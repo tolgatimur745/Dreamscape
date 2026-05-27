@@ -1,0 +1,285 @@
+
+<!-- PONG -->
+<section class="section" id="pong">
+  <div class="section-header"><div class="section-badge">🏓 Pong</div><h2 class="section-title">Neon Pong</h2><p class="section-sub">Fareyle kontrol et — yapay zekaya karşı oyna!</p></div>
+  <div class="pong-hud">
+    <div><span class="pong-score-num" id="pongScoreL">0</span><br><small style="color:var(--tx3)">Sen</small></div>
+    <button class="mini-btn" id="pongStartBtn">▶ Başlat</button>
+    <div><span class="pong-score-num" id="pongScoreR">0</span><br><small style="color:var(--tx3)">AI</small></div>
+  </div>
+  <canvas id="pongCanvas" height="320"></canvas>
+</section>
+
+<!-- VIRTUAL PIANO -->
+<section class="section" id="piano">
+  <div class="section-header"><div class="section-badge">🎹 Piyano</div><h2 class="section-title">Virtual Piano</h2><p class="section-sub">Tıkla veya klavyenle çal — gerçek sesler!</p></div>
+  <div class="piano-wrap">
+    <div class="piano-info-bar" id="pianoInfo">Bir tuşa bas veya tıkla...</div>
+    <div class="piano-keys-wrap" id="pianoKeys"></div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button class="mini-btn" id="pianoOct1">Oktav 1</button>
+      <button class="mini-btn" id="pianoOct2">Oktav 2</button>
+      <button class="mini-btn" id="pianoOct3">Oktav 3</button>
+      <button class="mini-btn" id="pianoChord">🎵 Otomatik Melodi</button>
+    </div>
+  </div>
+</section>
+
+<!-- DICE ROLLER -->
+<section class="section" id="dice">
+  <div class="section-header"><div class="section-badge">🎲 Zar</div><h2 class="section-title">Zar Toplayıcı</h2><p class="section-sub">D4'ten D20'ye — tüm zar tipleri!</p></div>
+  <div class="dice-wrap">
+    <div class="dice-type-row">
+      <button class="dt-btn active" data-sides="6">D6</button>
+      <button class="dt-btn" data-sides="4">D4</button>
+      <button class="dt-btn" data-sides="8">D8</button>
+      <button class="dt-btn" data-sides="10">D10</button>
+      <button class="dt-btn" data-sides="12">D12</button>
+      <button class="dt-btn" data-sides="20">D20</button>
+      <button class="dt-btn" data-sides="100">D100</button>
+    </div>
+    <div class="dice-count-row">
+      <button class="dc-btn" id="diceMinus">−</button>
+      <span id="diceCountLabel">1 Zar</span>
+      <button class="dc-btn" id="dicePlus">+</button>
+    </div>
+    <div class="dice-display-row" id="diceDisplay"></div>
+    <div class="dice-total-display" id="diceTotal"></div>
+    <button class="play-btn" id="diceRoll" style="max-width:200px">🎲 At!</button>
+    <div class="dice-hist" id="diceHist"></div>
+  </div>
+</section>
+
+<!-- BLACKJACK -->
+<section class="section" id="blackjack">
+  <div class="section-header"><div class="section-badge">🃏 Blackjack</div><h2 class="section-title">Blackjack</h2><p class="section-sub">21'i geç — kurpiyerle düello!</p></div>
+  <div class="bj-wrap">
+    <div class="bj-balance">💰 Bakiye: <span id="bjBalance">1000</span> | Bahis: <span id="bjBet">50</span></div>
+    <div class="bj-table">
+      <div class="bj-area">
+        <div class="bj-area-lbl">🤖 Krupiye — <span id="bjDealerScore">?</span></div>
+        <div class="bj-hand" id="bjDealerHand"></div>
+      </div>
+      <div class="bj-result" id="bjResult"></div>
+      <div class="bj-area">
+        <div class="bj-area-lbl">👤 Sen — <span id="bjPlayerScore">0</span></div>
+        <div class="bj-hand" id="bjPlayerHand"></div>
+      </div>
+    </div>
+    <div class="bj-bet-row" id="bjBetRow">
+      <span style="font-size:.83rem;color:var(--tx3)">Bahis:</span>
+      <button class="bj-chip" data-bet="10">+10</button>
+      <button class="bj-chip" data-bet="25">+25</button>
+      <button class="bj-chip" data-bet="50">+50</button>
+      <button class="bj-chip" data-bet="100">+100</button>
+      <button class="bj-chip" id="bjBetClear">Sıfırla</button>
+    </div>
+    <div class="bj-btn-row">
+      <button class="bj-btn deal" id="bjDeal">🃏 Dağıt</button>
+      <button class="bj-btn hit" id="bjHit" disabled>Kart Al</button>
+      <button class="bj-btn stand" id="bjStand" disabled>Dur</button>
+      <button class="bj-btn dbl" id="bjDouble" disabled>2× İkile</button>
+    </div>
+    <div class="bj-stats-row"><span>Kazanılan: <strong id="bjWins">0</strong></span><span>Kaybedilen: <strong id="bjLosses">0</strong></span><span>Berabere: <strong id="bjPushes">0</strong></span></div>
+  </div>
+</section>
+
+<!-- GEOGRAPHY QUIZ -->
+<section class="section" id="geography">
+  <div class="section-header"><div class="section-badge">🌍 Coğrafya</div><h2 class="section-title">Coğrafya Yarışması</h2><p class="section-sub">Başkentleri ve bayrakları bil — dünya turuna çık!</p></div>
+  <div class="geo-wrap">
+    <div class="geo-prog-bar"><div class="geo-prog-fill" id="geoProgFill" style="width:0%"></div></div>
+    <div class="geo-flag-big" id="geoFlag">🌍</div>
+    <div class="geo-q" id="geoQ">Hazır mısın?</div>
+    <div class="geo-opts" id="geoOpts"></div>
+    <div class="geo-score-row">
+      <span>Doğru: <strong id="geoCorrect">0</strong></span>
+      <span>Yanlış: <strong id="geoWrong">0</strong></span>
+      <span>Seri: <strong id="geoStreak">0</strong>🔥</span>
+    </div>
+    <button class="play-btn" id="geoStart" style="max-width:200px">🌍 Başlat</button>
+  </div>
+</section>
+
+<!-- PASSWORD GENERATOR -->
+<section class="section" id="passgen">
+  <div class="section-header"><div class="section-badge">🔑 Şifre</div><h2 class="section-title">Şifre Üretici</h2><p class="section-sub">Güçlü ve güvenli şifreler tek tıkta!</p></div>
+  <div class="pass-wrap">
+    <div class="pass-out">
+      <div class="pass-txt" id="passOutput">Şifre üretmek için butona bas...</div>
+      <button class="pass-copy" id="passCopy">📋 Kopyala</button>
+    </div>
+    <div class="pass-str" id="passStr"></div>
+    <div class="pass-opts">
+      <div class="pass-row">
+        <span>Uzunluk</span>
+        <div class="pass-len-wrap">
+          <input type="range" class="pass-len-sl" id="passLen" min="4" max="64" value="16">
+          <span class="pass-len-val" id="passLenVal">16</span>
+        </div>
+      </div>
+      <div class="pass-row"><span>Büyük Harf (A-Z)</span><label class="pass-toggle"><input type="checkbox" id="passUpper" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Küçük Harf (a-z)</span><label class="pass-toggle"><input type="checkbox" id="passLower" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Rakamlar (0-9)</span><label class="pass-toggle"><input type="checkbox" id="passNums" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Semboller (!@#$)</span><label class="pass-toggle"><input type="checkbox" id="passSyms"><span class="pass-sl"></span></label></div>
+    </div>
+    <button class="play-btn" id="passGen">🔐 Şifre Üret</button>
+  </div>
+</section>
+
+<!-- CAESAR CIPHER -->
+<section class="section" id="cipher">
+  <div class="section-header"><div class="section-badge">📝 Şifreleme</div><h2 class="section-title">Sezar Şifresi</h2><p class="section-sub">Mesajlarını şifrele — gizli kodlar yaz!</p></div>
+  <div class="cipher-wrap">
+    <div class="cipher-ctrl">
+      <div style="display:flex;gap:.4rem">
+        <button class="cm-btn active" id="cipherEnc">Şifrele</button>
+        <button class="cm-btn" id="cipherDec">Çöz</button>
+      </div>
+      <span style="font-size:.83rem;color:var(--tx2)">Kaydırma:</span>
+      <button class="shift-adj" id="shiftMinus">−</button>
+      <span class="shift-disp" id="shiftVal">13</span>
+      <button class="shift-adj" id="shiftPlus">+</button>
+      <button class="mini-btn" id="rot13Btn">ROT13</button>
+    </div>
+    <div class="cipher-dual">
+      <div class="cipher-panel">
+        <div class="cipher-lbl">Metin Gir</div>
+        <textarea class="cipher-ta" id="cipherInput" placeholder="Şifrelemek istediğin metni yaz..."></textarea>
+      </div>
+      <div class="cipher-panel">
+        <div class="cipher-lbl">Şifreli / Çözülmüş</div>
+        <textarea class="cipher-ta out" id="cipherOutput" readonly></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:center">
+      <button class="mini-btn" id="cipherCopy">📋 Sonucu Kopyala</button>
+      <button class="mini-btn" id="cipherSwap">⇄ Yer Değiştir</button>
+      <button class="mini-btn" id="cipherClear">🗑️ Temizle</button>
+    </div>
+  </div>
+</section>
+
+<!-- MOON PHASE -->
+<section class="section" id="moonphase">
+  <div class="section-header"><div class="section-badge">🌙 Ay Fazı</div><h2 class="section-title">Ay Takvimi</h2><p class="section-sub">Bugünkü ay fazı ve 30 günlük takvim</p></div>
+  <div class="moon-wrap">
+    <canvas id="moonCanvas" width="180" height="180"></canvas>
+    <div class="moon-grid" id="moonInfoGrid"></div>
+    <div class="moon-cal-row" id="moonCalRow"></div>
+  </div>
+</section>
+
+<!-- PIXEL ART -->
+<section class="section" id="pixelart">
+  <div class="section-header"><div class="section-badge">🎨 Pixel Art</div><h2 class="section-title">Pixel Art Stüdyosu</h2><p class="section-sub">Piksel piksel dijital sanat yarat!</p></div>
+  <div class="pixel-wrap">
+    <div class="pixel-pal" id="pixelPal"></div>
+    <div class="pixel-toolbar">
+      <button class="tool-btn active" id="pxDraw">🖌 Çiz</button>
+      <button class="tool-btn" id="pxErase">⬜ Sil</button>
+      <button class="tool-btn" id="pxFill">🪣 Doldur</button>
+      <button class="mini-btn" id="pxGrid">🔲 Grid</button>
+      <button class="mini-btn" id="pxClear">🗑️ Temizle</button>
+      <button class="mini-btn" id="pxSave">💾 Kaydet</button>
+    </div>
+    <div class="pixel-grid" id="pixelGrid"></div>
+  </div>
+</section>
+
+<!-- RIPPLE / INTERACTIVE CANVAS -->
+<section class="section" id="ripple">
+  <div class="section-header"><div class="section-badge">🌊 Dalgalar</div><h2 class="section-title">İnteraktif Dalga</h2><p class="section-sub">Tıkla, dokunuşlarınla renkli dalgalar yarat</p></div>
+  <div class="ripple-ctrl">
+    <button class="mini-btn ripple-col-btn active" data-col="rainbow">🌈 Gökkuşağı</button>
+    <button class="mini-btn ripple-col-btn" data-col="blue">💙 Okyanus</button>
+    <button class="mini-btn ripple-col-btn" data-col="fire">🔥 Ateş</button>
+    <button class="mini-btn ripple-col-btn" data-col="green">💚 Orman</button>
+    <button class="mini-btn" id="rippleClear">✨ Temizle</button>
+  </div>
+  <canvas id="rippleCanvas" height="320"></canvas>
+</section>
+
+<!-- SPEED CLICKER -->
+<section class="section" id="clicker">
+  <div class="section-header"><div class="section-badge">⚡ Hız Tıklama</div><h2 class="section-title">Speed Clicker</h2><p class="section-sub">10 saniyede kaç kez tıklayabilirsin?</p></div>
+  <div class="clicker-wrap">
+    <div class="clicker-timer-bar"><div class="clicker-timer-fill" id="clickerTimerFill"></div></div>
+    <button class="clicker-btn" id="clickerBtn">
+      <span class="clicker-count" id="clickerCount">0</span>
+      <span class="clicker-label">Tıkla!</span>
+    </button>
+    <div class="clicker-stats">
+      <span>En İyi: <strong id="clickerBest">0</strong></span>
+      <span>Son: <strong id="clickerLast">0</strong></span>
+      <span>CPS: <strong id="clickerCPS">0</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- EMOJI STORY BUILDER -->
+<section class="section" id="emojistory">
+  <div class="section-header"><div class="section-badge">📖 Hikaye</div><h2 class="section-title">Emoji Hikaye Yapıcı</h2><p class="section-sub">Emoji'lerle kendi hikayeni oluştur!</p></div>
+  <div class="emoji-wrap">
+    <div class="emoji-story-display" id="emojiStory">
+      <span style="color:var(--tx3);font-size:.9rem;font-style:italic">Aşağıdaki emoji'lere tıklayarak hikayeni başlat...</span>
+    </div>
+    <div class="emoji-story-actions">
+      <button class="mini-btn" id="emojiUndo">↩ Geri Al</button>
+      <button class="mini-btn" id="emojiClear">🗑️ Temizle</button>
+      <button class="mini-btn" id="emojiCopy">📋 Kopyala</button>
+      <button class="mini-btn" id="emojiRandom">🎲 Rastgele Hikaye</button>
+    </div>
+    <div class="emoji-palette" id="emojiPalette"></div>
+  </div>
+</section>
+
+<!-- SLOT MACHINE -->
+<section class="section" id="slots">
+  <div class="section-header"><div class="section-badge">🎰 Slot</div><h2 class="section-title">Şans Makinesi</h2><p class="section-sub">Şansını dene — jackpot'u yakala!</p></div>
+  <div class="slot-wrap">
+    <div class="slot-balance">💰 <span id="slotBalance">500</span> Koin</div>
+    <div class="slot-machine">
+      <div class="slot-reels">
+        <div class="slot-reel" id="slotR1"><div class="slot-reel-glow"></div><span id="slotE1">🍋</span></div>
+        <div class="slot-reel" id="slotR2"><div class="slot-reel-glow"></div><span id="slotE2">🍒</span></div>
+        <div class="slot-reel" id="slotR3"><div class="slot-reel-glow"></div><span id="slotE3">🔔</span></div>
+      </div>
+      <div class="slot-result" id="slotResult">Şansını dene!</div>
+      <button class="slot-pull-btn" id="slotSpin">🎰 Çevir!</button>
+    </div>
+    <div class="slot-bet-row">
+      <span style="font-size:.83rem;color:var(--tx3)">Bahis:</span>
+      <button class="slot-bet-btn active" data-bet="10">10</button>
+      <button class="slot-bet-btn" data-bet="25">25</button>
+      <button class="slot-bet-btn" data-bet="50">50</button>
+      <button class="slot-bet-btn" data-bet="100">100</button>
+    </div>
+    <div class="slot-stats"><span>Kazanılan: <strong id="slotWins">0</strong></span><span>Jackpot: <strong id="slotJP">0</strong></span></div>
+  </div>
+</section>
+
+<!-- GRATITUDE JOURNAL -->
+<section class="section" id="gratitude">
+  <div class="section-header"><div class="section-badge">📓 Günlük</div><h2 class="section-title">Şükran Günlüğü</h2><p class="section-sub">Her gün bir güzellik yaz — mutluluk birikiyor</p></div>
+  <div class="grat-wrap">
+    <div class="grat-streak-card">
+      <div class="grat-snum" id="gratStreak">0</div>
+      <div class="grat-sinfo"><h4>🔥 Günlük Seri</h4><p>Her gün yazarak serini kır!</p></div>
+    </div>
+    <div class="grat-input-card">
+      <h3>✨ Bugün neye şükrediyorsun?</h3>
+      <div class="grat-quick-row">
+        <button class="grat-qb">💙 Sağlığım için</button>
+        <button class="grat-qb">👨‍👩‍👧 Ailem için</button>
+        <button class="grat-qb">☀️ Güzel bir gün için</button>
+        <button class="grat-qb">🎵 Müzik için</button>
+        <button class="grat-qb">📚 Öğrenmek için</button>
+        <button class="grat-qb">🌿 Doğa için</button>
+      </div>
+      <textarea class="grat-ta" id="gratInput" placeholder="Bugün şükrettiğin şeyi yaz..."></textarea>
+      <button class="grat-save" id="gratSave">💚 Kaydet</button>
+    </div>
+    <div class="grat-entries" id="gratEntries"></div>
+  </div>
+</section>

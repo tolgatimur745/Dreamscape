@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
@@ -25,13 +25,13 @@
     #particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
 
     /* NAVBAR */
-    .navbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:64px;background:rgba(13,15,26,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);transition:var(--t)}
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:9998;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:64px;background:rgba(13,15,26,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);transition:var(--t)}
     .navbar.scrolled{background:rgba(13,15,26,.97);box-shadow:0 4px 30px rgba(0,0,0,.6)}
     .nav-logo{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:800}
     .logo-icon{font-size:1.4rem;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hue 8s linear infinite}
     .logo-text{background:linear-gradient(90deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     @keyframes hue{to{filter:hue-rotate(360deg)}}
-    .nav-links{display:flex;gap:.1rem;flex-wrap:wrap}
+    .nav-links{display:flex;gap:.3rem;align-items:center;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;flex-wrap:nowrap;max-width:calc(100vw - 220px)}.nav-links::-webkit-scrollbar{display:none}
     .nav-link{text-decoration:none;color:var(--tx2);font-size:.78rem;font-weight:500;padding:5px 9px;border-radius:20px;transition:var(--t);border:1px solid transparent}
     .nav-link:hover{color:var(--tx);background:var(--glass);border-color:var(--gb)}
     .nav-time{font-size:.9rem;font-weight:700;color:var(--a3);min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
@@ -572,34 +572,397 @@
     @keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
     .daily-total{font-size:.88rem;color:var(--tx2);text-align:center;padding:.8rem;background:var(--glass);border-radius:var(--r2);border:1px solid var(--gb);width:100%}
     .daily-total strong{color:var(--a5)}
+  
+    /* ═══ PONG ═══ */
+    #pongCanvas{display:block;width:100%;border-radius:var(--r3);background:#010108;border:1px solid rgba(255,255,255,.06);cursor:none}
+    .pong-hud{display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(0,0,0,.2);border-radius:var(--r2);margin-bottom:.5rem;font-size:.83rem;color:var(--tx2)}
+    .pong-score-num{font-size:1.5rem;font-weight:900;color:var(--a3)}
+    /* ═══ VIRTUAL PIANO ═══ */
+    .piano-wrap{display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+    .piano-keys-wrap{position:relative;height:150px;display:flex;border-radius:var(--r2);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.8);user-select:none}
+    .pk-white{width:44px;height:150px;background:linear-gradient(to bottom,#eee,#fff);border-right:1px solid #bbb;cursor:pointer;position:relative;border-radius:0 0 7px 7px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex-shrink:0;z-index:1}
+    .pk-white:hover,.pk-white.pressed{background:linear-gradient(to bottom,#d0d8ff,#eef)}
+    .pk-black{width:28px;height:96px;background:linear-gradient(to bottom,#333,#111);position:absolute;top:0;z-index:2;cursor:pointer;border-radius:0 0 5px 5px;box-shadow:2px 4px 8px rgba(0,0,0,.7)}
+    .pk-black:hover,.pk-black.pressed{background:linear-gradient(to bottom,#444,#222)}
+    .pk-lbl{font-size:.52rem;color:#888;font-weight:700;pointer-events:none}
+    .piano-info-bar{font-size:.83rem;color:var(--tx2);min-height:24px;text-align:center;padding:.3rem}
+    /* ═══ DICE ROLLER ═══ */
+    .dice-wrap{display:flex;flex-direction:column;align-items:center;gap:1.4rem;max-width:600px;margin:0 auto}
+    .dice-type-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+    .dt-btn{padding:7px 16px;border-radius:12px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .dt-btn.active{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff;box-shadow:var(--gp)}
+    .dice-display-row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;min-height:88px;align-items:center}
+    .dice-face{width:74px;height:74px;border-radius:12px;background:linear-gradient(145deg,#e8e8e8,#ffffff);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#1a1a1a;box-shadow:0 8px 20px rgba(0,0,0,.5),inset 0 2px 4px rgba(255,255,255,.9);animation:diceRoll .35s var(--tb)}
+    .dice-total-display{font-size:2rem;font-weight:900;color:var(--a3);min-height:40px;text-align:center}
+    .dice-count-row{display:flex;gap:.6rem;align-items:center;font-size:.88rem;color:var(--tx2)}
+    .dc-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--gb);background:var(--glass);color:var(--tx);cursor:pointer;font-size:1rem;transition:var(--t);display:flex;align-items:center;justify-content:center}
+    .dc-btn:hover{background:var(--gh);border-color:var(--a1)}
+    .dice-hist{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;max-width:420px}
+    .dhc{padding:2px 9px;border-radius:100px;font-size:.7rem;background:var(--glass);border:1px solid var(--gb);color:var(--tx3)}
+    /* ═══ BLACKJACK ═══ */
+    .bj-wrap{max-width:580px;margin:0 auto}
+    .bj-table{padding:1.5rem;background:radial-gradient(ellipse at center,#183524,#0a1a0a);border-radius:var(--r4);border:2px solid rgba(105,240,174,.2);display:flex;flex-direction:column;gap:1.2rem}
+    .bj-area-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.35)}
+    .bj-hand{display:flex;gap:.5rem;min-height:80px;flex-wrap:wrap;align-items:center}
+    .bj-card{width:54px;height:78px;border-radius:8px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:4px 5px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(0,0,0,.5);animation:cardIn .25s ease;flex-shrink:0;position:relative}
+    @keyframes cardIn{from{transform:translateY(-15px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .bj-card.red{color:#e74c3c}.bj-card.blk{color:#111}
+    .bj-card.back{background:linear-gradient(135deg,#7c4dff,#ff6b9d)}.bj-card.back::after{content:'✦';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.4);font-size:1.5rem}
+    .bj-suit{font-size:1.1rem;align-self:flex-end}
+    .bj-result{font-size:.95rem;font-weight:800;text-align:center;min-height:24px}
+    .bj-result.win{color:var(--a4)}.bj-result.lose{color:var(--a2)}.bj-result.push{color:var(--a5)}
+    .bj-btn-row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+    .bj-btn{padding:9px 20px;border-radius:100px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:var(--tb);border:none}
+    .bj-btn.deal{background:linear-gradient(135deg,var(--a4),var(--a3));color:#fff}
+    .bj-btn.hit{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff}
+    .bj-btn.stand{background:rgba(255,234,0,.15);color:var(--a5);border:1px solid rgba(255,234,0,.3)}
+    .bj-btn.dbl{background:rgba(0,229,255,.1);color:var(--a3);border:1px solid rgba(0,229,255,.3)}
+    .bj-btn:hover:not(:disabled){transform:scale(1.06)}.bj-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+    .bj-stats-row{display:flex;gap:1.5rem;justify-content:center;font-size:.83rem;color:var(--tx2);flex-wrap:wrap}
+    .bj-stats-row strong{color:var(--a3)}
+    .bj-balance{font-size:1rem;font-weight:700;color:var(--a5);text-align:center}
+    .bj-bet-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;align-items:center}
+    .bj-chip{padding:7px 16px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .bj-chip:hover{background:var(--gh);border-color:var(--a5);color:var(--a5);transform:translateY(-2px)}
+    /* ═══ GEOGRAPHY QUIZ ═══ */
+    .geo-wrap{max-width:540px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.4rem}
+    .geo-flag-big{font-size:5rem;text-align:center;animation:float 3s ease-in-out infinite;min-height:88px;display:flex;align-items:center;justify-content:center}
+    .geo-q{font-size:1rem;color:var(--tx2);text-align:center;min-height:26px}
+    .geo-opts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;width:100%}
+    .geo-btn{padding:11px;border-radius:12px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;transition:var(--t);font-weight:500;text-align:center}
+    .geo-btn:hover:not(:disabled){background:var(--gh);border-color:var(--a1);transform:translateY(-2px)}
+    .geo-btn.correct{background:rgba(105,240,174,.2)!important;border-color:var(--a4)!important;color:var(--a4)!important}
+    .geo-btn.wrong{background:rgba(255,107,157,.18)!important;border-color:var(--a2)!important;color:var(--a2)!important}
+    .geo-btn:disabled{cursor:default}
+    .geo-prog-bar{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
+    .geo-prog-fill{height:100%;background:linear-gradient(90deg,var(--a1),var(--a3));border-radius:10px;transition:width .5s ease}
+    .geo-score-row{display:flex;gap:1.5rem;font-size:.83rem;color:var(--tx2)}
+    .geo-score-row strong{color:var(--a3)}
+    /* ═══ PASSWORD GEN ═══ */
+    .pass-wrap{max-width:580px;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+    .pass-out{display:flex;align-items:center;gap:.8rem;padding:1rem 1.4rem;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:var(--r3)}
+    .pass-txt{flex:1;font-family:monospace;font-size:.93rem;color:var(--a3);word-break:break-all;letter-spacing:1px;min-height:22px}
+    .pass-copy{padding:7px 18px;border-radius:100px;background:var(--a1);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:var(--tb);flex-shrink:0}
+    .pass-copy:hover{transform:scale(1.06);box-shadow:var(--gp)}
+    .pass-opts{padding:1rem 1.4rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);display:flex;flex-direction:column;gap:.8rem}
+    .pass-row{display:flex;align-items:center;justify-content:space-between;font-size:.88rem;color:var(--tx2)}
+    .pass-toggle{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0}
+    .pass-toggle input{opacity:0;width:0;height:0;position:absolute}
+    .pass-sl{position:absolute;inset:0;border-radius:100px;background:rgba(255,255,255,.12);transition:var(--t)}
+    .pass-toggle input:checked+.pass-sl{background:var(--a1)}
+    .pass-sl::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;left:3px;top:3px;transition:var(--t)}
+    .pass-toggle input:checked+.pass-sl::before{left:23px}
+    .pass-len-wrap{display:flex;align-items:center;gap:.8rem}
+    .pass-len-sl{-webkit-appearance:none;width:160px;height:5px;border-radius:10px;background:var(--gb);cursor:pointer;outline:none}
+    .pass-len-sl::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--a1);cursor:pointer}
+    .pass-str{height:4px;border-radius:10px;transition:all .4s;background:rgba(255,255,255,.08);width:0}
+    /* ═══ CAESAR CIPHER ═══ */
+    .cipher-wrap{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+    .cipher-dual{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .cipher-panel{display:flex;flex-direction:column;gap:.5rem}
+    .cipher-lbl{font-size:.7rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+    .cipher-ta{width:100%;height:110px;padding:.8rem 1rem;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:var(--r2);color:var(--tx);font-family:monospace;font-size:.88rem;resize:none;outline:none;transition:var(--t)}
+    .cipher-ta:focus{border-color:var(--a1)}
+    .cipher-ta.out{background:rgba(124,77,255,.04);border-color:rgba(124,77,255,.2);color:var(--a3);cursor:default}
+    .cipher-ctrl{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;padding:.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2)}
+    .shift-disp{font-size:1.5rem;font-weight:900;color:var(--a3);min-width:32px;text-align:center}
+    .shift-adj{width:34px;height:34px;border-radius:50%;border:1px solid var(--gb);background:var(--glass);color:var(--tx);cursor:pointer;font-size:1.1rem;transition:var(--t);display:flex;align-items:center;justify-content:center}
+    .shift-adj:hover{background:var(--gh);border-color:var(--a1)}
+    .cm-btn{padding:6px 14px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--t)}
+    .cm-btn.active{background:rgba(124,77,255,.15);border-color:var(--a1);color:var(--a1)}
+    /* ═══ MOON PHASE ═══ */
+    .moon-wrap{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto}
+    #moonCanvas{border-radius:50%;box-shadow:0 0 70px rgba(200,200,255,.12)}
+    .moon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:.7rem;width:100%}
+    .moon-card{padding:.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2);text-align:center}
+    .mc-icon{font-size:1.4rem;margin-bottom:.2rem}
+    .mc-val{font-size:.93rem;font-weight:700;color:var(--a3)}
+    .mc-lbl{font-size:.66rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-top:.1rem}
+    .moon-cal-row{display:flex;gap:.3rem;flex-wrap:wrap;justify-content:center}
+    .moon-day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;border-radius:9px;background:var(--glass);border:1px solid var(--gb);min-width:38px}
+    .moon-day.now{border-color:var(--a3);background:rgba(0,229,255,.06)}
+    .md-moon{font-size:1.1rem}
+    .md-num{font-size:.58rem;color:var(--tx3)}
+    /* ═══ PIXEL ART ═══ */
+    .pixel-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem}
+    .pixel-pal{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;padding:.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3)}
+    .px-col{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:var(--tb);flex-shrink:0}
+    .px-col:hover{transform:scale(1.2)}.px-col.sel{border-color:#fff;transform:scale(1.25);box-shadow:0 0 10px rgba(255,255,255,.4)}
+    .pixel-grid{display:inline-grid;border:1px solid var(--gb);cursor:crosshair;user-select:none;touch-action:none}
+    .px-cell{border:1px solid rgba(255,255,255,.04);box-sizing:border-box}
+    .px-cell:hover{opacity:.8}
+    .pixel-toolbar{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+    /* ═══ RIPPLE CANVAS ═══ */
+    #rippleCanvas{display:block;width:100%;border-radius:var(--r3);background:#01020d;border:1px solid rgba(255,255,255,.06);cursor:crosshair}
+    .ripple-ctrl{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:.8rem}
+    /* ═══ GRATITUDE JOURNAL ═══ */
+    .grat-wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:1.2rem}
+    .grat-streak-card{display:flex;align-items:center;gap:1rem;padding:1rem 1.4rem;background:linear-gradient(135deg,rgba(105,240,174,.1),rgba(0,229,255,.06));border:1px solid rgba(105,240,174,.2);border-radius:var(--r3)}
+    .grat-snum{font-size:2rem;font-weight:900;color:var(--a4)}
+    .grat-sinfo h4{font-size:.9rem;font-weight:700;margin-bottom:.1rem}
+    .grat-sinfo p{font-size:.78rem;color:var(--tx3)}
+    .grat-input-card{padding:1.4rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);backdrop-filter:blur(20px)}
+    .grat-input-card h3{font-size:.95rem;margin-bottom:.6rem}
+    .grat-quick-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem}
+    .grat-qb{padding:4px 11px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.74rem;cursor:pointer;transition:var(--t)}
+    .grat-qb:hover{color:var(--tx);border-color:var(--a4)}
+    .grat-ta{width:100%;height:90px;padding:.7rem 1rem;background:rgba(0,0,0,.25);border:1px solid var(--gb);border-radius:var(--r2);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.88rem;resize:none;outline:none;transition:var(--t);margin-bottom:.6rem}
+    .grat-ta:focus{border-color:var(--a4);background:rgba(105,240,174,.04)}
+    .grat-save{display:inline-flex;align-items:center;gap:7px;padding:9px 22px;background:rgba(105,240,174,.15);color:var(--a4);border:1px solid var(--a4);border-radius:100px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .grat-save:hover{background:rgba(105,240,174,.3);transform:scale(1.04)}
+    .grat-entries{display:flex;flex-direction:column;gap:.7rem;max-height:400px;overflow-y:auto}
+    .grat-entry{padding:.9rem 1.2rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2);animation:fadeUp .3s ease;position:relative}
+    .grat-edate{font-size:.66rem;color:var(--tx3);margin-bottom:.3rem}
+    .grat-etext{font-size:.88rem;line-height:1.7}
+    .grat-edel{position:absolute;top:.6rem;right:.7rem;background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.85rem}
+    .grat-edel:hover{color:var(--a2)}
+    .grat-empty{text-align:center;color:var(--tx3);font-size:.88rem;padding:1.5rem;font-style:italic}
+    /* ═══ SLOT MACHINE ═══ */
+    .slot-wrap{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:500px;margin:0 auto}
+    .slot-machine{padding:2rem 2.5rem;background:radial-gradient(ellipse at top,#2a1a4a,#1a0a2a);border:3px solid rgba(124,77,255,.4);border-radius:var(--r4);box-shadow:0 0 60px rgba(124,77,255,.25),inset 0 2px 4px rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+    .slot-reels{display:flex;gap:1rem}
+    .slot-reel{width:80px;height:100px;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.1);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden;position:relative;box-shadow:inset 0 4px 20px rgba(0,0,0,.5)}
+    .slot-reel.spinning{animation:slotSpin .15s linear infinite}
+    @keyframes slotSpin{0%{transform:translateY(-5px)}50%{transform:translateY(5px)}100%{transform:translateY(-5px)}}
+    .slot-reel-glow{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.4),transparent,rgba(0,0,0,.4));pointer-events:none}
+    .slot-pull-btn{padding:14px 44px;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;border:none;border-radius:100px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:var(--tb);box-shadow:0 6px 20px rgba(231,76,60,.4);letter-spacing:1px}
+    .slot-pull-btn:hover:not(:disabled){transform:scale(1.07);box-shadow:0 10px 30px rgba(231,76,60,.6)}
+    .slot-pull-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .slot-result{font-size:1.1rem;font-weight:800;text-align:center;min-height:28px}
+    .slot-result.jackpot{color:var(--a5);animation:pulse 1s ease-in-out infinite}
+    .slot-result.win{color:var(--a4)}.slot-result.lose{color:var(--tx3)}
+    @keyframes pulse{0%,100%{text-shadow:0 0 10px var(--a5)}50%{text-shadow:0 0 30px var(--a5),0 0 60px var(--a5)}}
+    .slot-stats{display:flex;gap:2rem;font-size:.83rem;color:var(--tx2)}
+    .slot-stats strong{color:var(--a5)}
+    .slot-bet-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:center}
+    .slot-bet-btn{padding:5px 14px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--t)}
+    .slot-bet-btn.active{background:rgba(255,234,0,.15);border-color:var(--a5);color:var(--a5)}
+    .slot-balance{font-size:1.1rem;font-weight:800;color:var(--a5);text-align:center}
+    /* ═══ SPEED CLICKER ═══ */
+    .clicker-wrap{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:500px;margin:0 auto}
+    .clicker-timer-bar{width:100%;height:8px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+    .clicker-timer-fill{height:100%;background:linear-gradient(90deg,var(--a4),var(--a3));border-radius:10px;transition:width .1s linear;width:100%}
+    .clicker-btn{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(124,77,255,.6),rgba(124,77,255,.2));border:3px solid var(--a1);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:var(--tb);box-shadow:0 0 40px rgba(124,77,255,.3);font-family:'Outfit',sans-serif;user-select:none;color:#fff}
+    .clicker-btn:hover{transform:scale(1.05);box-shadow:0 0 60px rgba(124,77,255,.5)}
+    .clicker-btn:active{transform:scale(.94)}
+    .clicker-count{font-size:3rem;font-weight:900;display:block;line-height:1}
+    .clicker-label{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.2rem}
+    .clicker-stats{display:flex;gap:2rem;font-size:.83rem;color:var(--tx2)}
+    .clicker-stats strong{color:var(--a3)}
+    /* ═══ EMOJI STORY BUILDER ═══ */
+    .emoji-wrap{display:flex;flex-direction:column;gap:1.2rem;max-width:700px;margin:0 auto}
+    .emoji-palette{display:flex;gap:.4rem;flex-wrap:wrap;padding:1rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3)}
+    .emoji-cat{font-size:.7rem;font-weight:700;color:var(--tx3);width:100%;margin-top:.3rem;text-transform:uppercase;letter-spacing:1px}
+    .emoji-cat:first-child{margin-top:0}
+    .emoji-btn{font-size:1.5rem;background:none;border:1px solid transparent;border-radius:8px;cursor:pointer;transition:var(--tb);padding:4px;line-height:1}
+    .emoji-btn:hover{background:var(--glass);border-color:var(--gb);transform:scale(1.2)}
+    .emoji-story-display{min-height:80px;padding:1rem 1.4rem;background:rgba(0,0,0,.25);border:1px solid var(--gb);border-radius:var(--r3);font-size:1.8rem;line-height:1.6;word-break:break-all;cursor:text}
+    .emoji-story-display.empty{font-size:.9rem;color:var(--tx3);font-style:italic;display:flex;align-items:center;justify-content:center}
+    .emoji-story-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+  
+    /* ═══ HAMBURGER MENU ═══ */
+    .menu-ham{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px 10px;border-radius:10px;transition:var(--tb);flex-shrink:0}
+    .menu-ham span{display:block;width:22px;height:2px;background:var(--tx);border-radius:2px;transition:var(--tb)}
+    .menu-ham:hover span{background:var(--a3)}
+    .menu-ham.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .menu-ham.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+    .menu-ham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+    /* ═══ MENU OVERLAY ═══ */
+    .menu-overlay{position:fixed;inset:0;background:rgba(4,2,14,.97);z-index:9999;opacity:0;pointer-events:none;transition:opacity .35s ease;overflow-y:auto;backdrop-filter:blur(30px)}
+    .menu-overlay.open{opacity:1;pointer-events:all}
+    .menu-overlay-top{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;background:rgba(4,2,14,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .menu-back-btn{display:flex;align-items:center;gap:.5rem;background:var(--glass);border:1px solid var(--gb);color:var(--tx2);padding:8px 18px;border-radius:100px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;transition:var(--tb)}
+    .menu-back-btn:hover{background:var(--gh);color:var(--tx);transform:translateX(-3px)}
+    .menu-overlay-logo{font-size:1.1rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .menu-search-wrap{position:relative}
+    .menu-search{padding:8px 16px 8px 36px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.85rem;outline:none;transition:var(--t);width:180px}
+    .menu-search:focus{border-color:var(--a1);width:220px}
+    .menu-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
+    .menu-overlay-hero{text-align:center;padding:3rem 2rem 1.5rem}
+    .menu-overlay-hero h2{font-size:2.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem}
+    .menu-overlay-hero p{font-size:.95rem;color:var(--tx3)}
+    .menu-content{padding:0 2rem 4rem;max-width:1100px;margin:0 auto}
+    .menu-cat-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--tx3);margin:2rem 0 .8rem;padding-left:.2rem;display:flex;align-items:center;gap:.5rem}
+    .menu-cat-label::after{content:'';flex:1;height:1px;background:var(--gb)}
+    .menu-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.8rem}
+    .menu-card{padding:1.3rem .9rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);cursor:pointer;transition:var(--tb);display:flex;flex-direction:column;align-items:center;gap:.4rem;text-align:center;position:relative;overflow:hidden}
+    .menu-card::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:var(--t)}
+    .menu-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.5);border-color:rgba(255,255,255,.15)}
+    .menu-card:hover::before{opacity:.06}
+    .menu-card-em{font-size:2rem;line-height:1}
+    .menu-card-ttl{font-size:.82rem;font-weight:700;color:var(--tx)}
+    .menu-card-dsc{font-size:.68rem;color:var(--tx3);line-height:1.4}
+    .menu-card.hidden{display:none}
+
+    /* ═══ SIMPLIFIED NAVBAR ═══ */
+    .navbar{padding:.8rem 1.4rem}
+    .nav-links{display:none}
+
+      /* ═══ NAVBAR FIX ═══ */
+    .navbar{z-index:9998!important}
+    .menu-ham{position:relative;z-index:9998!important;pointer-events:all!important;cursor:pointer!important}
+    .menu-overlay{z-index:9999!important}
+      /* ══════════════════════════════════════════
+       HUB PAGE
+    ══════════════════════════════════════════ */
+    #hubPage {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    #hubPage.ds-hidden { display: none; }
+
+    .hub-bg {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #0d0f1a 0%, #1a0533 50%, #0a1a2e 100%);
+      z-index: -2;
+    }
+    .hub-orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(100px); opacity: .28; pointer-events: none; z-index: -1;
+    }
+    .hub-o1 { width: 700px; height: 700px; background: #7c4dff; top: -300px; left: -300px; animation: orbf1 8s ease-in-out infinite alternate; }
+    .hub-o2 { width: 600px; height: 600px; background: #ff6b9d; bottom: -200px; right: -200px; animation: orbf2 10s ease-in-out infinite alternate; }
+    .hub-o3 { width: 500px; height: 500px; background: #00e5ff; top: 40%; left: 55%; transform: translate(-50%,-50%); animation: orbf 7s ease-in-out infinite alternate; }
+
+    .hub-top {
+      text-align: center;
+      padding: 5rem 2rem 2.5rem;
+    }
+    .hub-logo-em { font-size: 2.8rem; display: block; margin-bottom: .4rem; }
+    .hub-logo-title {
+      font-size: 3.8rem; font-weight: 900;
+      background: linear-gradient(135deg, #c49bff, #7c4dff, #00e5ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: .5rem; line-height: 1.1;
+    }
+    .hub-tagline { color: rgba(255,255,255,.5); font-size: 1rem; margin-bottom: 2.5rem; }
+    .hub-search-wrap { position: relative; display: inline-block; }
+    .hub-search {
+      padding: .9rem 1.4rem .9rem 3rem;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: .95rem;
+      outline: none;
+      transition: all .3s;
+      width: 280px;
+      backdrop-filter: blur(20px);
+    }
+    .hub-search:focus {
+      border-color: #7c4dff;
+      width: 340px;
+      box-shadow: 0 0 30px rgba(124,77,255,.25);
+      background: rgba(124,77,255,.08);
+    }
+    .hub-search::placeholder { color: rgba(255,255,255,.3); }
+    .hub-search-icon { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); font-size: .9rem; pointer-events: none; }
+
+    .hub-main { padding: .5rem 1.5rem 5rem; max-width: 1100px; margin: 0 auto; }
+    .hub-cat {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2.5px; color: rgba(255,255,255,.3);
+      margin: 2.5rem 0 .9rem;
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .hub-cat::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.07); }
+    .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(152px, 1fr)); gap: .75rem; }
+    .hub-card {
+      padding: 1.3rem .85rem 1.1rem;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
+      display: flex; flex-direction: column; align-items: center; gap: .35rem;
+      text-align: center; position: relative; overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+    .hub-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0,0,0,.5);
+      border-color: rgba(124,77,255,.4);
+      background: rgba(124,77,255,.08);
+    }
+    .hub-card:active { transform: translateY(-2px) scale(.99); }
+    .hub-card.ds-hidden { display: none; }
+    .hc-em { font-size: 2.2rem; line-height: 1; margin-bottom: .1rem; }
+    .hc-ttl { font-size: .83rem; font-weight: 700; color: #fff; }
+    .hc-dsc { font-size: .68rem; color: rgba(255,255,255,.4); line-height: 1.4; }
+
+    /* ══ CONTENT SECTIONS (hidden by default) ══ */
+    .ds-section { display: none; }
+    .ds-section.ds-active { display: block; min-height: 100vh; padding-top: 72px; }
+
+    /* ══ NAVBAR — hub mode vs content mode ══ */
+    .nav-back {
+      display: none; align-items: center; gap: .45rem;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.7); padding: 7px 16px;
+      border-radius: 100px; cursor: pointer;
+      font-family: 'Outfit', sans-serif; font-size: .84rem; font-weight: 600;
+      transition: all .2s; flex-shrink: 0;
+    }
+    .nav-back:hover { background: rgba(255,255,255,.12); color: #fff; transform: translateX(-3px); }
+    .nav-section-title {
+      font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.6);
+      display: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    body.ds-in-section .nav-back { display: flex; }
+    body.ds-in-section .nav-section-title { display: block; }
+    body.ds-in-section .nav-logo { opacity: .4; }
+    body.ds-in-hub .nav-logo { opacity: 1; }
+    .menu-ham { display: none !important; }
+    body.ds-in-section .menu-ham { display: flex !important; }
+
+    /* star shimmer on hub cards */
+    .hub-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,.06), transparent 60%);
+      opacity: 0; transition: opacity .3s;
+    }
+    .hub-card:hover::after { opacity: 1; }
+
   </style>
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
 
 <nav class="navbar" id="navbar">
-  <div class="nav-logo"><span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span></div>
-  <div class="nav-links">
-    <a href="#games" class="nav-link">🎮 Oyunlar</a>
-    <a href="#ambiance" class="nav-link">🎵 Ses</a>
-    <a href="#canvas-sec" class="nav-link">🎨 Çizim</a>
-    <a href="#world" class="nav-link">🌍 Dünya</a>
-    <a href="#mastermind" class="nav-link">🔐 Şifre</a>
-    <a href="#magic8" class="nav-link">🎱 8 Top</a>
-    <a href="#stars" class="nav-link">🌌 Yıldız</a>
-    <a href="#palette-sec" class="nav-link">🌈 Palet</a>
-    <a href="#tarot" class="nav-link">🃏 Tarot</a>
-    <a href="#wyr" class="nav-link">💭 Seçim</a>
-    <a href="#nummagic" class="nav-link">🔮 Büyü</a>
-    <a href="#target" class="nav-link">🎯 Hedef</a>
-    <a href="#daily" class="nav-link">📅 Görev</a>
-    <a href="#breathe" class="nav-link">🧘 Nefes</a>
-    <a href="#facts" class="nav-link">💡 Bilgi</a>
+  <button class="menu-ham" id="menuHamburger" onclick="dsGoToHub()" style="position:relative;z-index:9998;pointer-events:all;cursor:pointer" aria-label="Ana Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="nav-back" id="navBackBtn" onclick="dsGoToHub()">← Ana Menü</button>
+  <div class="nav-logo" style="cursor:pointer" onclick="dsGoToHub()">
+    <span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span>
   </div>
+  <span class="nav-section-title" id="navSectionTitle"></span>
   <div class="nav-time" id="navTime"></div>
 </nav>
+<!-- ══ HUB PAGE ══ -->
+<div id="hubPage">
+  <div class="hub-bg"></div>
+  <div class="hub-orb hub-o1"></div>
+  <div class="hub-orb hub-o2"></div>
+  <div class="hub-orb hub-o3"></div>
+  <div class="hub-top">
+    <span class="hub-logo-em">✦</span>
+    <h1 class="hub-logo-title">Dreamscape</h1>
+    <p class="hub-tagline">Oyna &bull; Dinle &bull; &Ccedil;iz &bull; Ke&scaron;fet &bull; Huzur Bul</p>
+    <div class="hub-search-wrap">
+      <span class="hub-search-icon">&#128269;</span>
+      <input type="text" id="hubSearch" class="hub-search" placeholder="Ozellik ara...">
+    </div>
+  </div>
+  <div class="hub-main" id="hubMain"></div>
+</div>
 
-<section class="hero" id="hero">
+
+<section class="hero ds-section" id="hero">
   <div class="hero-bg"></div>
   <div class="hero-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
   <div class="hero-overlay"></div>
@@ -620,7 +983,7 @@
 </section>
 
 <!-- GAMES -->
-<section class="section" id="games">
+<section class="section ds-section" id="games">
   <div class="section-header">
     <div class="section-badge">🎮 Oyunlar</div>
     <h2 class="section-title">Mini Oyunlar</h2>
@@ -850,7 +1213,7 @@
 </section>
 
 <!-- AMBIANCE -->
-<section class="section" id="ambiance">
+<section class="section ds-section" id="ambiance">
   <div class="section-header"><div class="section-badge">🎵 Ambiyans</div><h2 class="section-title">Ses Ortamları</h2><p class="section-sub">Kendi atmosferini yarat</p></div>
   <div class="ambiance-container">
     <div class="viz-wrap" id="vizWrap">
@@ -913,7 +1276,7 @@
 </section>
 
 <!-- BREATHING -->
-<section class="section" id="breathe">
+<section class="section ds-section" id="breathe">
   <div class="section-header"><div class="section-badge">🧘 Nefes</div><h2 class="section-title">Nefes Egzersizi</h2><p class="section-sub">Zihnini dinlendir, stresi at</p></div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:2.5rem">
     <div class="breathe-types">
@@ -940,7 +1303,7 @@
 </section>
 
 <!-- POMODORO -->
-<section class="section" id="pomodoro">
+<section class="section ds-section" id="pomodoro">
   <div class="section-header"><div class="section-badge">⏱️ Pomodoro</div><h2 class="section-title">Pomodoro Zamanlayıcı</h2><p class="section-sub">25dk çalış, 5dk mola — odaklanmanın formülü</p></div>
   <div class="pomo-container">
     <div class="pomo-modes">
@@ -965,7 +1328,7 @@
 </section>
 
 <!-- FACTS -->
-<section class="section" id="facts">
+<section class="section ds-section" id="facts">
   <div class="section-header"><div class="section-badge">💡 Bilgi</div><h2 class="section-title">İlginç Bilgiler</h2><p class="section-sub">Her tıklamada yeni bir şey öğren</p></div>
   <div class="facts-container">
     <div class="fact-card"><div class="fact-badge" id="factCategory">🔬 Bilim</div><div class="fact-icon" id="factIcon">🔬</div><p class="fact-text" id="factText">Yükleniyor...</p><div class="fact-num" id="factNum">1 / 20</div></div>
@@ -986,7 +1349,7 @@
 </section>
 
 <!-- QUOTES -->
-<section class="section" id="quotes">
+<section class="section ds-section" id="quotes">
   <div class="section-header"><div class="section-badge">💬 Alıntı</div><h2 class="section-title">İlham Sözleri</h2><p class="section-sub">Büyük düşünürlerden seçilmiş sözler</p></div>
   <div class="quotes-container">
     <div class="quote-card"><div class="quote-mark">"</div><p class="quote-text" id="quoteText">Yükleniyor...</p><div class="quote-author" id="quoteAuthor">—</div><div class="quote-tag" id="quoteTag">💭</div></div>
@@ -1000,7 +1363,7 @@
 </section>
 
 <!-- CLOCKS & MOOD -->
-<section class="section" id="clock">
+<section class="section ds-section" id="clock">
   <div class="section-header"><div class="section-badge">🌍 Dünya</div><h2 class="section-title">Dünya Saatleri & Ruh Hali</h2></div>
   <div class="clocks-grid" id="clocksGrid"></div>
   <div class="mood-widget">
@@ -1017,7 +1380,7 @@
 </section>
 
 <!-- WORLD EXPLORER -->
-<section class="section" id="world">
+<section class="section ds-section" id="world">
   <div class="section-header"><div class="section-badge">🌍 Dünya Kaşifi</div><h2 class="section-title">Dünyayı Keşfet</h2><p class="section-sub">Tıkla ve dünyanın güzelliklerini keşfet</p></div>
   <div class="world-grid" id="worldGrid"></div>
   <div class="world-fact-panel" id="worldFactPanel">
@@ -1027,7 +1390,7 @@
 </section>
 
 <!-- MASTERMIND -->
-<section class="section" id="mastermind">
+<section class="section ds-section" id="mastermind">
   <div class="section-header"><div class="section-badge">🔐 Şifre Kırıcı</div><h2 class="section-title">Mastermind</h2><p class="section-sub">8 denemede gizli renk kodunu kır!</p></div>
   <div class="mm-container">
     <div class="mm-status" id="mmStatus">Bir renk seç ve 4 yere yerleştir</div>
@@ -1042,7 +1405,7 @@
 </section>
 
 <!-- MAGIC 8 BALL -->
-<section class="section" id="magic8">
+<section class="section ds-section" id="magic8">
   <div class="section-header"><div class="section-badge">🎱 Sihirli Top</div><h2 class="section-title">Sihirli 8 Top</h2><p class="section-sub">Bir soru sor ve topu salla...</p></div>
   <div class="ball-section">
     <input type="text" class="ball-q-input" id="ballInput" placeholder="Sorunuzu buraya yazın..." autocomplete="off" />
@@ -1059,7 +1422,7 @@
 </section>
 
 <!-- STAR MAP -->
-<section class="section" id="stars">
+<section class="section ds-section" id="stars">
   <div class="section-header"><div class="section-badge">🌌 Yıldız Haritası</div><h2 class="section-title">Takımyıldızları</h2><p class="section-sub">Yıldızlara tıklayarak kendi gökyüzünü oluştur</p></div>
   <div class="star-controls">
     <button class="star-mode-btn active" data-mode="explore" id="starExplore">🔭 Keşfet</button>
@@ -1072,7 +1435,7 @@
 </section>
 
 <!-- COLOR PALETTE -->
-<section class="section" id="palette-sec">
+<section class="section ds-section" id="palette-sec">
   <div class="section-header"><div class="section-badge">🌈 Renk Paleti</div><h2 class="section-title">Palet Üreticisi</h2><p class="section-sub">Güzel renk kombinasyonları oluştur ve kaydet</p></div>
   <div class="palette-gen">
     <div class="palette-display" id="paletteDisplay"></div>
@@ -1086,7 +1449,7 @@
 </section>
 
 <!-- TAROT -->
-<section class="section" id="tarot">
+<section class="section ds-section" id="tarot">
   <div class="section-header"><div class="section-badge">🃏 Tarot</div><h2 class="section-title">Tarot Kartları</h2><p class="section-sub">Geçmiş · Şimdi · Gelecek — Kartını çek</p></div>
   <div class="tarot-container">
     <div class="tarot-spread" id="tarotSpread"></div>
@@ -1096,7 +1459,7 @@
 </section>
 
 <!-- WOULD YOU RATHER -->
-<section class="section" id="wyr">
+<section class="section ds-section" id="wyr">
   <div class="section-header"><div class="section-badge">💭 Ya Şunu Seçsen?</div><h2 class="section-title">Would You Rather</h2><p class="section-sub">Zor seçimler, eğlenceli sonuçlar</p></div>
   <div class="wyr-container">
     <div class="wyr-card" id="wyrCard">
@@ -1112,7 +1475,7 @@
 </section>
 
 <!-- NUMBER MAGIC -->
-<section class="section" id="nummagic">
+<section class="section ds-section" id="nummagic">
   <div class="section-header"><div class="section-badge">🔮 Sayı Büyüsü</div><h2 class="section-title">Akıl Okuma</h2><p class="section-sub">Aklındaki sayıyı bileceğim... inan!</p></div>
   <div class="nummagic-container">
     <div class="magic-progress" id="magicProgress"></div>
@@ -1121,7 +1484,7 @@
 </section>
 
 <!-- MOVING TARGET -->
-<section class="section" id="target">
+<section class="section ds-section" id="target">
   <div class="section-header"><div class="section-badge">🎯 Hareketli Hedef</div><h2 class="section-title">Nişancı Testi</h2><p class="section-sub">Hareketli hedefe tıkla — combo yap!</p></div>
   <div class="target-stat-bar"><span>Skor: <strong id="targetScore">0</strong></span><span>Süre: <strong id="targetTimer">30</strong>s</span><span>En İyi: <strong id="targetBest">0</strong></span><span>Iskalama: <strong id="targetMiss">0</strong></span></div>
   <div class="target-combo" id="targetCombo"></div>
@@ -1130,7 +1493,7 @@
 </section>
 
 <!-- DAILY CHALLENGE -->
-<section class="section" id="daily">
+<section class="section ds-section" id="daily">
   <div class="section-header"><div class="section-badge">📅 Günlük Görev</div><h2 class="section-title">Bugünkü Görevler</h2><p class="section-sub">Her gün tamamla, serisini kır!</p></div>
   <div class="daily-container">
     <div class="daily-header-card">
@@ -1142,6 +1505,293 @@
   </div>
 </section>
 
+
+<!-- PONG -->
+<section class="section ds-section" id="pong">
+  <div class="section-header"><div class="section-badge">🏓 Pong</div><h2 class="section-title">Neon Pong</h2><p class="section-sub">Fareyle kontrol et — yapay zekaya karşı oyna!</p></div>
+  <div class="pong-hud">
+    <div><span class="pong-score-num" id="pongScoreL">0</span><br><small style="color:var(--tx3)">Sen</small></div>
+    <button class="mini-btn" id="pongStartBtn">▶ Başlat</button>
+    <div><span class="pong-score-num" id="pongScoreR">0</span><br><small style="color:var(--tx3)">AI</small></div>
+  </div>
+  <canvas id="pongCanvas" height="320"></canvas>
+</section>
+
+<!-- VIRTUAL PIANO -->
+<section class="section ds-section" id="piano">
+  <div class="section-header"><div class="section-badge">🎹 Piyano</div><h2 class="section-title">Virtual Piano</h2><p class="section-sub">Tıkla veya klavyenle çal — gerçek sesler!</p></div>
+  <div class="piano-wrap">
+    <div class="piano-info-bar" id="pianoInfo">Bir tuşa bas veya tıkla...</div>
+    <div class="piano-keys-wrap" id="pianoKeys"></div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button class="mini-btn" id="pianoOct1">Oktav 1</button>
+      <button class="mini-btn" id="pianoOct2">Oktav 2</button>
+      <button class="mini-btn" id="pianoOct3">Oktav 3</button>
+      <button class="mini-btn" id="pianoChord">🎵 Otomatik Melodi</button>
+    </div>
+  </div>
+</section>
+
+<!-- DICE ROLLER -->
+<section class="section ds-section" id="dice">
+  <div class="section-header"><div class="section-badge">🎲 Zar</div><h2 class="section-title">Zar Toplayıcı</h2><p class="section-sub">D4'ten D20'ye — tüm zar tipleri!</p></div>
+  <div class="dice-wrap">
+    <div class="dice-type-row">
+      <button class="dt-btn active" data-sides="6">D6</button>
+      <button class="dt-btn" data-sides="4">D4</button>
+      <button class="dt-btn" data-sides="8">D8</button>
+      <button class="dt-btn" data-sides="10">D10</button>
+      <button class="dt-btn" data-sides="12">D12</button>
+      <button class="dt-btn" data-sides="20">D20</button>
+      <button class="dt-btn" data-sides="100">D100</button>
+    </div>
+    <div class="dice-count-row">
+      <button class="dc-btn" id="diceMinus">−</button>
+      <span id="diceCountLabel">1 Zar</span>
+      <button class="dc-btn" id="dicePlus">+</button>
+    </div>
+    <div class="dice-display-row" id="diceDisplay"></div>
+    <div class="dice-total-display" id="diceTotal"></div>
+    <button class="play-btn" id="diceRoll" style="max-width:200px">🎲 At!</button>
+    <div class="dice-hist" id="diceHist"></div>
+  </div>
+</section>
+
+<!-- BLACKJACK -->
+<section class="section ds-section" id="blackjack">
+  <div class="section-header"><div class="section-badge">🃏 Blackjack</div><h2 class="section-title">Blackjack</h2><p class="section-sub">21'i geç — kurpiyerle düello!</p></div>
+  <div class="bj-wrap">
+    <div class="bj-balance">💰 Bakiye: <span id="bjBalance">1000</span> | Bahis: <span id="bjBet">50</span></div>
+    <div class="bj-table">
+      <div class="bj-area">
+        <div class="bj-area-lbl">🤖 Krupiye — <span id="bjDealerScore">?</span></div>
+        <div class="bj-hand" id="bjDealerHand"></div>
+      </div>
+      <div class="bj-result" id="bjResult"></div>
+      <div class="bj-area">
+        <div class="bj-area-lbl">👤 Sen — <span id="bjPlayerScore">0</span></div>
+        <div class="bj-hand" id="bjPlayerHand"></div>
+      </div>
+    </div>
+    <div class="bj-bet-row" id="bjBetRow">
+      <span style="font-size:.83rem;color:var(--tx3)">Bahis:</span>
+      <button class="bj-chip" data-bet="10">+10</button>
+      <button class="bj-chip" data-bet="25">+25</button>
+      <button class="bj-chip" data-bet="50">+50</button>
+      <button class="bj-chip" data-bet="100">+100</button>
+      <button class="bj-chip" id="bjBetClear">Sıfırla</button>
+    </div>
+    <div class="bj-btn-row">
+      <button class="bj-btn deal" id="bjDeal">🃏 Dağıt</button>
+      <button class="bj-btn hit" id="bjHit" disabled>Kart Al</button>
+      <button class="bj-btn stand" id="bjStand" disabled>Dur</button>
+      <button class="bj-btn dbl" id="bjDouble" disabled>2× İkile</button>
+    </div>
+    <div class="bj-stats-row"><span>Kazanılan: <strong id="bjWins">0</strong></span><span>Kaybedilen: <strong id="bjLosses">0</strong></span><span>Berabere: <strong id="bjPushes">0</strong></span></div>
+  </div>
+</section>
+
+<!-- GEOGRAPHY QUIZ -->
+<section class="section ds-section" id="geography">
+  <div class="section-header"><div class="section-badge">🌍 Coğrafya</div><h2 class="section-title">Coğrafya Yarışması</h2><p class="section-sub">Başkentleri ve bayrakları bil — dünya turuna çık!</p></div>
+  <div class="geo-wrap">
+    <div class="geo-prog-bar"><div class="geo-prog-fill" id="geoProgFill" style="width:0%"></div></div>
+    <div class="geo-flag-big" id="geoFlag">🌍</div>
+    <div class="geo-q" id="geoQ">Hazır mısın?</div>
+    <div class="geo-opts" id="geoOpts"></div>
+    <div class="geo-score-row">
+      <span>Doğru: <strong id="geoCorrect">0</strong></span>
+      <span>Yanlış: <strong id="geoWrong">0</strong></span>
+      <span>Seri: <strong id="geoStreak">0</strong>🔥</span>
+    </div>
+    <button class="play-btn" id="geoStart" style="max-width:200px">🌍 Başlat</button>
+  </div>
+</section>
+
+<!-- PASSWORD GENERATOR -->
+<section class="section ds-section" id="passgen">
+  <div class="section-header"><div class="section-badge">🔑 Şifre</div><h2 class="section-title">Şifre Üretici</h2><p class="section-sub">Güçlü ve güvenli şifreler tek tıkta!</p></div>
+  <div class="pass-wrap">
+    <div class="pass-out">
+      <div class="pass-txt" id="passOutput">Şifre üretmek için butona bas...</div>
+      <button class="pass-copy" id="passCopy">📋 Kopyala</button>
+    </div>
+    <div class="pass-str" id="passStr"></div>
+    <div class="pass-opts">
+      <div class="pass-row">
+        <span>Uzunluk</span>
+        <div class="pass-len-wrap">
+          <input type="range" class="pass-len-sl" id="passLen" min="4" max="64" value="16">
+          <span class="pass-len-val" id="passLenVal">16</span>
+        </div>
+      </div>
+      <div class="pass-row"><span>Büyük Harf (A-Z)</span><label class="pass-toggle"><input type="checkbox" id="passUpper" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Küçük Harf (a-z)</span><label class="pass-toggle"><input type="checkbox" id="passLower" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Rakamlar (0-9)</span><label class="pass-toggle"><input type="checkbox" id="passNums" checked><span class="pass-sl"></span></label></div>
+      <div class="pass-row"><span>Semboller (!@#$)</span><label class="pass-toggle"><input type="checkbox" id="passSyms"><span class="pass-sl"></span></label></div>
+    </div>
+    <button class="play-btn" id="passGen">🔐 Şifre Üret</button>
+  </div>
+</section>
+
+<!-- CAESAR CIPHER -->
+<section class="section ds-section" id="cipher">
+  <div class="section-header"><div class="section-badge">📝 Şifreleme</div><h2 class="section-title">Sezar Şifresi</h2><p class="section-sub">Mesajlarını şifrele — gizli kodlar yaz!</p></div>
+  <div class="cipher-wrap">
+    <div class="cipher-ctrl">
+      <div style="display:flex;gap:.4rem">
+        <button class="cm-btn active" id="cipherEnc">Şifrele</button>
+        <button class="cm-btn" id="cipherDec">Çöz</button>
+      </div>
+      <span style="font-size:.83rem;color:var(--tx2)">Kaydırma:</span>
+      <button class="shift-adj" id="shiftMinus">−</button>
+      <span class="shift-disp" id="shiftVal">13</span>
+      <button class="shift-adj" id="shiftPlus">+</button>
+      <button class="mini-btn" id="rot13Btn">ROT13</button>
+    </div>
+    <div class="cipher-dual">
+      <div class="cipher-panel">
+        <div class="cipher-lbl">Metin Gir</div>
+        <textarea class="cipher-ta" id="cipherInput" placeholder="Şifrelemek istediğin metni yaz..."></textarea>
+      </div>
+      <div class="cipher-panel">
+        <div class="cipher-lbl">Şifreli / Çözülmüş</div>
+        <textarea class="cipher-ta out" id="cipherOutput" readonly></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:center">
+      <button class="mini-btn" id="cipherCopy">📋 Sonucu Kopyala</button>
+      <button class="mini-btn" id="cipherSwap">⇄ Yer Değiştir</button>
+      <button class="mini-btn" id="cipherClear">🗑️ Temizle</button>
+    </div>
+  </div>
+</section>
+
+<!-- MOON PHASE -->
+<section class="section ds-section" id="moonphase">
+  <div class="section-header"><div class="section-badge">🌙 Ay Fazı</div><h2 class="section-title">Ay Takvimi</h2><p class="section-sub">Bugünkü ay fazı ve 30 günlük takvim</p></div>
+  <div class="moon-wrap">
+    <canvas id="moonCanvas" width="180" height="180"></canvas>
+    <div class="moon-grid" id="moonInfoGrid"></div>
+    <div class="moon-cal-row" id="moonCalRow"></div>
+  </div>
+</section>
+
+<!-- PIXEL ART -->
+<section class="section ds-section" id="pixelart">
+  <div class="section-header"><div class="section-badge">🎨 Pixel Art</div><h2 class="section-title">Pixel Art Stüdyosu</h2><p class="section-sub">Piksel piksel dijital sanat yarat!</p></div>
+  <div class="pixel-wrap">
+    <div class="pixel-pal" id="pixelPal"></div>
+    <div class="pixel-toolbar">
+      <button class="tool-btn active" id="pxDraw">🖌 Çiz</button>
+      <button class="tool-btn" id="pxErase">⬜ Sil</button>
+      <button class="tool-btn" id="pxFill">🪣 Doldur</button>
+      <button class="mini-btn" id="pxGrid">🔲 Grid</button>
+      <button class="mini-btn" id="pxClear">🗑️ Temizle</button>
+      <button class="mini-btn" id="pxSave">💾 Kaydet</button>
+    </div>
+    <div class="pixel-grid" id="pixelGrid"></div>
+  </div>
+</section>
+
+<!-- RIPPLE / INTERACTIVE CANVAS -->
+<section class="section ds-section" id="ripple">
+  <div class="section-header"><div class="section-badge">🌊 Dalgalar</div><h2 class="section-title">İnteraktif Dalga</h2><p class="section-sub">Tıkla, dokunuşlarınla renkli dalgalar yarat</p></div>
+  <div class="ripple-ctrl">
+    <button class="mini-btn ripple-col-btn active" data-col="rainbow">🌈 Gökkuşağı</button>
+    <button class="mini-btn ripple-col-btn" data-col="blue">💙 Okyanus</button>
+    <button class="mini-btn ripple-col-btn" data-col="fire">🔥 Ateş</button>
+    <button class="mini-btn ripple-col-btn" data-col="green">💚 Orman</button>
+    <button class="mini-btn" id="rippleClear">✨ Temizle</button>
+  </div>
+  <canvas id="rippleCanvas" height="320"></canvas>
+</section>
+
+<!-- SPEED CLICKER -->
+<section class="section ds-section" id="clicker">
+  <div class="section-header"><div class="section-badge">⚡ Hız Tıklama</div><h2 class="section-title">Speed Clicker</h2><p class="section-sub">10 saniyede kaç kez tıklayabilirsin?</p></div>
+  <div class="clicker-wrap">
+    <div class="clicker-timer-bar"><div class="clicker-timer-fill" id="clickerTimerFill"></div></div>
+    <button class="clicker-btn" id="clickerBtn">
+      <span class="clicker-count" id="clickerCount">0</span>
+      <span class="clicker-label">Tıkla!</span>
+    </button>
+    <div class="clicker-stats">
+      <span>En İyi: <strong id="clickerBest">0</strong></span>
+      <span>Son: <strong id="clickerLast">0</strong></span>
+      <span>CPS: <strong id="clickerCPS">0</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- EMOJI STORY BUILDER -->
+<section class="section ds-section" id="emojistory">
+  <div class="section-header"><div class="section-badge">📖 Hikaye</div><h2 class="section-title">Emoji Hikaye Yapıcı</h2><p class="section-sub">Emoji'lerle kendi hikayeni oluştur!</p></div>
+  <div class="emoji-wrap">
+    <div class="emoji-story-display" id="emojiStory">
+      <span style="color:var(--tx3);font-size:.9rem;font-style:italic">Aşağıdaki emoji'lere tıklayarak hikayeni başlat...</span>
+    </div>
+    <div class="emoji-story-actions">
+      <button class="mini-btn" id="emojiUndo">↩ Geri Al</button>
+      <button class="mini-btn" id="emojiClear">🗑️ Temizle</button>
+      <button class="mini-btn" id="emojiCopy">📋 Kopyala</button>
+      <button class="mini-btn" id="emojiRandom">🎲 Rastgele Hikaye</button>
+    </div>
+    <div class="emoji-palette" id="emojiPalette"></div>
+  </div>
+</section>
+
+<!-- SLOT MACHINE -->
+<section class="section ds-section" id="slots">
+  <div class="section-header"><div class="section-badge">🎰 Slot</div><h2 class="section-title">Şans Makinesi</h2><p class="section-sub">Şansını dene — jackpot'u yakala!</p></div>
+  <div class="slot-wrap">
+    <div class="slot-balance">💰 <span id="slotBalance">500</span> Koin</div>
+    <div class="slot-machine">
+      <div class="slot-reels">
+        <div class="slot-reel" id="slotR1"><div class="slot-reel-glow"></div><span id="slotE1">🍋</span></div>
+        <div class="slot-reel" id="slotR2"><div class="slot-reel-glow"></div><span id="slotE2">🍒</span></div>
+        <div class="slot-reel" id="slotR3"><div class="slot-reel-glow"></div><span id="slotE3">🔔</span></div>
+      </div>
+      <div class="slot-result" id="slotResult">Şansını dene!</div>
+      <button class="slot-pull-btn" id="slotSpin">🎰 Çevir!</button>
+    </div>
+    <div class="slot-bet-row">
+      <span style="font-size:.83rem;color:var(--tx3)">Bahis:</span>
+      <button class="slot-bet-btn active" data-bet="10">10</button>
+      <button class="slot-bet-btn" data-bet="25">25</button>
+      <button class="slot-bet-btn" data-bet="50">50</button>
+      <button class="slot-bet-btn" data-bet="100">100</button>
+    </div>
+    <div class="slot-stats"><span>Kazanılan: <strong id="slotWins">0</strong></span><span>Jackpot: <strong id="slotJP">0</strong></span></div>
+  </div>
+</section>
+
+<!-- GRATITUDE JOURNAL -->
+<section class="section ds-section" id="gratitude">
+  <div class="section-header"><div class="section-badge">📓 Günlük</div><h2 class="section-title">Şükran Günlüğü</h2><p class="section-sub">Her gün bir güzellik yaz — mutluluk birikiyor</p></div>
+  <div class="grat-wrap">
+    <div class="grat-streak-card">
+      <div class="grat-snum" id="gratStreak">0</div>
+      <div class="grat-sinfo"><h4>🔥 Günlük Seri</h4><p>Her gün yazarak serini kır!</p></div>
+    </div>
+    <div class="grat-input-card">
+      <h3>✨ Bugün neye şükrediyorsun?</h3>
+      <div class="grat-quick-row">
+        <button class="grat-qb">💙 Sağlığım için</button>
+        <button class="grat-qb">👨‍👩‍👧 Ailem için</button>
+        <button class="grat-qb">☀️ Güzel bir gün için</button>
+        <button class="grat-qb">🎵 Müzik için</button>
+        <button class="grat-qb">📚 Öğrenmek için</button>
+        <button class="grat-qb">🌿 Doğa için</button>
+      </div>
+      <textarea class="grat-ta" id="gratInput" placeholder="Bugün şükrettiğin şeyi yaz..."></textarea>
+      <button class="grat-save" id="gratSave">💚 Kaydet</button>
+    </div>
+    <div class="grat-entries" id="gratEntries"></div>
+  </div>
+</section>
+
+
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-logo"><span>✦</span><span>Dreamscape</span></div>
@@ -1152,5 +1802,19 @@
 
 <div class="toast" id="toast"></div>
 <script src="app.js"></script>
+
+
+</div>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
