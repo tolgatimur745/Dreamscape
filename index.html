@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreamscape — Huzur & Eğlence Merkezi</title>
+  <meta name="description" content="Dreamscape: Oyun oyna, müzik dinle, çiz, nefes al ve eğlen." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#0d0f1a;--bg2:#131629;--card:rgba(255,255,255,.04);
+      --a1:#7c4dff;--a2:#ff6b9d;--a3:#00e5ff;--a4:#69f0ae;--a5:#ffea00;
+      --tx:#f0f0ff;--tx2:rgba(240,240,255,.65);--tx3:rgba(240,240,255,.35);
+      --glass:rgba(255,255,255,.06);--gb:rgba(255,255,255,.12);--gh:rgba(255,255,255,.10);
+      --r1:10px;--r2:18px;--r3:28px;--r4:40px;
+      --gp:0 0 40px rgba(124,77,255,.4);--gc:0 0 40px rgba(0,229,255,.4);
+      --t:.3s cubic-bezier(.4,0,.2,1);--tb:.4s cubic-bezier(.34,1.56,.64,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a1);border-radius:6px}
+    #particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
+
+    /* NAVBAR */
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:64px;background:rgba(13,15,26,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);transition:var(--t)}
+    .navbar.scrolled{background:rgba(13,15,26,.97);box-shadow:0 4px 30px rgba(0,0,0,.6)}
+    .nav-logo{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:800}
+    .logo-icon{font-size:1.4rem;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hue 8s linear infinite}
+    .logo-text{background:linear-gradient(90deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    @keyframes hue{to{filter:hue-rotate(360deg)}}
+    .nav-links{display:flex;gap:.1rem;flex-wrap:wrap}
+    .nav-link{text-decoration:none;color:var(--tx2);font-size:.78rem;font-weight:500;padding:5px 9px;border-radius:20px;transition:var(--t);border:1px solid transparent}
+    .nav-link:hover{color:var(--tx);background:var(--glass);border-color:var(--gb)}
+    .nav-time{font-size:.9rem;font-weight:700;color:var(--a3);min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
+
+    /* HERO */
+    .hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1}
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0f1a 0%,#1a0533 40%,#0a1a2e 100%);animation:pan 20s ease-in-out infinite alternate}
+    .hero-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;animation:orbf 8s ease-in-out infinite alternate}
+    .orb1{width:600px;height:600px;background:var(--a1);top:-200px;left:-200px;animation-delay:0s}
+    .orb2{width:500px;height:500px;background:var(--a2);bottom:-150px;right:-100px;animation-delay:2s}
+    .orb3{width:400px;height:400px;background:var(--a3);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:4s}
+    @keyframes orbf{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.15) translate(30px,-20px)}}
+    .orb1{animation-name:orbf1}@keyframes orbf1{0%{transform:scale(1)}100%{transform:scale(1.2) translate(40px,30px)}}
+    .orb2{animation-name:orbf2}@keyframes orbf2{0%{transform:scale(1)}100%{transform:scale(1.15) translate(-30px,-20px)}}
+    @keyframes pan{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,15,26,.1) 0%,rgba(13,15,26,.4) 50%,rgba(13,15,26,1) 100%);pointer-events:none}
+    .hero-content{position:relative;z-index:2;text-align:center;max-width:800px;padding:0 2rem;animation:fadeUp 1.2s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+    .hero-badge{display:inline-block;padding:5px 20px;background:var(--glass);border:1px solid var(--gb);border-radius:100px;font-size:.83rem;color:var(--a3);letter-spacing:1px;margin-bottom:1.5rem;backdrop-filter:blur(10px)}
+    .hero-title{font-family:'Playfair Display',serif;display:flex;flex-direction:column;gap:.1em;margin-bottom:1rem}
+    .title-line{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700}
+    .title-accent{font-size:clamp(2.8rem,8vw,6rem);font-style:italic;background:linear-gradient(135deg,var(--a1),var(--a2),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hue 5s ease-in-out infinite alternate}
+    .hero-subtitle{font-size:1.05rem;color:var(--tx2);margin-bottom:2.5rem;letter-spacing:2px}
+    .hero-stats{display:flex;align-items:center;justify-content:center;gap:2rem;margin-bottom:3rem}
+    .stat-item{display:flex;flex-direction:column;align-items:center}
+    .stat-num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .stat-label{font-size:.72rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+    .stat-divider{width:1px;height:36px;background:var(--gb)}
+    .cta-btn{display:inline-flex;align-items:center;gap:10px;padding:15px 40px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;text-decoration:none;border-radius:100px;font-size:1.05rem;font-weight:700;font-family:'Outfit',sans-serif;transition:var(--tb);box-shadow:0 8px 40px rgba(124,77,255,.5);border:none;cursor:pointer}
+    .cta-btn:hover{transform:scale(1.07) translateY(-4px);box-shadow:0 16px 60px rgba(124,77,255,.7)}
+    .btn-arrow{transition:transform var(--t)}.cta-btn:hover .btn-arrow{transform:translateX(8px)}
+    .hero-scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--tx3);font-size:.73rem;animation:bounce 2s ease-in-out infinite;pointer-events:none}
+    .scroll-dot{width:7px;height:7px;border-radius:50%;background:var(--a3);box-shadow:0 0 8px var(--a3)}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(9px)}}
+
+    /* SECTIONS */
+    .section{position:relative;z-index:1;padding:5rem 2rem;max-width:1320px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:3rem}
+    .section-badge{display:inline-block;padding:5px 20px;background:var(--glass);border:1px solid var(--gb);border-radius:100px;font-size:.83rem;color:var(--a3);margin-bottom:.9rem;backdrop-filter:blur(10px)}
+    .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:700;margin-bottom:.6rem;background:linear-gradient(135deg,var(--tx),var(--tx2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .section-sub{color:var(--tx2);font-size:1rem}
+
+    /* GAME GRID & CARDS */
+    .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    .game-card{background:var(--card);border:1px solid var(--gb);border-radius:var(--r3);padding:1.4rem;transition:var(--t);backdrop-filter:blur(12px);position:relative}
+    .game-card:hover{transform:translateY(-5px);border-color:rgba(124,77,255,.4);box-shadow:var(--gp)}
+    .game-card.wide{grid-column:span 2}
+    .game-card-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+    .game-icon{font-size:1.9rem}
+    .game-card-header>div h3{font-size:1.05rem;font-weight:700}
+    .game-card-header>div p{font-size:.78rem;color:var(--tx3)}
+    .game-badge{margin-left:auto;padding:3px 11px;border-radius:100px;font-size:.68rem;font-weight:600;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;white-space:nowrap}
+    .new-badge{background:linear-gradient(135deg,var(--a4),var(--a3))}
+    .stats-row{display:flex;align-items:center;gap:8px;padding-top:.7rem;border-top:1px solid var(--gb);font-size:.82rem;color:var(--tx2);flex-wrap:wrap;margin-top:.7rem}
+    .stats-row strong{color:var(--a3)}
+    .stats-row .hint{margin-left:auto;font-size:.72rem;color:var(--tx3);letter-spacing:2px}
+    .play-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 28px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;border:none;border-radius:100px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:var(--tb);width:100%;margin-top:.5rem}
+    .play-btn:hover{transform:scale(1.04);box-shadow:var(--gp)}
+    .play-btn:disabled{opacity:.5;transform:none;cursor:not-allowed}
+    .mini-btn{padding:5px 12px;background:var(--glass);color:var(--tx);border:1px solid var(--gb);border-radius:100px;font-family:'Outfit',sans-serif;font-size:.76rem;cursor:pointer;transition:var(--t)}
+    .mini-btn:hover{background:var(--gh);border-color:var(--a1)}
+
+    /* SNAKE */
+    .game-area{position:relative;border-radius:var(--r2);overflow:hidden;background:rgba(0,0,0,.4);aspect-ratio:1;width:100%}
+    #snakeCanvas{display:block;width:100%;height:100%}
+    .game-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,15,26,.88);gap:12px;z-index:10}
+    .game-overlay.hidden{display:none}
+    .overlay-icon{font-size:3rem}
+
+    /* MEMORY */
+    .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:2px 0;perspective:1000px}
+    .mem-card{aspect-ratio:1;border-radius:9px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .5s ease}
+    .mem-card.flipped,.mem-card.matched{transform:rotateY(180deg)}
+    .mem-card.matched .card-front{box-shadow:0 0 12px var(--a4);border-color:var(--a4)}
+    .card-back,.card-front{position:absolute;inset:0;border-radius:9px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--gb)}
+    .card-back{background:linear-gradient(135deg,var(--a1),var(--a2));font-size:1rem;color:rgba(255,255,255,.5)}
+    .card-front{background:var(--bg2);font-size:1.5rem;transform:rotateY(180deg)}
+
+    /* BUBBLE */
+    .bubble-arena{height:220px;position:relative;border-radius:var(--r2);background:linear-gradient(135deg,rgba(0,229,255,.02),rgba(124,77,255,.02));border:1px solid rgba(124,77,255,.15);overflow:hidden}
+    .bubble{position:absolute;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;transition:transform .12s;animation:bfloat var(--bd,4s) ease-in-out infinite var(--bdd,0s)}
+    .bubble:hover{transform:scale(1.12)!important}
+    @keyframes bfloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.03)}}
+    @keyframes bpop{0%{transform:scale(1);opacity:1}70%{transform:scale(1.7);opacity:.2}100%{transform:scale(0);opacity:0}}
+
+    /* REACTION */
+    .reaction-area{display:flex;flex-direction:column;align-items:center;gap:1.4rem;padding:.8rem 0}
+    .reaction-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .4s,box-shadow .4s,transform .2s;font-weight:800;font-size:.95rem;box-shadow:0 0 30px rgba(124,77,255,.5);user-select:none;color:#fff;text-align:center;padding:1rem;border:none;font-family:'Outfit',sans-serif}
+    .reaction-circle.waiting{background:linear-gradient(135deg,#2a1a4a,#1a1228)!important;box-shadow:0 0 10px rgba(0,0,0,.3)!important;cursor:default}
+    .reaction-circle.go{background:linear-gradient(135deg,var(--a4),var(--a3))!important;box-shadow:0 0 50px rgba(105,240,174,.8)!important;transform:scale(1.1)}
+    .rt-results{display:flex;gap:1.8rem;justify-content:center}
+    .rt-stat{display:flex;flex-direction:column;align-items:center;gap:3px}
+    .rt-stat span{font-size:1.1rem;font-weight:800;color:var(--a3)}
+    .rt-stat small{font-size:.68rem;color:var(--tx3)}
+
+    /* COLOR GAME */
+    .color-area{display:flex;flex-direction:column;gap:.9rem}
+    .color-question{display:flex;align-items:center;gap:1rem}
+    .color-target{width:60px;height:60px;border-radius:12px;border:2px solid var(--gb);flex-shrink:0;transition:background .3s}
+    .color-question p{font-size:.88rem;color:var(--tx2);flex:1}
+    .color-options{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+    .color-opt{padding:10px;border-radius:10px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.83rem;cursor:pointer;transition:var(--t);text-align:center}
+    .color-opt:hover:not(:disabled){background:var(--gh);border-color:var(--a1)}
+    .color-opt:disabled{cursor:default}
+    .color-opt.correct{background:rgba(105,240,174,.2);border-color:var(--a4);color:var(--a4)}
+    .color-opt.wrong{background:rgba(255,107,157,.18);border-color:var(--a2);color:var(--a2)}
+    .color-stat-row{display:flex;gap:1.5rem;font-size:.82rem;color:var(--tx2)}
+    .color-stat-row strong{color:var(--a3)}
+
+    /* 15 PUZZLE */
+    .puzzle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:rgba(0,0,0,.3);padding:7px;border-radius:var(--r2)}
+    .p-tile{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;cursor:pointer;transition:var(--tb);border:1px solid rgba(255,255,255,.12);user-select:none;color:#fff}
+    .p-tile.empty{background:transparent!important;border:1px dashed rgba(255,255,255,.07);cursor:default}
+    .p-tile:hover:not(.empty){transform:scale(1.06)}
+
+    /* WHACK A MOLE */
+    .mole-info{display:flex;justify-content:space-between;font-size:.83rem;color:var(--tx2);background:rgba(0,0,0,.2);padding:7px 12px;border-radius:10px;margin-bottom:.6rem}
+    .mole-info strong{color:var(--a3)}
+    .mole-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.6rem}
+    .mole-hole{height:64px;background:radial-gradient(ellipse at bottom,#1a0800,#060300);border-radius:50%;border:3px solid #2a1200;position:relative;overflow:hidden;cursor:pointer}
+    .mole-hole:hover{border-color:var(--a2)}
+    .mole-inner{position:absolute;bottom:-100%;left:50%;transform:translateX(-50%);font-size:1.9rem;line-height:1;transition:bottom .18s cubic-bezier(.34,1.3,.64,1);pointer-events:none;user-select:none}
+    .mole-inner.up{bottom:4%}
+
+    /* TIC TAC TOE */
+    .ttt-status{font-size:.83rem;color:var(--tx2);text-align:center;min-height:20px;margin-bottom:.6rem}
+    .ttt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:rgba(0,0,0,.3);padding:7px;border-radius:14px}
+    .ttt-cell{aspect-ratio:1;border-radius:9px;background:var(--glass);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:1.7rem;cursor:pointer;transition:var(--tb);user-select:none;font-family:'Outfit',sans-serif;position:relative;z-index:1}
+    .ttt-cell:hover:not([data-taken]){background:var(--gh);border-color:var(--a1);transform:scale(1.04)}
+    .ttt-cell[data-taken]{cursor:default}
+    .ttt-cell.win-cell{background:rgba(105,240,174,.2)!important;border-color:var(--a4)!important;box-shadow:0 0 12px rgba(105,240,174,.4)}
+
+    /* WORD SCRAMBLE */
+    .word-game{display:flex;flex-direction:column;gap:.8rem}
+    .word-meta{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+    .word-cat{font-size:.72rem;font-weight:600;color:var(--a5);padding:3px 12px;background:rgba(255,234,0,.1);border:1px solid rgba(255,234,0,.2);border-radius:100px}
+    .word-hint-text{font-size:.78rem;color:var(--tx3);font-style:italic}
+    .scrambled-word{display:flex;flex-wrap:wrap;gap:5px;min-height:44px;align-items:center}
+    .s-letter{width:30px;height:36px;background:linear-gradient(135deg,rgba(124,77,255,.3),rgba(255,107,157,.3));border:1px solid rgba(124,77,255,.4);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:800;text-transform:uppercase}
+    .word-input{width:100%;padding:9px 14px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:11px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:var(--t);text-transform:uppercase}
+    .word-input:focus{border-color:var(--a1);background:rgba(124,77,255,.08)}
+    .word-input.correct{border-color:var(--a4)!important;background:rgba(105,240,174,.08)!important}
+    .word-input.wrong{border-color:var(--a2)!important;background:rgba(255,107,157,.08)!important}
+    .word-actions{display:flex;gap:6px}
+
+    /* SIMON */
+    .simon-board{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;border-radius:var(--r2);overflow:hidden;padding:3px}
+    .simon-btn{aspect-ratio:1;border-radius:12px;border:none;cursor:pointer;transition:opacity .1s,transform .1s;opacity:.5;font-size:0}
+    .simon-btn.lit{opacity:1!important;transform:scale(.94)!important}
+    .simon-btn:disabled{cursor:not-allowed}
+    .simon-red{background:#e74c3c;box-shadow:0 0 15px rgba(231,76,60,.4)}
+    .simon-blue{background:#3498db;box-shadow:0 0 15px rgba(52,152,219,.4)}
+    .simon-yellow{background:#f1c40f;box-shadow:0 0 15px rgba(241,196,15,.4)}
+    .simon-green{background:#2ecc71;box-shadow:0 0 15px rgba(46,204,113,.4)}
+
+    /* MATH */
+    .math-timer-bar{height:5px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden;margin-bottom:.6rem}
+    .math-timer-fill{height:100%;background:linear-gradient(90deg,var(--a4),var(--a3));border-radius:10px;transition:width 1s linear;width:100%}
+    .math-problem{font-size:1.5rem;font-weight:800;text-align:center;color:var(--tx);padding:.8rem;background:rgba(0,0,0,.2);border-radius:12px;min-height:60px;display:flex;align-items:center;justify-content:center;letter-spacing:1px;margin-bottom:.6rem}
+    .math-input{width:100%;padding:10px 16px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:1rem;outline:none;transition:var(--t);text-align:center;margin-bottom:.4rem}
+    .math-input:focus{border-color:var(--a3);background:rgba(0,229,255,.06)}
+    .math-input:disabled{opacity:.4}
+
+    /* RPS */
+    .rps-arena{display:flex;align-items:center;justify-content:space-around;padding:.6rem 0}
+    .rps-side{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .rps-side small{font-size:.73rem;color:var(--tx3)}
+    .rps-emoji{font-size:2.8rem;min-width:60px;text-align:center;transition:transform .3s var(--tb)}
+    .rps-emoji.pop{animation:rpspop .35s var(--tb)}
+    @keyframes rpspop{0%{transform:scale(.4) rotate(-20deg)}70%{transform:scale(1.2)}100%{transform:scale(1) rotate(0)}}
+    .rps-vs{font-size:1.1rem;font-weight:800;color:var(--tx3)}
+    .rps-result{text-align:center;font-size:.9rem;font-weight:600;min-height:22px;margin:.4rem 0}
+    .rps-result.win{color:var(--a4)}.rps-result.lose{color:var(--a2)}.rps-result.draw{color:var(--a5)}
+    .rps-btns{display:flex;gap:8px;justify-content:center}
+    .rps-btn{padding:10px 16px;border-radius:12px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:var(--tb);text-align:center;flex:1}
+    .rps-btn:hover{background:var(--gh);border-color:var(--a1);transform:translateY(-3px) scale(1.05)}
+
+    /* GUESS */
+    .guess-number{font-size:3.5rem;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-height:70px;display:flex;align-items:center;justify-content:center}
+    .guess-hint{text-align:center;font-size:.88rem;color:var(--tx2);min-height:22px;margin:.3rem 0}
+    .guess-range{text-align:center;font-size:.78rem;color:var(--tx3);padding:4px 14px;background:rgba(0,0,0,.2);border-radius:100px;margin-bottom:.6rem}
+    .guess-row{display:flex;gap:8px}
+    .guess-input{flex:1;padding:9px 14px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:11px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:var(--t)}
+    .guess-input:focus{border-color:var(--a1)}
+
+    /* MINESWEEPER */
+    .mine-header{display:flex;align-items:center;gap:1rem;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:10px;margin-bottom:.7rem;font-size:.83rem;color:var(--tx2);flex-wrap:wrap}
+    .mine-header strong{color:var(--a3)}
+    .mine-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;background:rgba(0,0,0,.4);padding:6px;border-radius:var(--r2)}
+    .mine-cell{aspect-ratio:1;border-radius:5px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;transition:background .15s;user-select:none;position:relative;z-index:1}
+    .mine-cell:hover:not(.revealed):not(.flagged){background:rgba(124,77,255,.25);border-color:var(--a1)}
+    .mine-cell.revealed{background:rgba(0,0,0,.4);border-color:rgba(255,255,255,.05);cursor:default}
+    .mine-cell.flagged{background:rgba(255,107,157,.15);border-color:rgba(255,107,157,.3)}
+    .mine-cell.boom{background:rgba(255,80,80,.5)!important;border-color:#f44!important}
+    .mn1{color:#7c4dff}.mn2{color:#69f0ae}.mn3{color:#ff6b9d}.mn4{color:#00e5ff}
+    .mn5{color:#ffea00}.mn6{color:#ff7043}.mn7{color:#ce93d8}.mn8{color:#fff}
+
+    /* TYPING */
+    .typing-stats{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.8rem}
+    .typing-stat{display:flex;flex-direction:column;align-items:center;gap:3px;padding:.8rem 1.5rem;background:rgba(0,0,0,.2);border-radius:14px;border:1px solid var(--gb);min-width:80px}
+    .typing-stat strong{font-size:1.7rem;font-weight:900;color:var(--a3)}
+    .typing-stat span{font-size:.7rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+    .typing-text{padding:1rem 1.2rem;background:rgba(0,0,0,.25);border-radius:14px;border:1px solid var(--gb);font-size:.93rem;line-height:1.9;min-height:80px;letter-spacing:.3px;margin-bottom:.7rem}
+    .typing-text .tc{color:var(--a4)}.typing-text .tw{color:var(--a2);text-decoration:underline}
+    .typing-text .cur{background:rgba(124,77,255,.4);border-radius:2px;color:var(--tx)}
+    .typing-text .tp{color:var(--tx3)}
+    .typing-textarea{width:100%;padding:10px 14px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:.93rem;resize:none;outline:none;transition:var(--t);margin-bottom:.5rem}
+    .typing-textarea:focus{border-color:var(--a1)}
+    .typing-textarea:disabled{opacity:.4}
+
+    /* AMBIANCE */
+    .ambiance-container{display:flex;flex-direction:column;align-items:center;gap:2.5rem}
+    .viz-wrap{width:190px;height:190px;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+    .viz-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .ring{position:absolute;border-radius:50%;border:2px solid var(--a1);opacity:.12}
+    .r1{width:65px;height:65px}.r2{width:100px;height:100px}.r3{width:145px;height:145px}.r4{width:190px;height:190px}
+    .viz-wrap.playing .ring{animation:rpulse 2s ease-in-out infinite}
+    .viz-wrap.playing .r2{animation-delay:.3s}.viz-wrap.playing .r3{animation-delay:.6s}.viz-wrap.playing .r4{animation-delay:.9s}
+    @keyframes rpulse{0%,100%{opacity:.08;transform:scale(1)}50%{opacity:.45;transform:scale(1.07)}}
+    .viz-icon{font-size:2.8rem;z-index:1;filter:drop-shadow(0 0 18px rgba(124,77,255,.7))}
+    #vizLabel{font-size:.8rem;color:var(--tx2);z-index:1}
+    .sound-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;max-width:700px}
+    .sound-card{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 16px;border-radius:var(--r2);border:1px solid var(--gb);background:var(--glass);cursor:pointer;transition:var(--t);min-width:80px;user-select:none}
+    .sound-card:hover{border-color:var(--a1);background:var(--gh);transform:translateY(-3px)}
+    .sound-card.active{border-color:var(--a3);background:rgba(0,229,255,.08);box-shadow:0 0 18px rgba(0,229,255,.18)}
+    .sound-icon{font-size:1.7rem;pointer-events:none}
+    .sound-card>span{font-size:.78rem;color:var(--tx2);pointer-events:none}
+    .sound-waves{display:flex;align-items:center;gap:2px;height:18px;pointer-events:none}
+    .wbar{width:3px;border-radius:3px;background:var(--a3);height:4px}
+    .sound-card.active .wbar{animation:wv .5s ease-in-out infinite alternate}
+    .sound-card.active .wbar:nth-child(2){animation-delay:.1s}.sound-card.active .wbar:nth-child(3){animation-delay:.2s}
+    .sound-card.active .wbar:nth-child(4){animation-delay:.3s}.sound-card.active .wbar:nth-child(5){animation-delay:.4s}
+    @keyframes wv{from{height:4px}to{height:16px}}
+    .amb-controls{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;justify-content:center}
+    .vol-control{display:flex;align-items:center;gap:10px;font-size:1.1rem}
+    .vol-slider{-webkit-appearance:none;width:170px;height:5px;border-radius:10px;background:var(--gb);outline:none;cursor:pointer}
+    .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a3));cursor:pointer}
+    #volDisplay{font-size:.83rem;color:var(--a3);min-width:36px}
+    .play-stop-btn{display:flex;align-items:center;gap:10px;padding:13px 35px;background:linear-gradient(135deg,var(--a1),var(--a3));color:#fff;border:none;border-radius:100px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .play-stop-btn:hover{transform:scale(1.05)}
+
+    /* CANVAS */
+    .canvas-toolbar{display:flex;align-items:center;gap:1.2rem;padding:.9rem 1.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);backdrop-filter:blur(20px);flex-wrap:wrap;justify-content:center;width:100%;max-width:900px;margin-bottom:1rem}
+    .tool-group{display:flex;flex-direction:column;gap:6px}
+    .tool-lbl{font-size:.68rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+    .palette{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+    .pal-color{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:var(--tb)}
+    .pal-color:hover{transform:scale(1.18)}
+    .pal-color.sel{border-color:#fff;transform:scale(1.22);box-shadow:0 0 10px rgba(255,255,255,.4)}
+    .custom-color{width:26px;height:26px;border-radius:50%;border:2px solid var(--gb);padding:0;cursor:pointer;background:transparent}
+    .brush-slider{-webkit-appearance:none;width:120px;height:5px;border-radius:10px;background:var(--gb);outline:none;cursor:pointer}
+    .brush-slider::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--a1);cursor:pointer}
+    .tool-btns{display:flex;gap:5px}
+    .tool-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:var(--t)}
+    .tool-btn:hover,.tool-btn.active{background:var(--a1);border-color:var(--a1);color:#fff}
+    .clear-btn,.save-btn{padding:8px 18px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx);font-family:'Outfit',sans-serif;font-size:.83rem;cursor:pointer;transition:var(--t)}
+    .clear-btn:hover{border-color:var(--a2);background:rgba(255,107,157,.1)}
+    .save-btn:hover{border-color:var(--a4);background:rgba(105,240,174,.1)}
+    .canvas-wrap{width:100%;max-width:900px;border-radius:var(--r3);overflow:hidden;border:1px solid var(--gb)}
+    #drawingCanvas{display:block;width:100%;height:430px;background:#0a0b14;cursor:crosshair;touch-action:none}
+    .canvas-section{display:flex;flex-direction:column;align-items:center}
+
+    /* BREATHE */
+    .breathe-types{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+    .breathe-type-btn{padding:9px 24px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.88rem;cursor:pointer;transition:var(--t)}
+    .breathe-type-btn.active{background:rgba(105,240,174,.15);border-color:var(--a4);color:var(--a4)}
+    .breathe-main{display:flex;flex-direction:column;align-items:center;gap:2rem}
+    .breathe-ring-wrap{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center}
+    .breathe-svg{position:absolute;inset:-10px;width:calc(100% + 20px);height:calc(100% + 20px);transform:rotate(-90deg)}
+    .b-track{fill:none;stroke:rgba(255,255,255,.05);stroke-width:4}
+    .b-fill{fill:none;stroke:var(--a4);stroke-width:4;stroke-linecap:round;stroke-dasharray:628;stroke-dashoffset:628;transition:stroke-dashoffset 1s linear}
+    .breathe-circle{width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,rgba(105,240,174,.1),rgba(0,229,255,.1));border:2px solid rgba(105,240,174,.35);display:flex;align-items:center;justify-content:center;transition:transform 4s ease-in-out,box-shadow 4s ease-in-out}
+    .breathe-circle.inhale{transform:scale(1.3);box-shadow:0 0 55px rgba(105,240,174,.45)}
+    .breathe-circle.exhale{transform:scale(.78);box-shadow:0 0 8px rgba(105,240,174,.1)}
+    .breathe-circle.hold{transform:scale(1.3);box-shadow:0 0 38px rgba(0,229,255,.45)}
+    .b-inner{display:flex;flex-direction:column;align-items:center;gap:3px}
+    .b-icon{font-size:1.7rem}.b-phase{font-size:.83rem;color:var(--tx2)}.b-count{font-size:1.9rem;font-weight:800;color:var(--a4)}
+    .breathe-start-btn{display:flex;align-items:center;gap:8px;padding:13px 38px;background:rgba(105,240,174,.15);color:var(--a4);border:1px solid var(--a4);border-radius:100px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .breathe-start-btn:hover{background:rgba(105,240,174,.3);box-shadow:0 0 28px rgba(105,240,174,.35);transform:scale(1.04)}
+    .breathe-session{display:flex;gap:2rem;font-size:.83rem;color:var(--tx2)}
+    .breathe-session strong{color:var(--a4)}
+    .breathe-tips{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
+    .tip-card{display:flex;align-items:center;gap:10px;padding:13px 20px;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2);font-size:.83rem;color:var(--tx2);max-width:210px}
+    .tip-icon{font-size:1.2rem;flex-shrink:0}
+
+    /* POMODORO */
+    .pomo-container{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:580px;margin:0 auto}
+    .pomo-modes{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+    .pomo-mode-btn{padding:9px 20px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;transition:var(--t)}
+    .pomo-mode-btn.active{background:rgba(255,107,157,.15);border-color:var(--a2);color:var(--a2)}
+    .pomo-clock{position:relative;width:250px;height:250px;display:flex;align-items:center;justify-content:center}
+    .pomo-ring{position:absolute;inset:0;transform:rotate(-90deg);width:100%;height:100%}
+    .pomo-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:10}
+    .pomo-fill{fill:none;stroke:var(--a2);stroke-width:10;stroke-linecap:round;stroke-dasharray:679;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+    .pomo-time-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;z-index:1}
+    .pomo-time-big{font-size:3.3rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-2px}
+    .pomo-label{font-size:.83rem;color:var(--tx2)}.pomo-count{font-size:.83rem;color:var(--a2)}
+    .pomo-btns{display:flex;gap:.8rem}
+    .pomo-btn{padding:12px 28px;border-radius:100px;border:1px solid var(--a2);background:rgba(255,107,157,.15);color:var(--a2);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .pomo-btn:hover{background:rgba(255,107,157,.28);transform:scale(1.04)}
+    .pomo-reset{border-color:var(--gb);background:var(--glass);color:var(--tx2)}
+    .pomo-tasks{width:100%;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);padding:1.4rem}
+    .pomo-tasks h3{font-size:.95rem;margin-bottom:.9rem}
+    .pomo-task-row{display:flex;gap:7px;margin-bottom:.9rem}
+    .pomo-task-row input{flex:1;padding:9px 14px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:11px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;transition:var(--t)}
+    .pomo-task-row input:focus{border-color:var(--a2)}
+    .pomo-task-row button{padding:9px 16px;background:linear-gradient(135deg,var(--a2),var(--a1));color:#fff;border:none;border-radius:11px;font-size:1.1rem;cursor:pointer}
+    .pomo-list{list-style:none;display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto}
+    .pomo-item{display:flex;align-items:center;gap:9px;padding:9px 12px;background:rgba(0,0,0,.18);border-radius:9px;cursor:pointer}
+    .pomo-item.done>span{text-decoration:line-through;color:var(--tx3)}
+    .pomo-cb{width:16px;height:16px;border-radius:50%;border:2px solid var(--a2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.65rem}
+    .pomo-item.done .pomo-cb{background:var(--a4);border-color:var(--a4)}
+    .pomo-del{margin-left:auto;background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.9rem}
+    .pomo-del:hover{color:var(--a2)}
+
+    /* FACTS */
+    .facts-container{display:flex;flex-direction:column;align-items:center;gap:1.8rem}
+    .fact-card{max-width:700px;width:100%;padding:2.5rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);text-align:center;backdrop-filter:blur(20px);min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem}
+    .fact-badge{font-size:.76rem;font-weight:600;color:var(--a5);padding:4px 16px;background:rgba(255,234,0,.1);border-radius:100px;border:1px solid rgba(255,234,0,.2)}
+    .fact-icon{font-size:3rem;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .fact-text{font-size:1.08rem;line-height:1.85;max-width:500px;transition:opacity .2s}
+    .fact-num{font-size:.73rem;color:var(--tx3)}
+    .fact-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+    .fact-btn{padding:9px 22px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.88rem;cursor:pointer;transition:var(--t)}
+    .fact-btn:hover{border-color:var(--a5);color:var(--a5)}
+    .rnd-btn{background:rgba(255,234,0,.08);border-color:rgba(255,234,0,.3);color:var(--a5)}
+    .cat-filters{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+    .cat-btn{padding:6px 16px;border-radius:100px;border:1px solid var(--gb);background:transparent;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--t)}
+    .cat-btn:hover{color:var(--tx2);background:var(--glass)}
+    .cat-btn.active{background:rgba(255,234,0,.1);border-color:var(--a5);color:var(--a5)}
+
+    /* QUOTES */
+    .quotes-container{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:700px;margin:0 auto}
+    .quote-card{width:100%;padding:2.5rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);text-align:center;backdrop-filter:blur(20px);position:relative;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem}
+    .quote-mark{font-size:4.5rem;line-height:.4;color:var(--a5);opacity:.2;position:absolute;top:1.2rem;left:1.8rem;font-family:'Playfair Display',serif;pointer-events:none}
+    .quote-text{font-size:1.1rem;line-height:1.9;font-style:italic;max-width:540px;position:relative;z-index:1;transition:opacity .2s}
+    .quote-author{font-size:.88rem;font-weight:600;color:var(--a3)}
+    .quote-tag{font-size:.73rem;color:var(--tx3);padding:3px 12px;border:1px solid var(--gb);border-radius:100px}
+
+    /* CLOCKS */
+    .clocks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1.2rem;margin-bottom:2.5rem}
+    .clock-card{background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);padding:1.3rem;text-align:center;transition:var(--t);backdrop-filter:blur(10px)}
+    .clock-card:hover{transform:translateY(-5px);border-color:rgba(0,229,255,.35);box-shadow:var(--gc)}
+    .clock-flag{font-size:2.3rem;margin-bottom:.4rem}
+    .clock-city{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+    .clock-time{font-size:1.7rem;font-weight:800;color:var(--a3);font-variant-numeric:tabular-nums;letter-spacing:1px;margin-bottom:.25rem}
+    .clock-date{font-size:.72rem;color:var(--tx3)}
+    .mood-widget{background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);padding:2.2rem;text-align:center;max-width:580px;margin:0 auto}
+    .mood-widget h3{font-size:1.2rem;margin-bottom:1.3rem}
+    .mood-btns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem}
+    .mood-btn{padding:10px 18px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.88rem;cursor:pointer;transition:var(--tb)}
+    .mood-btn:hover{transform:scale(1.07) translateY(-2px)}
+    .mood-btn.sel{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff;box-shadow:var(--gp)}
+    .mood-resp{font-size:.92rem;color:var(--tx2);min-height:28px;transition:var(--t);line-height:1.7}
+
+    /* FOOTER */
+    .footer{position:relative;z-index:1;padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--gb);background:rgba(13,15,26,.8);backdrop-filter:blur(20px)}
+    .footer-inner{display:flex;flex-direction:column;align-items:center;gap:.7rem}
+    .footer-logo{display:flex;align-items:center;gap:7px;font-size:1.1rem;font-weight:700;background:linear-gradient(90deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .footer p{color:var(--tx3);font-size:.88rem}
+    #sessionTime{font-size:.78rem;color:var(--tx3);padding:4px 14px;background:var(--glass);border-radius:100px;border:1px solid var(--gb)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);padding:11px 28px;background:rgba(124,77,255,.92);color:#fff;border-radius:100px;font-weight:600;font-size:.88rem;backdrop-filter:blur(20px);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.34,1.56,.64,1);z-index:1000;white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* MOBILE */
+    @media(max-width:960px){.nav-links{display:none}.games-grid{grid-template-columns:1fr!important}.game-card.wide{grid-column:span 1}}
+  </style>
+</head>
+<body>
+<canvas id="particleCanvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span></div>
+  <div class="nav-links">
+    <a href="#games" class="nav-link">🎮 Oyunlar</a>
+    <a href="#ambiance" class="nav-link">🎵 Ambiyans</a>
+    <a href="#canvas-sec" class="nav-link">🎨 Çizim</a>
+    <a href="#breathe" class="nav-link">🧘 Nefes</a>
+    <a href="#pomodoro" class="nav-link">⏱️ Pomodoro</a>
+    <a href="#facts" class="nav-link">💡 Bilgi</a>
+    <a href="#quotes" class="nav-link">💬 Alıntı</a>
+  </div>
+  <div class="nav-time" id="navTime"></div>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Huzurun Dijital Adresi</div>
+    <h1 class="hero-title"><span class="title-line">Hoş Geldin</span><span class="title-accent">Dreamscape'e</span></h1>
+    <p class="hero-subtitle">Oyna · Dinle · Çiz · Nefes Al · Keşfet</p>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-num">15+</span><span class="stat-label">Mini Oyun</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num">8</span><span class="stat-label">Ses Ortamı</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num">∞</span><span class="stat-label">Eğlence</span></div>
+    </div>
+    <a href="#games" class="cta-btn"><span>Keşfet</span><span class="btn-arrow">→</span></a>
+  </div>
+  <div class="hero-scroll-hint"><div class="scroll-dot"></div><span>Kaydır</span></div>
+</section>
+
+<!-- GAMES -->
+<section class="section" id="games">
+  <div class="section-header">
+    <div class="section-badge">🎮 Oyunlar</div>
+    <h2 class="section-title">Mini Oyunlar</h2>
+    <p class="section-sub">15 farklı oyun — her zevke uygun</p>
+  </div>
+  <div class="games-grid">
+
+    <!-- 1. SNAKE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🐍</span><div><h3>Snake</h3><p>Klasik yılan oyunu</p></div><span class="game-badge">Klasik</span></div>
+      <div class="game-area" id="snakeArea">
+        <canvas id="snakeCanvas"></canvas>
+        <div class="game-overlay" id="snakeOverlay">
+          <div class="overlay-icon">🐍</div><p>Hazır mısın?</p>
+          <button class="play-btn" id="snakeStartBtn" style="width:auto;padding:10px 28px">▶ Başlat</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <span>Skor: <strong id="snakeScore">0</strong></span>
+        <span>En İyi: <strong id="snakeBest">0</strong></span>
+        <span class="hint">← ↑ → ↓</span>
+      </div>
+    </div>
+
+    <!-- 2. MEMORY -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🃏</span><div><h3>Hafıza Kartları</h3><p>Çiftleri eşleştir</p></div><span class="game-badge">Hafıza</span></div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="stats-row">
+        <span>Hamle: <strong id="memoryMoves">0</strong></span>
+        <span>Eşleşme: <strong id="memoryMatches">0</strong>/8</span>
+        <button class="mini-btn" id="resetMemory">🔄 Yeni</button>
+      </div>
+    </div>
+
+    <!-- 3. BUBBLE POP -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🫧</span><div><h3>Bubble Pop</h3><p>Baloncuk patlat</p></div><span class="game-badge">Rahatlatıcı</span></div>
+      <div class="bubble-arena" id="bubbleArena"></div>
+      <div class="stats-row">
+        <span>Patlanan: <strong id="bubbleCount">0</strong></span>
+        <span>Puan: <strong id="bubbleScore">0</strong></span>
+        <button class="mini-btn" id="addBubbles">+ Balon Ekle</button>
+      </div>
+    </div>
+
+    <!-- 4. REACTION -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">⚡</span><div><h3>Refleks Testi</h3><p>Yeşile dönünce tıkla!</p></div><span class="game-badge">Hızlı</span></div>
+      <div class="reaction-area">
+        <button class="reaction-circle" id="reactionCircle">Tıkla!</button>
+        <div class="rt-results">
+          <div class="rt-stat"><span id="rtLast">—</span><small>Son (ms)</small></div>
+          <div class="rt-stat"><span id="rtBest">—</span><small>En İyi</small></div>
+          <div class="rt-stat"><span id="rtAvg">—</span><small>Ortalama</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. COLOR MATCH -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎨</span><div><h3>Renk Yarışı</h3><p>Rengi doğru adlandır</p></div><span class="game-badge">Görsel</span></div>
+      <div class="color-area">
+        <div class="color-question"><div class="color-target" id="colorTarget"></div><p id="colorQuestion">Bu rengin adı hangisi?</p></div>
+        <div class="color-options" id="colorOptions"></div>
+        <div class="color-stat-row"><span>Skor: <strong id="colorScore">0</strong></span><span>Can: <strong id="colorLives">❤️❤️❤️</strong></span></div>
+      </div>
+    </div>
+
+    <!-- 6. 15 PUZZLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧩</span><div><h3>15 Puzzle</h3><p>Sayıları sıraya diz</p></div><span class="game-badge">Zeka</span></div>
+      <div class="puzzle-grid" id="puzzleGrid"></div>
+      <div class="stats-row"><span>Hamle: <strong id="puzzleMoves">0</strong></span><button class="mini-btn" id="resetPuzzle">🔀 Yeni Oyun</button></div>
+    </div>
+
+    <!-- 7. WHACK A MOLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🐹</span><div><h3>Köstebek Vur!</h3><p>Çıkan köstebeklere vur</p></div><span class="game-badge new-badge">Aksiyon</span></div>
+      <div class="mole-info"><span>Süre: <strong id="moleTime">30</strong>s</span><span>Skor: <strong id="moleScore">0</strong></span></div>
+      <div class="mole-grid" id="moleGrid">
+        <div class="mole-hole" data-hole="0"><div class="mole-inner" id="mole0"></div></div>
+        <div class="mole-hole" data-hole="1"><div class="mole-inner" id="mole1"></div></div>
+        <div class="mole-hole" data-hole="2"><div class="mole-inner" id="mole2"></div></div>
+        <div class="mole-hole" data-hole="3"><div class="mole-inner" id="mole3"></div></div>
+        <div class="mole-hole" data-hole="4"><div class="mole-inner" id="mole4"></div></div>
+        <div class="mole-hole" data-hole="5"><div class="mole-inner" id="mole5"></div></div>
+        <div class="mole-hole" data-hole="6"><div class="mole-inner" id="mole6"></div></div>
+        <div class="mole-hole" data-hole="7"><div class="mole-inner" id="mole7"></div></div>
+        <div class="mole-hole" data-hole="8"><div class="mole-inner" id="mole8"></div></div>
+      </div>
+      <button class="play-btn" id="moleStartBtn">▶ Başlat</button>
+    </div>
+
+    <!-- 8. TIC TAC TOE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">❌</span><div><h3>XOX — AI</h3><p>Yapay zekaya karşı oyna</p></div><span class="game-badge">Strateji</span></div>
+      <div class="ttt-status" id="tttStatus">Sen ⭕ — AI ❌ — Sıra sende!</div>
+      <div class="ttt-grid" id="tttGrid">
+        <button class="ttt-cell" data-i="0"></button><button class="ttt-cell" data-i="1"></button><button class="ttt-cell" data-i="2"></button>
+        <button class="ttt-cell" data-i="3"></button><button class="ttt-cell" data-i="4"></button><button class="ttt-cell" data-i="5"></button>
+        <button class="ttt-cell" data-i="6"></button><button class="ttt-cell" data-i="7"></button><button class="ttt-cell" data-i="8"></button>
+      </div>
+      <div class="stats-row">
+        <span>Sen: <strong id="tttWin">0</strong></span>
+        <span>Ber: <strong id="tttDraw">0</strong></span>
+        <span>AI: <strong id="tttLose">0</strong></span>
+        <button class="mini-btn" id="tttReset" style="margin-left:auto">🔄 Yeni</button>
+      </div>
+    </div>
+
+    <!-- 9. WORD SCRAMBLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">📝</span><div><h3>Kelime Bulmaca</h3><p>Karışık harfleri düzenle</p></div><span class="game-badge">Kelime</span></div>
+      <div class="word-game">
+        <div class="word-meta"><span class="word-cat" id="wordCategory">Yükleniyor</span><span class="word-hint-text" id="wordHint"></span></div>
+        <div class="scrambled-word" id="scrambledWord"></div>
+        <input type="text" class="word-input" id="wordInput" placeholder="Tahminini yaz, Enter'a bas..." autocomplete="off" spellcheck="false" />
+        <div class="word-actions">
+          <button class="mini-btn" id="wordCheck">✓ Kontrol</button>
+          <button class="mini-btn" id="wordSkip">→ Atla</button>
+          <button class="mini-btn" id="wordHintBtn">💡 İpucu</button>
+        </div>
+        <div class="stats-row" style="border-top:none;padding-top:0;margin-top:0">
+          <span>Skor: <strong id="wordScore">0</strong></span>
+          <span>✅ <strong id="wordCorrect">0</strong></span>
+          <span>❌ <strong id="wordWrong">0</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. SIMON SAYS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧠</span><div><h3>Simon Says</h3><p>Renk dizisini ezberle</p></div><span class="game-badge new-badge">Hafıza</span></div>
+      <div class="simon-board" id="simonBoard">
+        <button class="simon-btn simon-red" id="simonRed"></button>
+        <button class="simon-btn simon-blue" id="simonBlue"></button>
+        <button class="simon-btn simon-yellow" id="simonYellow"></button>
+        <button class="simon-btn simon-green" id="simonGreen"></button>
+      </div>
+      <div class="stats-row" style="border-top:none;margin-top:.4rem;padding-top:0">
+        <span>Seviye: <strong id="simonLevel">0</strong></span>
+        <span>En İyi: <strong id="simonBest">0</strong></span>
+      </div>
+      <button class="play-btn" id="simonStart">▶ Başlat</button>
+    </div>
+
+    <!-- 11. MATH SPRINT -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🔢</span><div><h3>Matematik Sprint</h3><p>60 saniyede hızlı hesapla!</p></div><span class="game-badge">Zeka</span></div>
+      <div class="math-timer-bar"><div class="math-timer-fill" id="mathTimerFill"></div></div>
+      <div class="math-problem" id="mathProblem">Başlatmak için butona bas</div>
+      <input type="number" class="math-input" id="mathInput" placeholder="Cevabı gir ve Enter'a bas" disabled autocomplete="off" />
+      <div class="stats-row" style="border-top:none;padding-top:0;margin-top:0">
+        <span>✅ <strong id="mathCorrect">0</strong></span>
+        <span>❌ <strong id="mathWrong">0</strong></span>
+        <span>Puan: <strong id="mathScore">0</strong></span>
+      </div>
+      <button class="play-btn" id="mathStart">▶ Başlat</button>
+    </div>
+
+    <!-- 12. ROCK PAPER SCISSORS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">✊</span><div><h3>Taş-Kağıt-Makas</h3><p>AI'ya karşı oyna</p></div><span class="game-badge">Şans</span></div>
+      <div class="rps-arena">
+        <div class="rps-side"><div class="rps-emoji" id="rpsPlayer">❓</div><small>Sen</small></div>
+        <div class="rps-vs">VS</div>
+        <div class="rps-side"><div class="rps-emoji" id="rpsAI">❓</div><small>AI</small></div>
+      </div>
+      <div class="rps-result" id="rpsResult">Aşağıdan seçimini yap!</div>
+      <div class="rps-btns">
+        <button class="rps-btn" data-c="rock">✊<br><small>Taş</small></button>
+        <button class="rps-btn" data-c="paper">✋<br><small>Kağıt</small></button>
+        <button class="rps-btn" data-c="scissors">✌️<br><small>Makas</small></button>
+      </div>
+      <div class="stats-row" style="border-top:none;padding-top:0;margin-top:0">
+        <span>Sen: <strong id="rpsWin">0</strong></span>
+        <span>Ber: <strong id="rpsDraw">0</strong></span>
+        <span>AI: <strong id="rpsLose">0</strong></span>
+      </div>
+    </div>
+
+    <!-- 13. NUMBER GUESS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎯</span><div><h3>Sayı Tahmin</h3><p>1-100 arasını bul</p></div><span class="game-badge">Mantık</span></div>
+      <div class="guess-number" id="guessDisplay">?</div>
+      <div class="guess-hint" id="guessHint">1 ile 100 arasında bir sayı düşündüm...</div>
+      <div class="guess-range" id="guessRange">📍 Aralık: 1 — 100</div>
+      <div class="guess-row">
+        <input type="number" class="guess-input" id="guessInput" min="1" max="100" placeholder="Tahmin et..." />
+        <button class="mini-btn" id="guessSubmit">Dene</button>
+      </div>
+      <div class="stats-row" style="border-top:none;padding-top:0;margin-top:.4rem">
+        <span>Deneme: <strong id="guessTries">0</strong></span>
+        <span>En Az: <strong id="guessBest">—</strong></span>
+        <button class="mini-btn" id="guessReset">🔄 Yeni</button>
+      </div>
+    </div>
+
+    <!-- 14. MINESWEEPER -->
+    <div class="game-card wide">
+      <div class="game-card-header"><span class="game-icon">💣</span><div><h3>Mayın Tarlası</h3><p>Sol tık: Aç &nbsp;|&nbsp; Sağ tık: 🚩 Bayrak</p></div><span class="game-badge new-badge">Strateji</span></div>
+      <div class="mine-header">
+        <span>💣 Kalan: <strong id="mineCount">10</strong></span>
+        <span id="mineStatus" style="font-size:1.2rem;cursor:pointer" title="Yeni oyun">🙂</span>
+        <span>⏱ <strong id="mineTimer">0</strong>s</span>
+        <button class="mini-btn" id="mineReset">🔄 Yeni Oyun</button>
+      </div>
+      <div class="mine-grid" id="mineGrid"></div>
+    </div>
+
+    <!-- 15. TYPING SPEED -->
+    <div class="game-card wide">
+      <div class="game-card-header"><span class="game-icon">⌨️</span><div><h3>Yazma Hızı Testi</h3><p>WPM (Kelime/Dakika) ölçümü</p></div><span class="game-badge new-badge">WPM</span></div>
+      <div class="typing-stats">
+        <div class="typing-stat"><strong id="typingWPM">0</strong><span>WPM</span></div>
+        <div class="typing-stat"><strong id="typingAcc">100</strong><span>% Doğruluk</span></div>
+        <div class="typing-stat"><strong id="typingTimer">60</strong><span>Saniye</span></div>
+        <div class="typing-stat"><strong id="typingChars">0</strong><span>Karakter</span></div>
+      </div>
+      <div class="typing-text" id="typingText">Teste başlamak için aşağıdaki butona bas...</div>
+      <textarea class="typing-textarea" id="typingInput" placeholder="Buraya yaz..." disabled rows="2"></textarea>
+      <button class="play-btn" id="typingStart">▶ Testi Başlat</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- AMBIANCE -->
+<section class="section" id="ambiance">
+  <div class="section-header"><div class="section-badge">🎵 Ambiyans</div><h2 class="section-title">Ses Ortamları</h2><p class="section-sub">Kendi atmosferini yarat</p></div>
+  <div class="ambiance-container">
+    <div class="viz-wrap" id="vizWrap">
+      <div class="viz-rings"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div></div>
+      <div class="viz-icon" id="vizIcon">🎵</div>
+      <p id="vizLabel">Bir ses seç → Çal</p>
+    </div>
+    <div class="sound-cards" id="soundCards">
+      <div class="sound-card" data-sound="rain" data-icon="🌧️" data-label="Yağmur"><div class="sound-icon">🌧️</div><span>Yağmur</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="ocean" data-icon="🌊" data-label="Okyanus"><div class="sound-icon">🌊</div><span>Okyanus</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="forest" data-icon="🌲" data-label="Orman"><div class="sound-icon">🌲</div><span>Orman</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="fire" data-icon="🔥" data-label="Şömine"><div class="sound-icon">🔥</div><span>Şömine</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="cafe" data-icon="☕" data-label="Kafe"><div class="sound-icon">☕</div><span>Kafe</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="space" data-icon="🚀" data-label="Uzay"><div class="sound-icon">🚀</div><span>Uzay</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="wind" data-icon="💨" data-label="Rüzgar"><div class="sound-icon">💨</div><span>Rüzgar</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+      <div class="sound-card" data-sound="night" data-icon="🦗" data-label="Gece"><div class="sound-icon">🦗</div><span>Gece</span><div class="sound-waves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div></div>
+    </div>
+    <div class="amb-controls">
+      <div class="vol-control">
+        <span>🔉</span>
+        <input type="range" id="masterVolume" min="0" max="100" value="60" class="vol-slider" />
+        <span>🔊</span>
+        <span id="volDisplay">60%</span>
+      </div>
+      <button class="play-stop-btn" id="playStopBtn">▶ Çal</button>
+    </div>
+  </div>
+</section>
+
+<!-- DRAWING -->
+<section class="section canvas-section" id="canvas-sec">
+  <div class="section-header"><div class="section-badge">🎨 Çizim</div><h2 class="section-title">Doodle Alanı</h2><p class="section-sub">Aklına ne gelirse çiz</p></div>
+  <div class="canvas-toolbar">
+    <div class="tool-group"><label class="tool-lbl">Renk</label>
+      <div class="palette" id="palette">
+        <div class="pal-color sel" style="background:#7c4dff" data-color="#7c4dff"></div>
+        <div class="pal-color" style="background:#ff6b9d" data-color="#ff6b9d"></div>
+        <div class="pal-color" style="background:#00e5ff" data-color="#00e5ff"></div>
+        <div class="pal-color" style="background:#69f0ae" data-color="#69f0ae"></div>
+        <div class="pal-color" style="background:#ffea00" data-color="#ffea00"></div>
+        <div class="pal-color" style="background:#ff7043" data-color="#ff7043"></div>
+        <div class="pal-color" style="background:#ffffff" data-color="#ffffff"></div>
+        <div class="pal-color" style="background:#ff1744" data-color="#ff1744"></div>
+        <input type="color" id="customColor" class="custom-color" value="#7c4dff" />
+      </div>
+    </div>
+    <div class="tool-group"><label class="tool-lbl">Fırça: <span id="brushSizeDisplay">8</span>px</label><input type="range" id="brushSize" min="2" max="50" value="8" class="brush-slider" /></div>
+    <div class="tool-group"><label class="tool-lbl">Araç</label>
+      <div class="tool-btns">
+        <button class="tool-btn active" id="brushTool">✏️ Fırça</button>
+        <button class="tool-btn" id="eraserTool">⬜ Silgi</button>
+        <button class="tool-btn" id="sparkTool">✨ Işıltı</button>
+      </div>
+    </div>
+    <button class="tool-btn" id="glowToggle">💫 Glow</button>
+    <button class="clear-btn" id="clearCanvas">🗑️ Temizle</button>
+    <button class="save-btn" id="saveCanvas">💾 Kaydet</button>
+  </div>
+  <div class="canvas-wrap"><canvas id="drawingCanvas"></canvas></div>
+</section>
+
+<!-- BREATHING -->
+<section class="section" id="breathe">
+  <div class="section-header"><div class="section-badge">🧘 Nefes</div><h2 class="section-title">Nefes Egzersizi</h2><p class="section-sub">Zihnini dinlendir, stresi at</p></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2.5rem">
+    <div class="breathe-types">
+      <button class="breathe-type-btn active" data-type="478">4-7-8 Tekniği</button>
+      <button class="breathe-type-btn" data-type="box">Box Breathing</button>
+      <button class="breathe-type-btn" data-type="calm">Sakinleş 5-5</button>
+    </div>
+    <div class="breathe-main">
+      <div class="breathe-ring-wrap">
+        <svg class="breathe-svg" viewBox="0 0 220 220"><circle class="b-track" cx="110" cy="110" r="100"/><circle class="b-fill" id="bFill" cx="110" cy="110" r="100"/></svg>
+        <div class="breathe-circle" id="breatheCircle"><div class="b-inner"><span class="b-icon" id="bIcon">🌬️</span><span class="b-phase" id="bPhase">Hazır</span><span class="b-count" id="bCount"></span></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.8rem">
+        <button class="breathe-start-btn" id="breatheStart">▶ Başlat</button>
+        <div class="breathe-session"><span>Döngü: <strong id="bCycles">0</strong></span><span>Süre: <strong id="bTime">0:00</strong></span></div>
+      </div>
+    </div>
+    <div class="breathe-tips">
+      <div class="tip-card"><span class="tip-icon">💤</span><p>4-7-8 uyku öncesi idealdir</p></div>
+      <div class="tip-card"><span class="tip-icon">💼</span><p>Box breathing stres azaltır</p></div>
+      <div class="tip-card"><span class="tip-icon">🧠</span><p>Düzenli nefes odaklanmayı artırır</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- POMODORO -->
+<section class="section" id="pomodoro">
+  <div class="section-header"><div class="section-badge">⏱️ Pomodoro</div><h2 class="section-title">Pomodoro Zamanlayıcı</h2><p class="section-sub">25dk çalış, 5dk mola — odaklanmanın formülü</p></div>
+  <div class="pomo-container">
+    <div class="pomo-modes">
+      <button class="pomo-mode-btn active" data-mode="work">🎯 Çalışma (25dk)</button>
+      <button class="pomo-mode-btn" data-mode="short">☕ Kısa (5dk)</button>
+      <button class="pomo-mode-btn" data-mode="long">🌿 Uzun (15dk)</button>
+    </div>
+    <div class="pomo-clock">
+      <svg class="pomo-ring" viewBox="0 0 240 240"><circle class="pomo-track" cx="120" cy="120" r="108"/><circle class="pomo-fill" id="pomoFill" cx="120" cy="120" r="108"/></svg>
+      <div class="pomo-time-wrap"><div class="pomo-time-big" id="pomoTime">25:00</div><div class="pomo-label" id="pomoLabel">Çalışma Zamanı 🎯</div><div class="pomo-count">🍅 <span id="pomoCount">0</span> Pomodoro</div></div>
+    </div>
+    <div class="pomo-btns">
+      <button class="pomo-btn" id="pomoStart">▶ Başlat</button>
+      <button class="pomo-btn pomo-reset" id="pomoReset">↺ Sıfırla</button>
+    </div>
+    <div class="pomo-tasks">
+      <h3>📋 Görevler</h3>
+      <div class="pomo-task-row"><input type="text" id="pomoTaskInput" placeholder="Görev ekle..." autocomplete="off" /><button id="pomoAddTask">+</button></div>
+      <ul class="pomo-list" id="pomoList"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- FACTS -->
+<section class="section" id="facts">
+  <div class="section-header"><div class="section-badge">💡 Bilgi</div><h2 class="section-title">İlginç Bilgiler</h2><p class="section-sub">Her tıklamada yeni bir şey öğren</p></div>
+  <div class="facts-container">
+    <div class="fact-card"><div class="fact-badge" id="factCategory">🔬 Bilim</div><div class="fact-icon" id="factIcon">🔬</div><p class="fact-text" id="factText">Yükleniyor...</p><div class="fact-num" id="factNum">1 / 20</div></div>
+    <div class="fact-actions">
+      <button class="fact-btn" id="prevFact">← Önceki</button>
+      <button class="fact-btn rnd-btn" id="rndFact">🎲 Rastgele</button>
+      <button class="fact-btn" id="nextFact">Sonraki →</button>
+    </div>
+    <div class="cat-filters">
+      <button class="cat-btn active" data-cat="all">Tümü</button>
+      <button class="cat-btn" data-cat="science">🔬 Bilim</button>
+      <button class="cat-btn" data-cat="nature">🌿 Doğa</button>
+      <button class="cat-btn" data-cat="space">🚀 Uzay</button>
+      <button class="cat-btn" data-cat="history">📜 Tarih</button>
+      <button class="cat-btn" data-cat="animals">🐾 Hayvanlar</button>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="section" id="quotes">
+  <div class="section-header"><div class="section-badge">💬 Alıntı</div><h2 class="section-title">İlham Sözleri</h2><p class="section-sub">Büyük düşünürlerden seçilmiş sözler</p></div>
+  <div class="quotes-container">
+    <div class="quote-card"><div class="quote-mark">"</div><p class="quote-text" id="quoteText">Yükleniyor...</p><div class="quote-author" id="quoteAuthor">—</div><div class="quote-tag" id="quoteTag">💭</div></div>
+    <div class="fact-actions">
+      <button class="fact-btn" id="prevQuote">← Önceki</button>
+      <button class="fact-btn rnd-btn" id="rndQuote">🎲 Rastgele</button>
+      <button class="fact-btn" id="nextQuote">Sonraki →</button>
+      <button class="fact-btn" id="copyQuote" style="border-color:rgba(0,229,255,.4);color:var(--a3)">📋 Kopyala</button>
+    </div>
+  </div>
+</section>
+
+<!-- CLOCKS & MOOD -->
+<section class="section" id="clock">
+  <div class="section-header"><div class="section-badge">🌍 Dünya</div><h2 class="section-title">Dünya Saatleri & Ruh Hali</h2></div>
+  <div class="clocks-grid" id="clocksGrid"></div>
+  <div class="mood-widget">
+    <h3>🌤️ Bugünkü Ruh Halin</h3>
+    <div class="mood-btns">
+      <button class="mood-btn" data-mood="amazing">🤩 Harika</button>
+      <button class="mood-btn" data-mood="happy">😊 Mutlu</button>
+      <button class="mood-btn" data-mood="okay">😌 İyi</button>
+      <button class="mood-btn" data-mood="tired">😴 Yorgun</button>
+      <button class="mood-btn" data-mood="stressed">😤 Stresli</button>
+    </div>
+    <div class="mood-resp" id="moodResp"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo"><span>✦</span><span>Dreamscape</span></div>
+    <p>Huzurlu anlar, keyifli vakitler 💙</p>
+    <span id="sessionTime">⏱️ Bu oturumda: 0 dk</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

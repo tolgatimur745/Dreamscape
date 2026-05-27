@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>JS Debug Test</title></head>
+<body>
+<pre id="out" style="font-size:13px;padding:20px;background:#111;color:#0f0;min-height:100vh"></pre>
+<script>
+var log = document.getElementById('out');
+function p(msg) { log.textContent += msg + '\n'; }
+p('=== DEBUG START ===');
+window.onerror = function(msg, src, line, col, err) {
+  p('GLOBAL ERROR at line ' + line + ': ' + msg);
+};
+// Simulate DOM for each game
+var ids = [
+  'particleCanvas','toast','navbar','navTime','sessionTime',
+  'snakeArea','snakeCanvas','snakeOverlay','snakeScore','snakeBest','snakeStartBtn',
+  'memoryGrid','memoryMoves','memoryMatches','resetMemory',
+  'bubbleArena','bubbleCount','bubbleScore','addBubbles',
+  'reactionCircle','reactionText','rtLast','rtBest','rtAvg',
+  'colorTarget','colorOptions','colorScore','colorLives',
+  'puzzleGrid','puzzleMoves','resetPuzzle',
+  'moleScore','moleTime','moleStartBtn','mole0','mole1','mole2','mole3','mole4','mole5','mole6','mole7','mole8',
+  'tttStatus','tttGrid','tttWin','tttDraw','tttLose','tttReset',
+  'scrambledWord','wordInput','wordCategory','wordHint','wordScore','wordCorrect','wordWrong','wordCheck','wordSkip','wordHintBtn',
+  'simonRed','simonBlue','simonYellow','simonGreen','simonLevel','simonBest','simonStart','simonBoard',
+  'mathProblem','mathInput','mathCorrect','mathWrong','mathScore','mathTimerFill','mathStart',
+  'rpsPlayer','rpsAI','rpsResult','rpsWin','rpsDraw','rpsLose',
+  'guessDisplay','guessHint','guessRange','guessInput','guessSubmit','guessTries','guessBest','guessReset',
+  'mineGrid','mineCount','mineStatus','mineTimer','mineReset',
+  'typingText','typingInput','typingWPM','typingAcc','typingTimer','typingChars','typingStart',
+  'ambianceVisualizer','vizIcon','vizLabel','playStopBtn','playStopIcon','playStopLabel','masterVolume','volumeDisplay',
+  'colorPalette','customColor','brushSize','brushSizeDisplay','brushTool','eraserTool','sparkTool','glowToggle','clearCanvas','saveCanvas','drawingCanvas','drawingWrapper',
+  'breatheCircle','breatheIcon','breathePhaseText','breatheCountdown','breatheStart','breatheStartIcon','breatheStartLabel','breatheCycle','breatheTime','breatheProgressFill',
+  'pomoTime','pomoFill','pomoCount','pomoModeLabel','pomoStart','pomoReset','pomoTaskInput','pomoTaskList','pomoAddTask',
+  'factText','factCategory','factIconBig','factNumber','prevFact','randomFact','nextFact',
+  'quoteText','quoteAuthor','quoteTag','prevQuote','randomQuote','nextQuote','copyQuote',
+  'clocksGrid','moodResponse'
+];
+var missing = ids.filter(function(id) { return !document.getElementById(id); });
+if (missing.length) {
+  p('MISSING IDs IN THIS PAGE: ' + missing.join(', '));
+} else {
+  p('All IDs found!');
+}
+p('=== END ===');
+</script>
+</body>
+</html>
