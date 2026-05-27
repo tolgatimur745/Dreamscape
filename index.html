@@ -402,6 +402,176 @@
 
     /* MOBILE */
     @media(max-width:960px){.nav-links{display:none}.games-grid{grid-template-columns:1fr!important}.game-card.wide{grid-column:span 1}}
+
+    /* ═══════ NEW FEATURES CSS ═══════ */
+
+    /* WORLD EXPLORER */
+    .world-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem}
+    .world-card{border-radius:var(--r3);overflow:hidden;cursor:pointer;position:relative;height:200px;transition:var(--tb);border:1px solid var(--gb)}
+    .world-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 60px rgba(0,0,0,.6)}
+    .world-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease}
+    .world-card:hover .world-bg{transform:scale(1.1)}
+    .world-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.2) 60%,transparent 100%)}
+    .world-info{position:absolute;bottom:0;left:0;right:0;padding:1.2rem}
+    .world-flag{font-size:1.6rem;margin-bottom:.2rem}
+    .world-name{font-size:1rem;font-weight:700;color:#fff}
+    .world-country{font-size:.72rem;color:rgba(255,255,255,.6)}
+    .world-fact-panel{max-width:700px;margin:1.5rem auto 0;padding:1.5rem 2rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);backdrop-filter:blur(20px);display:none;animation:fadeUp .4s ease}
+    .world-fact-panel.show{display:block}
+    .world-fact-header{display:flex;align-items:center;gap:1rem;margin-bottom:.8rem}
+    .world-fact-icon{font-size:2.5rem}
+    .world-fact-title{font-size:1.2rem;font-weight:700}
+    .world-fact-sub{font-size:.78rem;color:var(--tx3)}
+    .world-fact-text{font-size:.95rem;line-height:1.8;color:var(--tx2)}
+
+    /* MASTERMIND */
+    .mm-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:520px;margin:0 auto}
+    .mm-board{display:flex;flex-direction:column;gap:6px;width:100%}
+    .mm-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid transparent;transition:var(--t)}
+    .mm-row.active{border-color:var(--a3);background:rgba(0,229,255,.04)}
+    .mm-peg-row{display:flex;gap:6px;flex:1}
+    .mm-peg{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;transition:var(--tb);flex-shrink:0}
+    .mm-peg:hover{transform:scale(1.15)}
+    .mm-hints{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;width:52px}
+    .mm-hint{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)}
+    .mm-hint.black{background:#fff;box-shadow:0 0 6px rgba(255,255,255,.5)}
+    .mm-hint.white{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.5)}
+    .mm-colors{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .mm-color-btn{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:var(--tb);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    .mm-color-btn:hover{transform:scale(1.18);border-color:white}
+    .mm-color-btn.selected{border-color:#fff;transform:scale(1.22);box-shadow:0 0 20px rgba(255,255,255,.4)}
+    .mm-status{font-size:.9rem;color:var(--tx2);text-align:center;min-height:22px}
+    .mm-row-num{font-size:.72rem;color:var(--tx3);width:18px;text-align:center}
+    .mm-key{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:.78rem;color:var(--tx3)}
+    .mm-key-item{display:flex;align-items:center;gap:5px}
+    .mm-key-dot{width:12px;height:12px;border-radius:50%}
+
+    /* MAGIC 8 BALL */
+    .ball-section{display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+    .ball-wrap{position:relative;width:220px;height:220px;cursor:pointer;user-select:none}
+    .ball{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2a2a4a,#07070f);box-shadow:0 0 60px rgba(124,77,255,.3),inset -20px -20px 40px rgba(0,0,0,.6),inset 5px 5px 20px rgba(255,255,255,.04);transition:transform .1s;position:relative;overflow:hidden}
+    .ball:active{transform:scale(.95)}
+    .ball-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+    .ball-triangle{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(0,229,255,.12),rgba(124,77,255,.25));border:1px solid rgba(0,229,255,.2);display:flex;align-items:center;justify-content:center;transition:var(--t)}
+    .ball-answer{font-size:.68rem;font-weight:700;color:var(--a3);text-align:center;padding:.4rem;line-height:1.4;letter-spacing:.5px;text-transform:uppercase}
+    .ball-shine{position:absolute;top:18%;left:25%;width:35%;height:28%;background:radial-gradient(ellipse,rgba(255,255,255,.12),transparent);border-radius:50%;pointer-events:none}
+    .ball-number{position:absolute;bottom:18%;right:18%;font-size:1.6rem;font-weight:900;color:rgba(0,229,255,.2);font-family:'Playfair Display',serif}
+    .ball-shake{animation:shake .5s ease}
+    @keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(14deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(6deg)}}
+    .ball-q-input{width:100%;max-width:360px;padding:12px 18px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:100px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:.93rem;outline:none;transition:var(--t);text-align:center}
+    .ball-q-input:focus{border-color:var(--a1);background:rgba(124,77,255,.06)}
+    .ball-history{display:flex;flex-direction:column;gap:6px;max-height:120px;overflow-y:auto;width:100%;max-width:400px}
+    .ball-history-item{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:rgba(0,0,0,.2);border-radius:100px;font-size:.75rem;color:var(--tx2)}
+    .ball-history-item .bha{color:var(--a3);font-weight:600}
+
+    /* CONSTELLATION MAP */
+    #starCanvas{display:block;width:100%;border-radius:var(--r3);background:#02030d;cursor:crosshair;border:1px solid rgba(255,255,255,.07)}
+    .star-info{text-align:center;padding:.8rem;font-size:.88rem;color:var(--tx2);min-height:28px}
+    .star-controls{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:.8rem}
+    .star-mode-btn{padding:7px 18px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:var(--t)}
+    .star-mode-btn.active{background:rgba(255,234,0,.1);border-color:var(--a5);color:var(--a5)}
+
+    /* PALETTE GENERATOR */
+    .palette-gen{display:flex;flex-direction:column;align-items:center;gap:2rem}
+    .palette-display{display:flex;border-radius:var(--r3);overflow:hidden;height:140px;width:100%;max-width:700px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+    .pal-swatch{flex:1;position:relative;cursor:pointer;transition:flex .3s ease}
+    .pal-swatch:hover{flex:2}
+    .pal-swatch-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:.7rem;opacity:0;transition:opacity .2s}
+    .pal-swatch:hover .pal-swatch-inner{opacity:1}
+    .pal-hex{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.9);background:rgba(0,0,0,.4);padding:3px 8px;border-radius:100px;cursor:pointer}
+    .pal-lock{position:absolute;top:.5rem;right:.5rem;font-size:.9rem;opacity:.7}
+    .saved-palettes{display:flex;flex-direction:column;gap:.8rem;width:100%;max-width:700px}
+    .saved-pal{display:flex;align-items:center;gap:.8rem;padding:.6rem 1rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2)}
+    .saved-pal-preview{display:flex;border-radius:6px;overflow:hidden;height:28px;flex:1}
+    .saved-pal-preview div{flex:1}
+    .pal-gen-btn{display:flex;align-items:center;gap:8px;padding:12px 32px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;border:none;border-radius:100px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tb)}
+    .pal-gen-btn:hover{transform:scale(1.05);box-shadow:var(--gp)}
+    .pal-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+
+    /* TAROT */
+    .tarot-container{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:700px;margin:0 auto}
+    .tarot-spread{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+    .tarot-card{width:120px;cursor:pointer;position:relative;perspective:800px;user-select:none}
+    .tarot-card-inner{position:relative;width:100%;padding-bottom:175%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+    .tarot-card.revealed .tarot-card-inner{transform:rotateY(180deg)}
+    .tarot-face,.tarot-back{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.6rem}
+    .tarot-back{background:linear-gradient(135deg,#1a0533,#0a1a3a);border:2px solid rgba(124,77,255,.3);font-size:1.8rem}
+    .tarot-face{background:linear-gradient(160deg,var(--c1,#1a0533),var(--c2,#0a1a3a));border:2px solid var(--cb,rgba(124,77,255,.4));transform:rotateY(180deg);gap:.3rem}
+    .tarot-card-emoji{font-size:2.5rem;margin-bottom:.2rem}
+    .tarot-card-name{font-size:.62rem;font-weight:700;text-align:center;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.8)}
+    .tarot-card-label{font-size:.55rem;color:rgba(255,255,255,.4);text-align:center}
+    .tarot-meaning{padding:1.2rem 1.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);text-align:center;backdrop-filter:blur(20px);min-height:80px;display:flex;flex-direction:column;align-items:center;gap:.5rem;width:100%}
+    .tarot-meaning h4{font-size:1rem;font-weight:700;color:var(--a3)}
+    .tarot-meaning p{font-size:.88rem;color:var(--tx2);line-height:1.7}
+    .tarot-label{font-size:.72rem;color:var(--tx3);margin-top:.2rem;text-transform:uppercase;letter-spacing:1px}
+
+    /* WOULD YOU RATHER */
+    .wyr-container{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:700px;margin:0 auto}
+    .wyr-card{width:100%;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r4);overflow:hidden;backdrop-filter:blur(20px)}
+    .wyr-header{text-align:center;padding:1rem 1.5rem .5rem;font-size:.8rem;color:var(--tx3);font-weight:600;letter-spacing:2px;text-transform:uppercase}
+    .wyr-options{display:grid;grid-template-columns:1fr 1fr;min-height:180px}
+    .wyr-option{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;cursor:pointer;transition:background .25s;gap:.6rem;border:none;background:transparent;font-family:'Outfit',sans-serif;color:var(--tx);position:relative;overflow:hidden}
+    .wyr-option:first-child{border-right:1px solid var(--gb)}
+    .wyr-option:hover{background:rgba(255,255,255,.04)}
+    .wyr-option.voted{cursor:default}
+    .wyr-option-icon{font-size:2.2rem}
+    .wyr-option-text{font-size:.88rem;font-weight:600;text-align:center;line-height:1.4;z-index:1}
+    .wyr-bar{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--a1),var(--a2));transition:width .8s ease;width:0}
+    .wyr-option:first-child .wyr-bar{background:linear-gradient(90deg,var(--a1),var(--a3))}
+    .wyr-pct{font-size:.72rem;color:var(--tx3);z-index:1;transition:var(--t)}
+    .wyr-divider{display:flex;align-items:center;justify-content:center;background:var(--bg2);padding:.5rem;font-size:.72rem;font-weight:800;color:var(--tx3);letter-spacing:1px}
+    .wyr-footer{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.5rem;border-top:1px solid var(--gb)}
+    .wyr-votes{font-size:.75rem;color:var(--tx3)}
+    .wyr-skip{padding:6px 16px;border-radius:100px;border:1px solid var(--gb);background:var(--glass);color:var(--tx2);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:var(--t)}
+    .wyr-skip:hover{background:var(--gh);border-color:var(--a1)}
+
+    /* NUMBER MAGIC */
+    .nummagic-container{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:520px;margin:0 auto}
+    .magic-step{width:100%;padding:1.5rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r3);text-align:center;backdrop-filter:blur(20px);display:none}
+    .magic-step.active{display:block;animation:fadeUp .4s ease}
+    .magic-step h3{font-size:1.05rem;font-weight:700;margin-bottom:.7rem}
+    .magic-step p{font-size:.93rem;color:var(--tx2);line-height:1.7;margin-bottom:.8rem}
+    .magic-big{font-size:3.5rem;font-weight:900;background:linear-gradient(135deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:.5rem 0}
+    .magic-num-input{width:100%;max-width:160px;padding:12px;background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:12px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:700;outline:none;text-align:center;transition:var(--t)}
+    .magic-num-input:focus{border-color:var(--a1)}
+    .magic-progress{display:flex;justify-content:center;gap:6px}
+    .magic-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);transition:var(--t)}
+    .magic-dot.done{background:var(--a3)}
+    .magic-dot.cur{background:var(--a1);box-shadow:0 0 8px var(--a1)}
+    .magic-reveal{font-size:1rem;color:var(--a4);font-weight:700;padding:.6rem 1.2rem;background:rgba(105,240,174,.1);border-radius:100px;display:inline-block;margin-top:.5rem}
+
+    /* MOVING TARGET */
+    .target-arena{position:relative;height:280px;background:radial-gradient(ellipse at 50% 50%,rgba(124,77,255,.06),rgba(0,0,0,.4));border-radius:var(--r3);border:1px solid var(--gb);overflow:hidden;cursor:crosshair}
+    .target{position:absolute;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transform:translate(-50%,-50%);transition:none;user-select:none}
+    .target-rings{position:absolute;inset:0;pointer-events:none}
+    .target-outer{border-radius:50%;border:2px solid rgba(255,107,157,.7);position:absolute;transform:translate(-50%,-50%);animation:tpulse 1.2s ease-in-out infinite}
+    @keyframes tpulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:.1;transform:translate(-50%,-50%) scale(1.8)}}
+    .target-stat-bar{display:flex;justify-content:space-between;margin-bottom:.6rem;font-size:.83rem;color:var(--tx2)}
+    .target-stat-bar strong{color:var(--a3)}
+    .target-combo{text-align:center;font-size:.78rem;color:var(--a5);min-height:20px;font-weight:600}
+
+    /* DAILY CHALLENGE */
+    .daily-container{display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:700px;margin:0 auto}
+    .daily-header-card{width:100%;padding:1.5rem 2rem;background:linear-gradient(135deg,rgba(124,77,255,.15),rgba(255,107,157,.1));border:1px solid rgba(124,77,255,.3);border-radius:var(--r4);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+    .daily-streak{display:flex;flex-direction:column;align-items:center;gap:3px;padding:1rem 1.5rem;background:rgba(0,0,0,.2);border-radius:var(--r2)}
+    .daily-streak-num{font-size:2rem;font-weight:900;color:var(--a5)}
+    .daily-streak-label{font-size:.7rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px}
+    .daily-header-text h3{font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
+    .daily-header-text p{font-size:.85rem;color:var(--tx2)}
+    .daily-challenges{display:flex;flex-direction:column;gap:.8rem;width:100%}
+    .daily-ch{display:flex;align-items:center;gap:1rem;padding:1rem 1.4rem;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r2);cursor:pointer;transition:var(--t)}
+    .daily-ch:hover:not(.completed){background:var(--gh);border-color:rgba(124,77,255,.3)}
+    .daily-ch.completed{border-color:var(--a4);background:rgba(105,240,174,.06)}
+    .daily-ch-icon{font-size:1.8rem;flex-shrink:0}
+    .daily-ch-text{flex:1}
+    .daily-ch-title{font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+    .daily-ch-desc{font-size:.78rem;color:var(--tx3)}
+    .daily-ch-pts{font-size:.75rem;font-weight:700;color:var(--a5);padding:3px 10px;background:rgba(255,234,0,.1);border-radius:100px;border:1px solid rgba(255,234,0,.2)}
+    .daily-ch-check{font-size:1.3rem;flex-shrink:0;transition:var(--tb)}
+    .daily-ch.completed .daily-ch-check{animation:popIn .4s var(--tb)}
+    @keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+    .daily-total{font-size:.88rem;color:var(--tx2);text-align:center;padding:.8rem;background:var(--glass);border-radius:var(--r2);border:1px solid var(--gb);width:100%}
+    .daily-total strong{color:var(--a5)}
   </style>
 </head>
 <body>
@@ -411,12 +581,20 @@
   <div class="nav-logo"><span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span></div>
   <div class="nav-links">
     <a href="#games" class="nav-link">🎮 Oyunlar</a>
-    <a href="#ambiance" class="nav-link">🎵 Ambiyans</a>
+    <a href="#ambiance" class="nav-link">🎵 Ses</a>
     <a href="#canvas-sec" class="nav-link">🎨 Çizim</a>
+    <a href="#world" class="nav-link">🌍 Dünya</a>
+    <a href="#mastermind" class="nav-link">🔐 Şifre</a>
+    <a href="#magic8" class="nav-link">🎱 8 Top</a>
+    <a href="#stars" class="nav-link">🌌 Yıldız</a>
+    <a href="#palette-sec" class="nav-link">🌈 Palet</a>
+    <a href="#tarot" class="nav-link">🃏 Tarot</a>
+    <a href="#wyr" class="nav-link">💭 Seçim</a>
+    <a href="#nummagic" class="nav-link">🔮 Büyü</a>
+    <a href="#target" class="nav-link">🎯 Hedef</a>
+    <a href="#daily" class="nav-link">📅 Görev</a>
     <a href="#breathe" class="nav-link">🧘 Nefes</a>
-    <a href="#pomodoro" class="nav-link">⏱️ Pomodoro</a>
     <a href="#facts" class="nav-link">💡 Bilgi</a>
-    <a href="#quotes" class="nav-link">💬 Alıntı</a>
   </div>
   <div class="nav-time" id="navTime"></div>
 </nav>
@@ -835,6 +1013,132 @@
       <button class="mood-btn" data-mood="stressed">😤 Stresli</button>
     </div>
     <div class="mood-resp" id="moodResp"></div>
+  </div>
+</section>
+
+<!-- WORLD EXPLORER -->
+<section class="section" id="world">
+  <div class="section-header"><div class="section-badge">🌍 Dünya Kaşifi</div><h2 class="section-title">Dünyayı Keşfet</h2><p class="section-sub">Tıkla ve dünyanın güzelliklerini keşfet</p></div>
+  <div class="world-grid" id="worldGrid"></div>
+  <div class="world-fact-panel" id="worldFactPanel">
+    <div class="world-fact-header"><span class="world-fact-icon" id="wfIcon">🌍</span><div><div class="world-fact-title" id="wfTitle">Yer Adı</div><div class="world-fact-sub" id="wfSub">Ülke</div></div></div>
+    <p class="world-fact-text" id="wfText"></p>
+  </div>
+</section>
+
+<!-- MASTERMIND -->
+<section class="section" id="mastermind">
+  <div class="section-header"><div class="section-badge">🔐 Şifre Kırıcı</div><h2 class="section-title">Mastermind</h2><p class="section-sub">8 denemede gizli renk kodunu kır!</p></div>
+  <div class="mm-container">
+    <div class="mm-status" id="mmStatus">Bir renk seç ve 4 yere yerleştir</div>
+    <div class="mm-board" id="mmBoard"></div>
+    <div class="mm-colors" id="mmColors"></div>
+    <div class="mm-key">
+      <div class="mm-key-item"><div class="mm-key-dot" style="background:#fff"></div>⚫ = Doğru renk, doğru yer</div>
+      <div class="mm-key-item"><div class="mm-key-dot" style="background:rgba(255,255,255,.4)"></div>⚪ = Doğru renk, yanlış yer</div>
+    </div>
+    <button class="play-btn" id="mmNewGame" style="max-width:220px">🔄 Yeni Oyun</button>
+  </div>
+</section>
+
+<!-- MAGIC 8 BALL -->
+<section class="section" id="magic8">
+  <div class="section-header"><div class="section-badge">🎱 Sihirli Top</div><h2 class="section-title">Sihirli 8 Top</h2><p class="section-sub">Bir soru sor ve topu salla...</p></div>
+  <div class="ball-section">
+    <input type="text" class="ball-q-input" id="ballInput" placeholder="Sorunuzu buraya yazın..." autocomplete="off" />
+    <div class="ball-wrap" id="ballWrap">
+      <div class="ball">
+        <div class="ball-shine"></div>
+        <div class="ball-number">8</div>
+        <div class="ball-inner"><div class="ball-triangle"><div class="ball-answer" id="ballAnswer">Tıkla ve sal...</div></div></div>
+      </div>
+    </div>
+    <p style="font-size:.78rem;color:var(--tx3)">Tıkla veya Enter'a bas</p>
+    <div class="ball-history" id="ballHistory"></div>
+  </div>
+</section>
+
+<!-- STAR MAP -->
+<section class="section" id="stars">
+  <div class="section-header"><div class="section-badge">🌌 Yıldız Haritası</div><h2 class="section-title">Takımyıldızları</h2><p class="section-sub">Yıldızlara tıklayarak kendi gökyüzünü oluştur</p></div>
+  <div class="star-controls">
+    <button class="star-mode-btn active" data-mode="explore" id="starExplore">🔭 Keşfet</button>
+    <button class="star-mode-btn" data-mode="draw" id="starDraw">✏️ Çiz</button>
+    <button class="mini-btn" id="starClear">🗑️ Temizle</button>
+    <button class="mini-btn" id="starRandom">✨ Rastgele Takımyıldızı</button>
+  </div>
+  <canvas id="starCanvas" height="380"></canvas>
+  <div class="star-info" id="starInfo">Bir yıldıza tıkla — takımyıldızını öğren 🌟</div>
+</section>
+
+<!-- COLOR PALETTE -->
+<section class="section" id="palette-sec">
+  <div class="section-header"><div class="section-badge">🌈 Renk Paleti</div><h2 class="section-title">Palet Üreticisi</h2><p class="section-sub">Güzel renk kombinasyonları oluştur ve kaydet</p></div>
+  <div class="palette-gen">
+    <div class="palette-display" id="paletteDisplay"></div>
+    <div class="pal-actions">
+      <button class="pal-gen-btn" id="palGenBtn">🎲 Yeni Palet Üret</button>
+      <button class="mini-btn" id="palSaveBtn">💾 Kaydet</button>
+      <button class="mini-btn" id="palCopyBtn">📋 HEX Kopyala</button>
+    </div>
+    <div id="savedPalettes" class="saved-palettes"></div>
+  </div>
+</section>
+
+<!-- TAROT -->
+<section class="section" id="tarot">
+  <div class="section-header"><div class="section-badge">🃏 Tarot</div><h2 class="section-title">Tarot Kartları</h2><p class="section-sub">Geçmiş · Şimdi · Gelecek — Kartını çek</p></div>
+  <div class="tarot-container">
+    <div class="tarot-spread" id="tarotSpread"></div>
+    <div class="tarot-meaning" id="tarotMeaning"><p style="color:var(--tx3)">Bir karta tıkla ve sırını keşfet...</p></div>
+    <button class="play-btn" id="tarotNew" style="max-width:240px">🔀 Yeni Okuma</button>
+  </div>
+</section>
+
+<!-- WOULD YOU RATHER -->
+<section class="section" id="wyr">
+  <div class="section-header"><div class="section-badge">💭 Ya Şunu Seçsen?</div><h2 class="section-title">Would You Rather</h2><p class="section-sub">Zor seçimler, eğlenceli sonuçlar</p></div>
+  <div class="wyr-container">
+    <div class="wyr-card" id="wyrCard">
+      <div class="wyr-header">🤔 Hangisini Seçerdin?</div>
+      <div class="wyr-options" id="wyrOptions">
+        <button class="wyr-option" id="wyrA"><span class="wyr-option-icon" id="wyrIconA">❓</span><span class="wyr-option-text" id="wyrTextA">Yükleniyor...</span><span class="wyr-pct" id="wyrPctA"></span><div class="wyr-bar" id="wyrBarA"></div></button>
+        <button class="wyr-option" id="wyrB"><span class="wyr-option-icon" id="wyrIconB">❓</span><span class="wyr-option-text" id="wyrTextB">Yükleniyor...</span><span class="wyr-pct" id="wyrPctB"></span><div class="wyr-bar" id="wyrBarB"></div></button>
+      </div>
+      <div class="wyr-divider">YA DA</div>
+      <div class="wyr-footer"><span class="wyr-votes" id="wyrVotes">0 oy</span><button class="wyr-skip" id="wyrSkip">→ Atla</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBER MAGIC -->
+<section class="section" id="nummagic">
+  <div class="section-header"><div class="section-badge">🔮 Sayı Büyüsü</div><h2 class="section-title">Akıl Okuma</h2><p class="section-sub">Aklındaki sayıyı bileceğim... inan!</p></div>
+  <div class="nummagic-container">
+    <div class="magic-progress" id="magicProgress"></div>
+    <div id="magicSteps"></div>
+  </div>
+</section>
+
+<!-- MOVING TARGET -->
+<section class="section" id="target">
+  <div class="section-header"><div class="section-badge">🎯 Hareketli Hedef</div><h2 class="section-title">Nişancı Testi</h2><p class="section-sub">Hareketli hedefe tıkla — combo yap!</p></div>
+  <div class="target-stat-bar"><span>Skor: <strong id="targetScore">0</strong></span><span>Süre: <strong id="targetTimer">30</strong>s</span><span>En İyi: <strong id="targetBest">0</strong></span><span>Iskalama: <strong id="targetMiss">0</strong></span></div>
+  <div class="target-combo" id="targetCombo"></div>
+  <div class="target-arena" id="targetArena"></div>
+  <button class="play-btn" id="targetStart" style="margin-top:.8rem">🎯 Başlat</button>
+</section>
+
+<!-- DAILY CHALLENGE -->
+<section class="section" id="daily">
+  <div class="section-header"><div class="section-badge">📅 Günlük Görev</div><h2 class="section-title">Bugünkü Görevler</h2><p class="section-sub">Her gün tamamla, serisini kır!</p></div>
+  <div class="daily-container">
+    <div class="daily-header-card">
+      <div class="daily-streak"><div class="daily-streak-num" id="dailyStreak">0</div><div class="daily-streak-label">🔥 Seri</div></div>
+      <div class="daily-header-text"><h3>Günlük Dreamscape Görevi</h3><p id="dailyDateLabel">Bugünkü görevlerini tamamla ve puanla!</p></div>
+    </div>
+    <div class="daily-challenges" id="dailyChallenges"></div>
+    <div class="daily-total" id="dailyTotal">Toplam Puan: <strong>0</strong> / 100</div>
   </div>
 </section>
 
