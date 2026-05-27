@@ -204,6 +204,7 @@ try {
       });
     }
     function starDraw() {
+      if (typeof PAGE_VISIBLE !== 'undefined' && !PAGE_VISIBLE) { requestAnimationFrame(starDraw); return; }
       var W = starCanvas.width, H = starCanvas.height;
       sc.fillStyle = '#02030d'; sc.fillRect(0, 0, W, H);
       sc.save(); sc.strokeStyle = 'rgba(255,234,0,.3)'; sc.lineWidth = 1; sc.setLineDash([4,6]);
@@ -216,9 +217,10 @@ try {
       sc.setLineDash([]); sc.restore();
       starList.forEach(function(s) {
         s.ph += s.tw; var a = s.a * (0.6 + Math.abs(Math.sin(s.ph)) * 0.4);
-        sc.save(); sc.globalAlpha = a; sc.shadowBlur = s.name ? 14 : 4; sc.shadowColor = 'hsl(' + s.h + ',80%,75%)';
-        sc.fillStyle = 'hsl(' + s.h + ',75%,85%)'; sc.beginPath(); sc.arc(s.x, s.y, s.r, 0, 6.28); sc.fill(); sc.restore();
+        sc.globalAlpha = a;
+        sc.fillStyle = 'hsl(' + s.h + ',75%,85%)'; sc.beginPath(); sc.arc(s.x, s.y, s.r, 0, 6.28); sc.fill();
       });
+      sc.globalAlpha = 1;
       requestAnimationFrame(starDraw);
     }
     starCanvas.addEventListener('click', function(e) {

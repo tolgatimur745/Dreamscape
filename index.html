@@ -2610,7 +2610,1123 @@
   </div>
 </section>
 
+<!-- KOZMİK KARAR ÇARKI -->
+<section class="section ds-section" id="wheel-sec">
+  <div class="section-header">
+    <div class="section-badge">🎡 Karar Vermek</div>
+    <h2 class="section-title">Kozmik Karar Çarkı</h2>
+    <p class="section-sub">Kararsız kaldığın anlarda çarkı çevir, kozmik tavsiyeni al veya kendi seçeneklerini ekle!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 1.2rem;">
+      <div style="position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border-radius: 50%; border: 1px solid var(--gb); box-shadow: 0 0 20px rgba(0,229,255,0.1);">
+        <!-- Selector arrow at the top center -->
+        <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 18px solid #ffea00; z-index: 10; filter: drop-shadow(0 0 5px #ffea00);"></div>
+        <canvas id="wheelCanvas" width="260" height="260" style="display: block; border-radius: 50%;"></canvas>
+      </div>
+      <button class="play-btn" id="btnSpinWheel" style="width: 100%; max-width: 220px; font-weight: 700; background: linear-gradient(135deg, #00e5ff, #7c4dff);">🌀 Çarkı Çevir</button>
+    </div>
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; justify-content: flex-start; height: 100%;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Seçenekleri Düzenle</h3>
+      <div style="display: flex; gap: 0.5rem;">
+        <input type="text" id="txtNewOption" placeholder="Yeni seçenek yaz..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.85rem;" />
+        <button class="mini-btn" id="btnAddOption" style="padding: 10px 15px; font-size: 0.85rem; font-weight: 700;">➕ Ekle</button>
+      </div>
+      <div id="listOptions" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; padding-right: 5px;">
+        <!-- Option items are appended dynamically -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METİN ANALİZÖRÜ -->
+<section class="section ds-section" id="text-sec">
+  <div class="section-header">
+    <div class="section-badge">📊 Zihinsel Analiz</div>
+    <h2 class="section-title">Metin Analizörü</h2>
+    <p class="section-sub">Yazılarını analiz et; kelime, karakter, tahmini okuma süresi ve kelime bazlı yapay his analizi ile zihnindeki kelimeleri keşfet!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <textarea id="txtAnalyzerInput" placeholder="Zihnindeki düşünceleri buraya yazmaya başla... Gerçek zamanlı analiz sol tarafta güncellenecektir." style="width: 100%; height: 160px; padding: 1.2rem; background: rgba(3, 4, 15, 0.4); border: 1px solid var(--gb); border-radius: var(--r2); color: #fff; font-family: inherit; font-size: 0.9rem; line-height: 1.6; resize: none; outline: none; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);"></textarea>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; flex-wrap: wrap;">
+      <div class="game-card" style="padding: 1rem; text-align: center; display: flex; flex-direction: column; gap: 0.3rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Kelime</span>
+        <strong id="statWords" style="font-size: 1.6rem; color: #00e5ff;">0</strong>
+      </div>
+      <div class="game-card" style="padding: 1rem; text-align: center; display: flex; flex-direction: column; gap: 0.3rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Karakter</span>
+        <strong id="statChars" style="font-size: 1.6rem; color: #ff6b9d;">0</strong>
+      </div>
+      <div class="game-card" style="padding: 1rem; text-align: center; display: flex; flex-direction: column; gap: 0.3rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Okuma Süresi</span>
+        <strong id="statReadTime" style="font-size: 1.3rem; color: #ffea00; height: 1.9rem; display: flex; align-items: center; justify-content: center;">0 sn</strong>
+      </div>
+      <div class="game-card" style="padding: 1rem; text-align: center; display: flex; flex-direction: column; gap: 0.3rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Hissiyat</span>
+        <strong id="statSentiment" style="font-size: 1.1rem; color: #00c853; height: 1.9rem; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">🧘 Dingin</strong>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <button class="mini-btn" id="btnRandomZenText">💡 Zen Alıntısı Yapıştır</button>
+      <button class="mini-btn" id="btnCleanAnalyzer" style="background: rgba(255,107,157,0.1); border-color: rgba(255,107,157,0.3); color: #ff6b9d;">🗑️ Metni Temizle</button>
+    </div>
+  </div>
+</section>
+
+<!-- BİORİTİM HESAPLAYICI -->
+<section class="section ds-section" id="biorhythm-sec">
+  <div class="section-header">
+    <div class="section-badge">📈 Bioritim</div>
+    <h2 class="section-title">Bioritim Grafikleyici</h2>
+    <p class="section-sub">Doğum tarihini girerek fiziksel, duygusal ve entelektüel dalgalanma grafiklerini SVG tabanlı kozmik dalgalarla izle!</p>
+  </div>
+  <div style="max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap; background: var(--glass); border: 1px solid var(--gb); padding: 1rem; border-radius: var(--r2);">
+      <span style="font-size: 0.85rem; color: var(--tx2);">Doğum Tarihin:</span>
+      <input type="date" id="dateBirth" value="2000-01-01" style="padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.85rem; outline: none;" />
+      <button class="play-btn" id="btnCalcBiorhythm" style="padding: 8px 20px; font-size: 0.85rem; margin: 0; background: linear-gradient(135deg, #7c4dff, #ff1744);">📈 Grafik Oluştur</button>
+    </div>
+    
+    <div class="game-card" style="padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; overflow: hidden; position: relative;">
+      <!-- Chart Title / Legend -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; border-bottom: 1px solid var(--gb); padding-bottom: 0.6rem; font-size: 0.75rem;">
+        <span style="color: var(--tx3);">📅 Gelecek 7 Günlük Bioritim Raporu</span>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <span style="display: flex; align-items: center; gap: 0.3rem;"><i style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #00e5ff;"></i> Fiziksel (23 Gün)</span>
+          <span style="display: flex; align-items: center; gap: 0.3rem;"><i style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ff6b9d;"></i> Duygusal (28 Gün)</span>
+          <span style="display: flex; align-items: center; gap: 0.3rem;"><i style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ffea00;"></i> Zihinsel (33 Gün)</span>
+        </div>
+      </div>
+      
+      <!-- SVG Wrapper -->
+      <div style="width: 100%; overflow-x: auto;">
+        <svg id="svgBiorhythm" viewBox="0 0 800 300" style="width: 100%; min-width: 600px; height: 250px; background: rgba(2,2,8,0.4); border-radius: var(--r1); display: block;"></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAM KRONOMETRE & SÜREÖLÇER -->
+<section class="section ds-section" id="stopwatch-sec">
+  <div class="section-header">
+    <div class="section-badge">⏱️ Zaman</div>
+    <h2 class="section-title">Cam Kronometre & Süreölçer</h2>
+    <p class="section-sub">Tur kayıt özellikli dijital kronometre veya kozmik sesli geri sayım zamanlayıcı ile zamanı yönet!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+    <div style="display: flex; gap: 0.3rem; background: rgba(255,255,255,0.03); border: 1px solid var(--gb); padding: 5px; border-radius: var(--r2); width: 100%; max-width: 320px;">
+      <button class="tool-btn active" id="tabStopwatch" style="flex: 1; text-align: center; border-radius: var(--r1); padding: 8px;">⏱️ Kronometre</button>
+      <button class="tool-btn" id="tabTimer" style="flex: 1; text-align: center; border-radius: var(--r1); padding: 8px;">⏳ Geri Sayım</button>
+    </div>
+    
+    <div class="game-card" style="width: 100%; padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; min-height: 380px;">
+      <!-- Glowing display -->
+      <div style="width: 200px; height: 200px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.02); background: radial-gradient(circle, rgba(124,77,255,0.05), rgba(0,0,0,0)); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 30px rgba(124,77,255,0.08);">
+        <!-- SVG indicator ring -->
+        <svg style="position: absolute; inset: -4px; width: 208px; height: 208px; transform: rotate(-90deg);">
+          <circle cx="104" cy="104" r="100" fill="transparent" stroke="rgba(124, 77, 255, 0.08)" stroke-width="4"></circle>
+          <circle id="timerProgressRing" cx="104" cy="104" r="100" fill="transparent" stroke="#7c4dff" stroke-width="4" stroke-dasharray="628" stroke-dashoffset="0" style="transition: stroke-dashoffset 0.1s linear;"></circle>
+        </svg>
+        <span id="timeDisplay" style="font-size: 2.1rem; font-family: monospace; font-weight: 700; color: #fff; letter-spacing: 1px; z-index: 2;">00:00.00</span>
+        <span id="displayModeLabel" style="font-size: 0.65rem; color: var(--tx3); text-transform: uppercase; margin-top: 5px; z-index: 2;">Kronometre</span>
+      </div>
+      
+      <!-- Timer Input Controls (shown only on Timer mode when stopped) -->
+      <div id="timerInputs" style="display: none; gap: 0.5rem; align-items: center;">
+        <input type="number" id="timerMin" min="0" max="99" value="5" style="width: 60px; padding: 8px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-weight: 700;" />
+        <span style="color: var(--tx3);">dk</span>
+        <input type="number" id="timerSec" min="0" max="59" value="0" style="width: 60px; padding: 8px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-weight: 700;" />
+        <span style="color: var(--tx3);">sn</span>
+      </div>
+      
+      <!-- Control Buttons -->
+      <div style="display: flex; gap: 1rem; width: 100%; max-width: 320px;">
+        <button class="mini-btn" id="btnStopwatchReset" style="flex: 1; padding: 10px;">🔄 Sıfırla / Tur</button>
+        <button class="play-btn" id="btnStopwatchStart" style="flex: 1; padding: 10px; margin: 0; background: linear-gradient(135deg, #7c4dff, #ff6b9d);">▶ Başlat</button>
+      </div>
+      
+      <!-- Lap List (shown only on Stopwatch mode) -->
+      <div id="lapContainer" style="width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 0.5rem; border-top: 1px solid var(--gb); padding-top: 1.2rem; margin-top: 0.5rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Tur Kayıtları</span>
+        <div id="lapList" style="max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; padding-right: 5px;">
+          <!-- Laps appended dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN YAPISKAN NOTLAR -->
+<section class="section ds-section" id="notes-sec">
+  <div class="section-header">
+    <div class="section-badge">📌 Notlar</div>
+    <h2 class="section-title">Kozmik Not Defteri</h2>
+    <p class="section-sub">Fikirlerini, görevlerini veya zihinsel notlarını tarayıcıda kalıcı renkli yapışkan notlar halinde sakla!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <!-- Controls row -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: var(--glass); border: 1px solid var(--gb); padding: 1rem; border-radius: var(--r2);">
+      <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+        <span style="font-size: 0.83rem; color: var(--tx2);">Not Rengi:</span>
+        <div style="display: flex; gap: 0.4rem;" id="noteColorPicker">
+          <button class="pal-color sel" data-color="purple" style="width:24px; height:24px; background:#7c4dff; border-radius:50%; border:none; cursor:pointer; position:relative;"></button>
+          <button class="pal-color" data-color="cyan" style="width:24px; height:24px; background:#00e5ff; border-radius:50%; border:none; cursor:pointer; position:relative;"></button>
+          <button class="pal-color" data-color="pink" style="width:24px; height:24px; background:#ff6b9d; border-radius:50%; border:none; cursor:pointer; position:relative;"></button>
+          <button class="pal-color" data-color="gold" style="width:24px; height:24px; background:#ffea00; border-radius:50%; border:none; cursor:pointer; position:relative;"></button>
+        </div>
+      </div>
+      <button class="play-btn" id="btnAddNote" style="margin: 0; padding: 8px 18px; font-size: 0.83rem; background: linear-gradient(135deg, #00e5ff, #7c4dff);">📌 Yeni Not Ekle</button>
+    </div>
+    
+    <!-- Notes Grid -->
+    <div id="notesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; width: 100%;">
+      <!-- Notes are injected dynamically -->
+    </div>
+  </div>
+</section>
+
+<!-- KRİPTO MARKET SİMÜLATÖRÜ -->
+<section class="section ds-section" id="crypto-sec">
+  <div class="section-header">
+    <div class="section-badge">🪙 Kozmik Borsa</div>
+    <h2 class="section-title">Kozmik Borsa Simülatörü</h2>
+    <p class="section-sub">Canlı dalgalanan BTC, ETH, SOL, DOGE, ADA ve AVAX tahtasını izle; miktar girerek işlem yap ve P&L kar/zar oranlarını takip et!</p>
+  </div>
+  <div style="max-width: 950px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <!-- Left column: Wallet Overview & Portfolio Details -->
+    <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+      <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem; background: radial-gradient(circle at top right, rgba(124,77,255,0.05), rgba(0,0,0,0));">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase; letter-spacing: 1px;">Sanal Cüzdan</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <strong id="walletBalance" style="font-size: 1.8rem; color: #fff; font-family: monospace;">10000.00 CC</strong>
+          <span style="font-size: 0.75rem; color: var(--tx3);">Değer: <strong id="walletValue" style="color: #00e5ff; font-family: monospace;">10000.00 CC</strong></span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--tx3); text-align: right;">Toplam Kar/Zar: <strong id="walletTotalPNL" style="color: #00c853;">+0.00 CC (+0.00%)</strong></div>
+        
+        <div style="height: 1px; background: var(--gb); margin: 0.3rem 0;"></div>
+        
+        <span style="font-size: 0.7rem; color: var(--tx3); text-transform: uppercase; margin-bottom: 0.2rem;">Mevcut Portföy</span>
+        <!-- Portfolio Details Table -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem; font-family: monospace;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; color: var(--tx3);">
+            <span>Varlık</span>
+            <span>Miktar</span>
+            <span>Ort. Maliyet</span>
+            <span style="text-align: right;">Kar/Zar</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowBTC">
+            <span>🪙 BTC</span>
+            <strong id="walletBTC">0.0000</strong>
+            <span id="avgBTC">$0.00</span>
+            <span id="pnlBTC" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowETH">
+            <span>🔷 ETH</span>
+            <strong id="walletETH">0.0000</strong>
+            <span id="avgETH">$0.00</span>
+            <span id="pnlETH" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowSOL">
+            <span>☀️ SOL</span>
+            <strong id="walletSOL">0.0000</strong>
+            <span id="avgSOL">$0.00</span>
+            <span id="pnlSOL" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowDOGE">
+            <span>🐕 DOGE</span>
+            <strong id="walletDOGE">0.0000</strong>
+            <span id="avgDOGE">$0.00</span>
+            <span id="pnlDOGE" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowADA">
+            <span>🔹 ADA</span>
+            <strong id="walletADA">0.0000</strong>
+            <span id="avgADA">$0.00</span>
+            <span id="pnlADA" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; align-items: center;" id="rowAVAX">
+            <span>🔺 AVAX</span>
+            <strong id="walletAVAX">0.0000</strong>
+            <span id="avgAVAX">$0.00</span>
+            <span id="pnlAVAX" style="text-align: right; color: var(--tx3);">--</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Info box -->
+      <div style="background: rgba(255,234,0,0.03); border: 1px solid rgba(255,234,0,0.1); border-radius: var(--r2); padding: 1rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5;">
+        ⚠️ <strong>Canlı Fluctuation</strong>: Fiyat dalgalanmaları **500 milisaniye** (0.5 saniye) hızına yükseltilmiştir. CC (Cosmic Coin) tamamen sanal bir koin birimidir. Meme coin DOGE yüksek volatiliteye sahiptir!
+      </div>
+    </div>
+    
+    <!-- Right column: Asset Board & Ticker -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem;">
+      <h3 style="margin: 0 0 0.2rem 0; font-size: 1.1rem; color: #fff;">Canlı Tahta</h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+        
+        <!-- BTC -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">🪙 BTC</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">Bitcoin</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceBTC">$67420</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #00c853;" id="trendBTC">+1.25%</div>
+          <!-- Sparkline -->
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkBTC"><path d="M0,12" fill="none" stroke="#00c853" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtBTC" min="0.001" step="0.01" value="0.1" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuyBTC" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellBTC" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+        
+        <!-- ETH -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">🔷 ETH</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">Ethereum</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceETH">$3480</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #ff1744;" id="trendETH">-0.82%</div>
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkETH"><path d="M0,12" fill="none" stroke="#ff1744" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtETH" min="0.01" step="0.1" value="0.5" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuyETH" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellETH" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+        
+        <!-- SOL -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">☀️ SOL</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">Solana</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceSOL">$148.50</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #00c853;" id="trendSOL">+4.12%</div>
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkSOL"><path d="M0,12" fill="none" stroke="#00c853" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtSOL" min="0.1" step="1" value="2.0" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuySOL" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellSOL" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+
+        <!-- DOGE -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">🐕 DOGE</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">DogeCoin</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceDOGE">$0.15</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #ff1744;" id="trendDOGE">-1.45%</div>
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkDOGE"><path d="M0,12" fill="none" stroke="#ff1744" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtDOGE" min="1" step="10" value="100" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuyDOGE" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellDOGE" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+
+        <!-- ADA -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">🔹 ADA</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">Cardano</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceADA">$0.45</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #00c853;" id="trendADA">+0.50%</div>
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkADA"><path d="M0,12" fill="none" stroke="#00c853" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtADA" min="1" step="5" value="10" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuyADA" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellADA" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+
+        <!-- AVAX -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.9fr 1.1fr 1.1fr; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.02); padding: 0.6rem 0.8rem; border-radius: var(--r1); border: 1px solid var(--gb);">
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.85rem;">🔺 AVAX</div>
+            <div style="font-size: 0.65rem; color: var(--tx3);">Avalanche</div>
+          </div>
+          <div style="font-family: monospace; font-size: 0.88rem; font-weight: 700;" id="priceAVAX">$35.00</div>
+          <div style="font-family: monospace; font-size: 0.75rem; font-weight: 700; color: #ff1744;" id="trendAVAX">-2.10%</div>
+          <svg style="width:65px; height:24px; background:transparent;" id="sparkAVAX"><path d="M0,12" fill="none" stroke="#ff1744" stroke-width="1.5"></path></svg>
+          <div style="display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end;">
+            <input type="number" id="tradeAmtAVAX" min="0.1" step="1" value="5.0" style="width: 48px; padding: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.72rem; text-align: center;" />
+            <button class="mini-btn" id="btnBuyAVAX" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(0,200,83,0.12); color:#00c853; border-color:rgba(0,200,83,0.3)">Al</button>
+            <button class="mini-btn" id="btnSellAVAX" style="padding: 4px 6px; font-size: 0.7rem; background: rgba(255,23,71,0.12); color:#ff1744; border-color:rgba(255,23,71,0.3)">Sat</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEDEN KİTLE ENDEKSİ (BKE) HESAPLAYICI -->
+<section class="section ds-section" id="bmi-sec">
+  <div class="section-header">
+    <div class="section-badge">⚖️ BKE</div>
+    <h2 class="section-title">Beden Kitle Endeksi</h2>
+    <p class="section-sub">Kayar sürgüler yardımıyla boy ve kilonu hızlıca ayarla, BKE değerini ve sağlık önerilerini öğren!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <!-- Sliders column -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Boy</span>
+          <span style="color: #00e5ff;" id="lblHeight">175 cm</span>
+        </div>
+        <input type="range" id="rangeHeight" min="120" max="220" value="175" class="brush-slider" style="width: 100%; cursor: pointer;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Kilo</span>
+          <span style="color: #ff6b9d;" id="lblWeight">70 kg</span>
+        </div>
+        <input type="range" id="rangeWeight" min="30" max="150" value="70" class="brush-slider" style="width: 100%; cursor: pointer;" />
+      </div>
+    </div>
+    
+    <!-- Result column -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; min-height: 200px; text-align: center; background: radial-gradient(circle at bottom left, rgba(0,229,255,0.03), rgba(0,0,0,0));">
+      <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">BKE Skorunuz</span>
+      <strong id="bmiScore" style="font-size: 2.8rem; color: #fff; font-family: monospace; text-shadow: 0 0 15px rgba(255,255,255,0.15);">22.9</strong>
+      <div id="bmiCategory" style="background: rgba(0,200,83,0.12); color: #00c853; border: 1px solid rgba(0,200,83,0.25); border-radius: var(--r1); padding: 5px 15px; font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Normal Kilolu</div>
+      <p id="bmiAdvice" style="font-size: 0.78rem; color: var(--tx2); line-height: 1.5; margin: 5px 0 0 0;">Harika bir dengedesiniz! Bu formunuzu korumak için bol su tüketin ve günlük yürüyüşlerinizi aksatmayın.</p>
+    </div>
+  </div>
+</section>
+
+<!-- İKİLİ İŞİTSEL RİTİM -->
+<section class="section ds-section" id="binaural-sec">
+  <div class="section-header">
+    <div class="section-badge">🎧 Zihinsel Sentezleyici</div>
+    <h2 class="section-title">İkili İşitsel Ritim</h2>
+    <p class="section-sub">Web Audio API ile üretilen taşıyıcı ve vuruş dalgaları sayesinde odaklanma, meditasyon ve uyku moduna geçin.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+        <button class="mini-btn active" id="bbPresetFocus" style="padding: 6px 14px;">🎯 Odaklanma (10Hz)</button>
+        <button class="mini-btn" id="bbPresetMed" style="padding: 6px 14px;">🧘 Meditasyon (6Hz)</button>
+        <button class="mini-btn" id="bbPresetSleep" style="padding: 6px 14px;">💤 Derin Uyku (2.5Hz)</button>
+        <button class="mini-btn" id="bbPresetRelax" style="padding: 6px 14px;">🌿 Rahatlama (8Hz)</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.3rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Taşıyıcı Frekans (Sol)</span>
+          <span style="color: #00e5ff;" id="lblCarrier">200 Hz</span>
+        </div>
+        <input type="range" id="rangeCarrier" min="100" max="600" value="200" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Vuruş Frekansı (Sağ Farkı)</span>
+          <span style="color: #ff6b9d;" id="lblBeat">10 Hz</span>
+        </div>
+        <input type="range" id="rangeBeat" min="1" max="40" value="10" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Ses Seviyesi</span>
+          <span style="color: #69f0ae;" id="lblBBVol">50%</span>
+        </div>
+        <input type="range" id="rangeBBVol" min="0" max="100" value="50" class="brush-slider" style="width: 100%;" />
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2rem; min-height: 250px; text-align: center; background: radial-gradient(circle at bottom left, rgba(124,77,255,0.03), rgba(0,0,0,0));">
+      <div id="bbVisualizer" class="ambiance-visualizer" style="width: 120px; height: 120px; margin-bottom: 0.5rem;">
+        <div class="visualizer-rings">
+          <div class="ring ring-1" style="border-color: var(--a1)"></div>
+          <div class="ring ring-2" style="border-color: var(--a3)"></div>
+          <div class="ring ring-3" style="border-color: var(--a4)"></div>
+        </div>
+        <div class="visualizer-icon" id="bbStatusIcon">🎧</div>
+      </div>
+      <button class="play-btn" id="btnPlayBB" style="padding: 10px 30px;">▶ Ritmi Başlat</button>
+      <div style="font-size: 0.72rem; color: var(--tx3); line-height: 1.4;">
+        * Kulaklık kullanılması zorunludur. Sol kulağa taşıyıcı frekans, sağ kulağa ise (taşıyıcı + vuruş) frekansı iletilerek beyninizde fark dalgası oluşturulur.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN GÜNLÜK SU TAKİPÇİSİ -->
+<section class="section ds-section" id="water-sec">
+  <div class="section-header">
+    <div class="section-badge">💧 Hidrasyon</div>
+    <h2 class="section-title">Zen Su Takipçisi</h2>
+    <p class="section-sub">Günlük su tüketim hedefinizi eğlenceli ve animasyonlu su dalgaları eşliğinde kaydedin.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+      <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Bugünkü Tüketim</span>
+      <strong id="waterTotalText" style="font-size: 2.2rem; color: #00e5ff; font-family: monospace; text-shadow: 0 0 15px rgba(0,229,255,0.2);">0 / 2500 ml</strong>
+      
+      <!-- Water cylinder SVG container -->
+      <div style="position: relative; width: 120px; height: 180px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1); border-radius: 20px 20px 40px 40px; overflow: hidden; box-shadow: inset 0 0 20px rgba(255,255,255,0.05);">
+        <div id="waterLiquid" style="position: absolute; bottom: 0; left: 0; right: 0; height: 0%; background: linear-gradient(180deg, rgba(0,229,255,0.6) 0%, rgba(124,77,255,0.7) 100%); transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;">
+          <div style="position: absolute; top: -10px; left: -20px; right: -20px; height: 20px; background: radial-gradient(ellipse at bottom, rgba(255,255,255,0.4) 0%, transparent 70%); animation: waveMove 3s linear infinite alternate;"></div>
+        </div>
+        <div style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: rgba(255,255,255,0.3); font-weight: 700; letter-spacing: 1px;">ZEN WATER</div>
+      </div>
+      
+      <div style="font-size: 0.75rem; color: var(--tx3);">Hedef Oranı: <strong id="waterPercent" style="color: #69f0ae;">0%</strong></div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Su Günlüğü Ekle</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+        <button class="mini-btn" id="btnAddWater250" style="padding: 8px;">🥛 +250 ml</button>
+        <button class="mini-btn" id="btnAddWater500" style="padding: 8px;">🥤 +500 ml</button>
+        <button class="mini-btn" id="btnAddWater750" style="padding: 8px;">🧴 +750 ml</button>
+      </div>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.2rem;">
+        <input type="number" id="inputCustomWater" placeholder="Miktar (ml)..." style="flex: 1; padding: 7px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: var(--r1); color: #fff; font-size: 0.85rem;" />
+        <button class="mini-btn" id="btnAddWaterCustom" style="padding: 8px 15px; background: rgba(0,229,255,0.1); border-color: rgba(0,229,255,0.3); color: #00e5ff;">Ekle</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.75rem; color: var(--tx3); text-transform: uppercase;">Bugünkü Kayıtlar</span>
+        <button class="mini-btn" id="btnResetWater" style="padding: 3px 10px; font-size: 0.7rem; border-color: rgba(255,23,71,0.2); color: #ff1744;">Sıfırla</button>
+      </div>
+      <div id="waterLogList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 0.75rem;">
+        <div style="color: var(--tx3); text-align: center; font-style: italic; padding: 10px 0;">Henüz kayıt yok. Sağlığınız için su için!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN YAPILACAKLAR -->
+<section class="section ds-section" id="todo-sec">
+  <div class="section-header">
+    <div class="section-badge">✔️ Checklist</div>
+    <h2 class="section-title">Zen Yapılacaklar</h2>
+    <p class="section-sub">Zihninizi gereksiz detaylardan arındırın, hedeflerinizi hevesle ve pratik kontrol listenizle tamamlayın.</p>
+  </div>
+  <div style="max-width: 650px; margin: 0 auto;">
+    <div class="game-card" style="padding: 1.8rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <input type="text" id="todoInput" placeholder="Zihnindeki görevi buraya yaz..." style="flex: 1; padding: 10px 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; color: #fff; font-size: 0.9rem;" />
+        <button class="play-btn" id="btnTodoAdd" style="padding: 10px 20px; font-size: 0.88rem; margin: 0;">Ekle</button>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.4rem; background: rgba(255,255,255,0.02); padding: 0.8rem; border-radius: var(--r2); border: 1px solid var(--gb);">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem;">
+          <span style="color: var(--tx2);" id="todoProgressText">Tamamlanan: 0 / 0 (%0)</span>
+          <span style="color: var(--a3); font-weight: 700;" id="todoQuote">Odaklanma başarının anahtarıdır. 🌟</span>
+        </div>
+        <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-top: 0.2rem;">
+          <div id="todoProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--a1) 0%, var(--a3) 100%); transition: width 0.4s ease;"></div>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+        <div style="display: flex; gap: 0.3rem;">
+          <button class="mini-btn active" id="todoFilterAll" style="font-size: 0.72rem;">Hepsi</button>
+          <button class="mini-btn" id="todoFilterActive" style="font-size: 0.72rem;">Aktif</button>
+          <button class="mini-btn" id="todoFilterCompleted" style="font-size: 0.72rem;">Tamamlanan</button>
+        </div>
+        <button class="mini-btn" id="btnTodoClear" style="font-size: 0.72rem; border-color: rgba(255,255,255,0.08); color: var(--tx3);">Tamamlananları Sil</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <ul id="todoList" style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; max-height: 300px; overflow-y: auto;">
+        <!-- Inject dynamically -->
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- NEBULA ANSİKLOPEDİSİ -->
+<section class="section ds-section" id="nebula-info-sec">
+  <div class="section-header">
+    <div class="section-badge">🔭 Derin Uzay</div>
+    <h2 class="section-title">Nebula Ansiklopedisi</h2>
+    <p class="section-sub">Kozmosun en büyüleyici, renkli ve gizemli gaz bulutlarını yakından inceleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.3fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+      <div class="game-card nebula-tab active" data-neb="orion" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.8rem; border-left: 3px solid var(--a3);">
+        <div style="font-size: 1.8rem; background: linear-gradient(135deg, #7c4dff, #ff6b9d); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🌌</div>
+        <div>
+          <h4 style="margin: 0; font-size: 0.9rem; color: #fff;">Orion Nebulası</h4>
+          <span style="font-size: 0.7rem; color: var(--tx3);">M42 - Yıldız Doğumevi</span>
+        </div>
+      </div>
+      
+      <div class="game-card nebula-tab" data-neb="crab" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.8rem;">
+        <div style="font-size: 1.8rem; background: linear-gradient(135deg, #00e5ff, #7c4dff); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🦀</div>
+        <div>
+          <h4 style="margin: 0; font-size: 0.9rem; color: #fff;">Yengeç Nebulası</h4>
+          <span style="font-size: 0.7rem; color: var(--tx3);">M1 - Süpernova Kalıntısı</span>
+        </div>
+      </div>
+      
+      <div class="game-card nebula-tab" data-neb="helix" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.8rem;">
+        <div style="font-size: 1.8rem; background: linear-gradient(135deg, #ffea00, #ff6b9d); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">👁️</div>
+        <div>
+          <h4 style="margin: 0; font-size: 0.9rem; color: #fff;">Sarmal Nebula</h4>
+          <span style="font-size: 0.7rem; color: var(--tx3);">NGC 7293 - Tanrının Gözü</span>
+        </div>
+      </div>
+      
+      <div class="game-card nebula-tab" data-neb="eagle" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.8rem;">
+        <div style="font-size: 1.8rem; background: linear-gradient(135deg, #69f0ae, #00e5ff); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🦅</div>
+        <div>
+          <h4 style="margin: 0; font-size: 0.9rem; color: #fff;">Kartal Nebulası</h4>
+          <span style="font-size: 0.7rem; color: var(--tx3);">M16 - Yaratılış Sütunları</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.8rem; display: flex; flex-direction: column; gap: 1rem; min-height: 380px; position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="nebulaTitle" style="margin: 0; font-size: 1.3rem; color: #fff;">Orion Nebulası</h3>
+        <span id="nebulaCatalog" style="font-size: 0.75rem; color: var(--a3); font-weight: 700; background: rgba(0,229,255,0.08); padding: 3px 12px; border-radius: 100px; border: 1px solid rgba(0,229,255,0.2);">M42</span>
+      </div>
+      
+      <div style="position: relative; width: 100%; height: 160px; border-radius: 15px; overflow: hidden; border: 1px solid var(--gb); display: flex; align-items: center; justify-content: center;">
+        <div style="position: absolute; inset: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 0 0 9999px rgba(10,11,20,0.95); z-index: 2; overflow: hidden; pointer-events: none;">
+          <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(255,255,255,0.08);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255,255,255,0.08);"></div>
+        </div>
+        
+        <div id="nebulaBackdrop" style="position: absolute; inset: 0; background: radial-gradient(circle at 30% 40%, rgba(124,77,255,0.4), transparent 50%), radial-gradient(circle at 70% 60%, rgba(255,107,157,0.4), transparent 60%); transition: background 0.8s ease; filter: blur(25px); animation: pulseBackdrop 6s ease-in-out infinite alternate;"></div>
+        <div style="position: absolute; inset: 0; background: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(2px 2px at 150px 80px, #fff, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 300px 120px, #00e5ff, rgba(0,0,0,0)), radial-gradient(2px 2px at 80px 140px, #ff6b9d, rgba(0,0,0,0)); opacity: 0.8;"></div>
+        
+        <span style="position: absolute; bottom: 10px; right: 20px; font-size: 0.65rem; color: rgba(255,255,255,0.4); z-index: 3; font-family: monospace; letter-spacing: 1px;">ZOOM: 160x</span>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-family: monospace; font-size: 0.72rem; background: rgba(0,0,0,0.15); padding: 0.6rem; border-radius: 10px; border: 1px solid var(--gb); text-align: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.05);">
+          <span style="color: var(--tx3);">MESAFE</span>
+          <strong id="nebulaDist" style="color: #fff; font-size: 0.8rem; margin-top: 2px;">1344 IY</strong>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.05);">
+          <span style="color: var(--tx3);">ÇAP</span>
+          <strong id="nebulaSize" style="color: #fff; font-size: 0.8rem; margin-top: 2px;">24 IY</strong>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <span style="color: var(--tx3);">KEŞİF</span>
+          <strong id="nebulaDiscovery" style="color: #fff; font-size: 0.8rem; margin-top: 2px;">1610</strong>
+        </div>
+      </div>
+      
+      <p id="nebulaDesc" style="font-size: 0.82rem; color: var(--tx2); line-height: 1.6; margin: 0;">
+        Orion Bulutsusu, Samanyolu Galaksisi'nde, Avcı Takımyıldızı kuşağının hemen güneyinde yer alan dağınık bir bulutsudur. Dünya'ya en yakın aktif yıldız oluşum bölgesi olduğu için çıplak gözle dahi hafifçe fark edilebilir.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- EVRENİN ÖLÇEĞİ -->
+<section class="section ds-section" id="universe-scale-sec">
+  <div class="section-header">
+    <div class="section-badge">📏 Cetvel</div>
+    <h2 class="section-title">Evrenin Ölçeği</h2>
+    <p class="section-sub">Mikro parçacıklardan makro uzay boyutlarına kadar zihninizi açacak bir kozmik karşılaştırma sürgüsü.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem;">
+    <div class="game-card" style="padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center;">
+      <div style="position: relative; width: 100%; height: 200px; display: flex; align-items: center; justify-content: center;">
+        <div id="scaleOuterCircle" style="position: absolute; width: 180px; height: 180px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.1); background: radial-gradient(circle, rgba(124,77,255,0.03), transparent 60%); transition: all 0.5s ease;"></div>
+        <div id="scaleMidCircle" style="position: absolute; width: 100px; height: 100px; border-radius: 50%; border: 1px solid rgba(0,229,255,0.2); background: radial-gradient(circle, rgba(0,229,255,0.05), transparent 70%); transition: all 0.5s ease; box-shadow: 0 0 15px rgba(0,229,255,0.08);"></div>
+        <div id="scaleGraphic" style="position: absolute; font-size: 4rem; z-index: 2; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); filter: drop-shadow(0 0 15px rgba(255,255,255,0.25));">⚛️</div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+        <h3 id="scaleTitle" style="margin: 0; font-size: 1.4rem; color: #fff;">Kuark</h3>
+        <span id="scaleUnit" style="font-family: monospace; font-size: 0.9rem; color: #ff6b9d; font-weight: 700; background: rgba(255,107,157,0.08); padding: 4px 15px; border-radius: 100px; border: 1px solid rgba(255,107,157,0.25); display: inline-block; margin: 4px auto 0 auto;">10⁻¹⁸ metre</span>
+      </div>
+      
+      <p id="scaleDesc" style="font-size: 0.85rem; color: var(--tx2); line-height: 1.6; max-width: 580px; margin: 0;">
+        Evrendeki en temel parçacıklardan biridir. Proton ve nötron gibi atom altı parçacıkları oluştururlar. Kendi başlarına bağımsız olarak gözlenmeleri imkansızdır.
+      </p>
+      
+      <div style="height: 1px; background: var(--gb); width: 100%; margin: 0.5rem 0;"></div>
+      
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 0.6rem;">
+        <input type="range" id="rangeScale" min="0" max="9" value="0" class="brush-slider" style="width: 100%;" />
+        <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--tx3); font-family: monospace; font-weight: 700;">
+          <span>MİKRO (10⁻¹⁸m)</span>
+          <span>İNSAN HADDİ (10⁰m)</span>
+          <span>MAKRO (10²⁶m)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KAOS TEORİSİ -->
+<section class="section ds-section" id="chaos-fractal-sec">
+  <div class="section-header">
+    <div class="section-badge">🌀 Kaos Teorisi</div>
+    <h2 class="section-title">Kaos Teorisi & Serpinski Fraktalı</h2>
+    <p class="section-sub">Kaos oyunundaki rastgele hareketlerin ve matematiksel kuralların nasıl kusursuz bir fraktal düzen oluşturduğunu izleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+      <canvas id="chaosCanvas" width="400" height="360" style="background: #06070c; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1.1; max-width: 420px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);"></canvas>
+      <div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.72rem; color: var(--tx3); font-family: monospace;">
+        <span>Nokta Sayısı: <strong id="chaosPointCount" style="color: #69f0ae;">0</strong></span>
+        <span>Kararlılık: <strong style="color: #00e5ff;">Yüksek</strong></span>
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Fraktal Ayarları</h3>
+      
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="play-btn" id="btnChaosStart" style="flex: 1.2; padding: 10px 15px; font-size: 0.85rem; margin: 0;">▶ Çizimi Başlat</button>
+        <button class="mini-btn" id="btnChaosClear" style="flex: 0.8; padding: 8px 15px; font-size: 0.8rem; border-color: rgba(255,255,255,0.08); color: var(--tx3);">🗑️ Temizle</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Çizim Hızı (Nokta / Kare)</span>
+          <span style="color: #00e5ff;" id="lblChaosSpeed">50 Nokta</span>
+        </div>
+        <input type="range" id="rangeChaosSpeed" min="5" max="300" value="50" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700;">Renk Paleti</span>
+        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+          <button class="mini-btn active" id="chaosColCyan" style="font-size: 0.72rem; padding: 5px 10px; border-color: rgba(0,229,255,0.25);">💎 Kozmik Neon</button>
+          <button class="mini-btn" id="chaosColFire" style="font-size: 0.72rem; padding: 5px 10px;">🔥 Güneş Plazması</button>
+          <button class="mini-btn" id="chaosColForest" style="font-size: 0.72rem; padding: 5px 10px;">🌿 Orman Ruhu</button>
+        </div>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 0.8rem; font-size: 0.72rem; color: var(--tx2); line-height: 1.5;">
+        💡 <strong>Kural</strong>: Ekranda 3 tepe noktası seçilir. Rastgele bir nokta seçilir ve her adımda en son nokta ile rastgele seçilen bir tepe arasındaki orta nokta işaretlenir. Bu basit kuraldan fraktal bir düzen çıkar!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARADOKSLAR BAHÇESİ -->
+<section class="section ds-section" id="paradox-sec">
+  <div class="section-header">
+    <div class="section-badge">🧩 Felsefe</div>
+    <h2 class="section-title">Paradokslar Bahçesi</h2>
+    <p class="section-sub">Bilim ve felsefe tarihindeki en ünlü zihinsel paradoksları inceleyin, kendi fikrinizi oylayın.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="game-card" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 380px; position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <span style="font-size: 0.72rem; color: var(--a5); font-weight: 700; background: rgba(255,234,0,0.08); padding: 4px 14px; border-radius: 100px; border: 1px solid rgba(255,234,0,0.25);" id="paradoxCategory">Kuantum Fiziği</span>
+        <div style="display: flex; gap: 0.4rem;">
+          <button class="mini-btn" id="btnPrevParadox" style="padding: 5px 12px; border-radius: 50%;">←</button>
+          <button class="mini-btn" id="btnNextParadox" style="padding: 5px 12px; border-radius: 50%;">→</button>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+        <h3 id="paradoxTitle" style="margin: 0; font-size: 1.4rem; color: #fff;">Schrödinger'in Kedisi</h3>
+        <span style="font-size: 0.78rem; color: var(--tx3);" id="paradoxAuthor">Erwin Schrödinger (1935)</span>
+      </div>
+      
+      <p id="paradoxDesc" style="font-size: 0.85rem; color: var(--tx2); line-height: 1.6; margin: 0;">
+        Bir kedi; zehirli gaz kapsülü, radyoaktif tetikleyici ve sayaç bulunan kapalı bir kutuya konur. Kuantum kurallarına göre kutu açılana kadar parçacık %50 olasılıkla sönmüştür ve kedi hem canlı hem de ölüdür.
+      </p>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.5rem 0;"></div>
+      
+      <div id="paradoxVotingArea" style="display: flex; flex-direction: column; gap: 0.8rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700; text-align: center;">Senin Düşüncen Nedir?</span>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;" id="paradoxButtons">
+          <button class="mini-btn" id="btnParadoxOptA" style="padding: 12px; border-radius: 12px; font-weight: 700; text-align: center; white-space: normal; line-height: 1.4; display: flex; flex-direction: column; gap: 2px;">
+            <span>Kutu açılana kadar kedi hem ölü hem canlıdır.</span>
+          </button>
+          <button class="mini-btn" id="btnParadoxOptB" style="padding: 12px; border-radius: 12px; font-weight: 700; text-align: center; white-space: normal; line-height: 1.4; display: flex; flex-direction: column; gap: 2px;">
+            <span>Kedi gözlemden bağımsız olarak sadece tek bir durumdadır.</span>
+          </button>
+        </div>
+        
+        <div id="paradoxResults" style="display: none; flex-direction: column; gap: 0.8rem; background: rgba(0,0,0,0.18); padding: 1rem; border-radius: 12px; border: 1px solid var(--gb);">
+          <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem;">
+              <span id="lblParadoxOptA" style="color: var(--tx2); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 70%;">A Seçeneği</span>
+              <strong id="pctParadoxOptA" style="color: var(--a3);">50%</strong>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+              <div id="barParadoxOptA" style="height: 100%; width: 50%; background: var(--a3);"></div>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem;">
+              <span id="lblParadoxOptB" style="color: var(--tx2); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 70%;">B Seçeneği</span>
+              <strong id="pctParadoxOptB" style="color: var(--a2);">50%</strong>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+              <div id="barParadoxOptB" style="height: 100%; width: 50%; background: var(--a2);"></div>
+            </div>
+          </div>
+          
+          <button class="mini-btn" id="btnParadoxResetVote" style="padding: 4px 10px; font-size: 0.68rem; margin: 4px auto 0 auto; display: block; border-color: rgba(255,255,255,0.08); color: var(--tx3);">Yeniden Oy Ver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- KOZMİK YERÇEKİMİ SANDBOXI -->
+<section class="section ds-section" id="gravity-sec">
+  <div class="section-header">
+    <div class="section-badge">🌌 Kütleçekim Simülatörü</div>
+    <h2 class="section-title">Kozmik Yerçekimi Sandboxı</h2>
+    <p class="section-sub">Kendi güneş sisteminizi kurun! Çekim alanları yaratarak gezegenlerin, yıldızların ve kaotik yörüngelerin dansını izleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+    <div class="game-card" style="padding: 1.2rem; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; background: radial-gradient(circle at top right, rgba(124,77,255,0.02), rgba(0,0,0,0));">
+      <canvas id="gravityCanvas" width="800" height="420" style="background: #030408; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; height: auto; aspect-ratio: 1.9; box-shadow: inset 0 0 35px rgba(0,0,0,0.9); cursor: pointer; touch-action: none;"></canvas>
+      <div style="font-size: 0.72rem; color: var(--tx3); text-align: center; width: 100%;">
+        * Ekrana tıklayarak fırlatmak istediğiniz gezegeni yerleştirin ve fırlatmak istediğiniz yöne doğru sürükleyip bırakın (sapan yöntemi).
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.4rem; width: 100%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.2rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700; margin-right: 0.4rem;">Cisim Türü:</span>
+        <button class="mini-btn active" id="gravitySpawnPlanet" style="padding: 6px 12px; border-color: rgba(105,240,174,0.3); color: #69f0ae;">🟢 Gezegen (Küçük)</button>
+        <button class="mini-btn" id="gravitySpawnStar" style="padding: 6px 12px;">🟡 Yıldız (Büyük)</button>
+        <button class="mini-btn" id="gravitySpawnBH" style="padding: 6px 12px;">🟣 Karadelik (Aşırı)</button>
+      </div>
+      
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; justify-content: flex-end; align-items: center; min-width: 280px;">
+        <div style="display: flex; gap: 0.4rem;">
+          <button class="mini-btn" id="gravityPresetSolar" style="font-size: 0.72rem; padding: 6px 10px;">🌌 Güneş Sistemi</button>
+          <button class="mini-btn" id="gravityPresetBinary" style="font-size: 0.72rem; padding: 6px 10px;">♊ Çift Yıldız</button>
+          <button class="mini-btn" id="gravityPresetChaos" style="font-size: 0.72rem; padding: 6px 10px;">🌀 3-Cisim Kaosu</button>
+        </div>
+        <div style="height: 20px; width: 1px; background: var(--gb);"></div>
+        <button class="mini-btn" id="btnGravityTrails" style="padding: 6px 12px; color: var(--tx2);">💫 Yörünge İzleri: Açık</button>
+        <button class="mini-btn" id="btnGravityClear" style="padding: 6px 15px; border-color: rgba(255,23,71,0.2); color: #ff1744;">🗑️ Evreni Temizle</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ZEN YAPAY YAŞAM (LENIA) -->
+<section class="section ds-section" id="lenia-sec">
+  <div class="section-header">
+    <div class="section-badge">🎛️ Hücresel Otomat</div>
+    <h2 class="section-title">Zen Yapay Yaşam: Lenia Canlıları</h2>
+    <p class="section-sub">Matematiksel hücresel kurallara göre hareket eden, bölünen ve evrimleşen kozmik mikro organizma simülasyonu.</p>
+  </div>
+  <div style="max-width: 850px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+      <canvas id="leniaCanvas" width="400" height="360" style="background: #030407; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1.1; max-width: 420px; cursor: crosshair; box-shadow: inset 0 0 30px rgba(0,0,0,0.9);"></canvas>
+      <div style="font-size: 0.72rem; color: var(--tx3); text-align: center;">
+        * Tuvale mouse ile dokunarak organik sıvılar serpebilir, tohumlar ekebilirsiniz.
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Organizasyon & Yaşam Kontrolü</h3>
+      
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="play-btn" id="btnLeniaStart" style="flex: 1.2; padding: 10px 15px; font-size: 0.85rem; margin: 0;">▶ Yaşamı Başlat</button>
+        <button class="mini-btn" id="btnLeniaClear" style="flex: 0.8; padding: 8px 15px; font-size: 0.8rem; border-color: rgba(255,255,255,0.08); color: var(--tx3);">🗑️ Yok Et</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Metabolizma Hızı</span>
+          <span style="color: #69f0ae;" id="lblLeniaSpeed">Normal</span>
+        </div>
+        <input type="range" id="rangeLeniaSpeed" min="1" max="4" value="2" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700;">Tohum Şablonları</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+          <button class="mini-btn" id="btnLeniaSeed1" style="font-size: 0.72rem; padding: 7px;">🧬 Gezgin Hücre</button>
+          <button class="mini-btn" id="btnLeniaSeed2" style="font-size: 0.72rem; padding: 7px;">🐌 Salyangoz</button>
+          <button class="mini-btn" id="btnLeniaSeed3" style="font-size: 0.72rem; padding: 7px;">🌀 Çift Pulsar</button>
+          <button class="mini-btn" id="btnLeniaSeed4" style="font-size: 0.72rem; padding: 7px;">🫧 Kaotik Organizma</button>
+        </div>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 0.8rem; font-size: 0.72rem; color: var(--tx2); line-height: 1.5;">
+        💡 <strong>Lenia Nedir?</strong> Conway'in klasik Game of Life otomatının sürekli (continuous) uzayda geçen gelişmiş halidir. Buradaki varlıklar, hücresel etkileşim kurallarına göre kararlı hareket eden gerçek kozmik organizmalara benzer.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REZONANS TABLASI (KİMATİK) -->
+<section class="section ds-section" id="cymatics-sec">
+  <div class="section-header">
+    <div class="section-badge">🔮 Ses Rezonansı</div>
+    <h2 class="section-title">Rezonans Tablası: Kimatik Desenler</h2>
+    <p class="section-sub">Frekans titreşimlerinin kum taneleri üzerinde oluşturduğu muazzam geometrik Chladni rezonans çizgilerini izleyin.</p>
+  </div>
+  <div style="max-width: 850px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+      <canvas id="cymaticsCanvas" width="400" height="380" style="background: #05060b; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1.05; max-width: 420px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9);"></canvas>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Titreşim Kontrolleri</h3>
+      
+      <button class="play-btn" id="btnCymaticsPlay" style="width: 100%; padding: 10px 15px; font-size: 0.85rem; margin: 0;">▶ Titreşimi Başlat</button>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Frekans</span>
+          <span style="color: #ffea00; font-family: monospace;" id="lblCymaticsFreq">342 Hz</span>
+        </div>
+        <input type="range" id="rangeCymaticsFreq" min="100" max="1500" value="342" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Ses Seviyesi (Volume)</span>
+          <span style="color: var(--tx3);" id="lblCymaticsVol">30%</span>
+        </div>
+        <input type="range" id="rangeCymaticsVol" min="0" max="100" value="30" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700;">Karakteristik Desen Rezonansları</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+          <button class="mini-btn active" id="btnCymaticsPattern1" style="font-size: 0.72rem; padding: 6px;">✴️ Kare Yıldız (342Hz)</button>
+          <button class="mini-btn" id="btnCymaticsPattern2" style="font-size: 0.72rem; padding: 6px;">🌸 Geometrik Çiçek (512Hz)</button>
+          <button class="mini-btn" id="btnCymaticsPattern3" style="font-size: 0.72rem; padding: 6px;">🔬 Kozmik Doku (880Hz)</button>
+          <button class="mini-btn" id="btnCymaticsPattern4" style="font-size: 0.72rem; padding: 6px;">🕸️ Karmaşık Örgü (1240Hz)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KAOTİK ÇİFT SARKAÇ -->
+<section class="section ds-section" id="double-pendulum-sec">
+  <div class="section-header">
+    <div class="section-badge">🌀 Kaos Teorisi</div>
+    <h2 class="section-title">Kaos Teorisi: Çift Sarkaç Simülasyonu</h2>
+    <p class="section-sub">Lagrangian fizik mekaniği denklemleriyle mikro başlangıç farklarının devasa kaotik neon yörüngelere ayrılışını gözlemleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+      <canvas id="pendulumCanvas" width="420" height="380" style="background: #030407; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1.1; max-width: 440px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); cursor: grab;"></canvas>
+      <div style="font-size: 0.72rem; color: var(--tx3); text-align: center;">
+        * Sarkaç uçlarını mouse veya parmağınızla sürükleyerek savurabilirsiniz.
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Fizik Sandbox Ayarları</h3>
+      
+      <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+        <button class="mini-btn active" id="btnPendSingle" style="padding: 6px 12px;">🟢 Tekli Sarkaç</button>
+        <button class="mini-btn" id="btnPendDual" style="padding: 6px 12px; border-color: rgba(0,229,255,0.3); color: #00e5ff;">🌀 Çiftli Sarkaç (Kaos)</button>
+        <button class="mini-btn" id="btnPendClear" style="padding: 6px 12px; border-color: rgba(255,23,71,0.15); color: #ff1744; margin-left: auto;">🗑️ İzleri Sil</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Kolların Uzunluğu</span>
+          <span style="color: #00e5ff;" id="lblPendLength">Orta</span>
+        </div>
+        <input type="range" id="rangePendLength" min="50" max="150" value="100" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Sürtünme / Sönümleme</span>
+          <span style="color: #ff6b9d;" id="lblPendDamp">Çok Düşük</span>
+        </div>
+        <input type="range" id="rangePendDamp" min="0" max="100" value="5" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Çekim Kuvveti (G Yerçekimi)</span>
+          <span style="color: #69f0ae;" id="lblPendGrav">1.0g (Dünya)</span>
+        </div>
+        <input type="range" id="rangePendGrav" min="0" max="25" value="10" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 0.8rem; font-size: 0.72rem; color: var(--tx2); line-height: 1.5;">
+        🧠 <strong>Kaos Düellosu:</strong> Çiftli modda, başlangıç açısı arasında milimetrik fark olan iki sarkaç (Mavi ve Pembe) eşzamanlı sallanır. Kaotik Lagrangian denklemleri nedeniyle, yörüngeler kısa sürede tamamen ayrışacaktır!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KOZMİK KARA DELİK -->
+<section class="section ds-section" id="blackhole-sec">
+  <div class="section-header">
+    <div class="section-badge">🕳️ Uzay-Zaman</div>
+    <h2 class="section-title">Kozmik Kütleçekim: Kara Delik Simülatörü</h2>
+    <p class="section-sub">Rölativistik yerçekimi denklemleriyle ışık (foton) ve madde yollarının bükülmesini ve yutuluş aşamasını inceleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+      <canvas id="blackholeCanvas" width="420" height="380" style="background: #020204; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1.1; max-width: 440px; box-shadow: inset 0 0 35px rgba(0,0,0,0.95); cursor: move;"></canvas>
+      <div style="font-size: 0.72rem; color: var(--tx3); text-align: center;">
+        * Kara deliği mouse yardımıyla hareket ettirerek çekim alanını yerinden oynatabilirsiniz.
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Olay Ufku & Kütleçekim Laboratuvarı</h3>
+      
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="play-btn" id="btnBHShoot" style="flex: 1.2; padding: 10px 15px; font-size: 0.85rem; margin: 0;">💫 Foton Püskürt</button>
+        <button class="mini-btn" id="btnBHEmit" style="flex: 0.8; padding: 8px 15px; font-size: 0.8rem; border-color: rgba(0,229,255,0.25); color: #00e5ff;">🔄 Sürekli Emitter</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Singularity Kütlesi (Mass)</span>
+          <span style="color: #ff1744;" id="lblBHMass">2.5 M☉</span>
+        </div>
+        <input type="range" id="rangeBHMass" min="1" max="6" value="2.5" step="0.5" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Gaz Diski Hızı (Accretion Disc)</span>
+          <span style="color: #00e5ff;" id="lblBHDisc">Normal</span>
+        </div>
+        <input type="range" id="rangeBHDisc" min="0" max="3" value="1.5" step="0.5" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Çıkış Foton Hızı</span>
+          <span style="color: #ffea00;" id="lblBHSpeed">Orta</span>
+        </div>
+        <input type="range" id="rangeBHSpeed" min="3" max="15" value="8" class="brush-slider" style="width: 100%;" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KUANTUM GÖZLEMCİ -->
+<section class="section ds-section" id="quantum-sec">
+  <div class="section-header">
+    <div class="section-badge">👁️‍🗨️ Kuantum Fiziği</div>
+    <h2 class="section-title">Kuantum Gözlemci: Çift Yarık Deneyi</h2>
+    <p class="section-sub">Kuantum süperpozisyon dalga-parçacık ikiliğini inceleyin. Gözlemci kamerası yerleştirildiğinde dalga fonksiyonunun nasıl çöktüğünü görün.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; position: relative;">
+      <!-- Drag Observer graphic label -->
+      <div id="observerDragBox" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,229,255,0.3); border-radius: var(--r1); padding: 5px 12px; font-size: 0.73rem; z-index: 5; color: #00e5ff; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+        <span id="observerDragIcon">👁️</span> <span id="observerDragLabel">Gözlemci ÇEVRİMDIŞI</span>
+      </div>
+      <canvas id="quantumCanvas" width="420" height="280" style="background: #040508; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; height: auto; aspect-ratio: 1.5; max-width: 440px; box-shadow: inset 0 0 25px rgba(0,0,0,0.9);"></canvas>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 335px;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Dalga Fonksiyonu Ölçüm İstasyonu</h3>
+      
+      <button class="play-btn" id="btnQuantumObserve" style="width: 100%; padding: 10px 15px; font-size: 0.85rem; margin: 0; background: linear-gradient(135deg, #00e5ff, #7c4dff);">👁️ Gözlemciyi Etkinleştir</button>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Yarıklar Arası Mesafe</span>
+          <span style="color: #ff6b9d;" id="lblQuantumSlit">Geniş</span>
+        </div>
+        <input type="range" id="rangeQuantumSlit" min="20" max="60" value="40" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
+          <span style="color: var(--tx2);">Fırlatma Dalga Boyu (Wavelength)</span>
+          <span style="color: #00e5ff;" id="lblQuantumWave">Kısa</span>
+        </div>
+        <input type="range" id="rangeQuantumWave" min="15" max="45" value="25" class="brush-slider" style="width: 100%;" />
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 0.8rem; font-size: 0.72rem; color: var(--tx2); line-height: 1.5;">
+        📊 <strong>Kuantum Gizemi:</strong> Gözlemci kapalıyken elektronlar yarıklardan dalga gibi geçip girişim deseni (çoklu dikey neon çizgiler) oluşturur. Gözlemci açıldığında sistem "ölçüm" yapar, dalga çöker ve elektronlar sadece iki paralel hat halinde toplanır!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FİLOZOFLAR ARENASI -->
+<section class="section ds-section" id="debate-sec">
+  <div class="section-header">
+    <div class="section-badge">🏛️ Felsefe</div>
+    <h2 class="section-title">Filozoflar Arenası: Simüle Sokratik Tartışma</h2>
+    <p class="section-sub">Tarihin en büyük düşünürleri hayatın, zamanın ve kaderin gizemlerini tartışırken onlarla etkileşime girin.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="game-card" style="padding: 1.8rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 480px;">
+      <!-- Chat thread frame -->
+      <div id="debateChat" style="flex: 1; min-height: 300px; max-height: 380px; overflow-y: auto; background: rgba(0,0,0,0.25); border: 1px solid var(--gb); border-radius: 15px; padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; gap: 0.6rem; align-items: start;">
+          <div style="font-size: 1.5rem; width: 36px; height: 36px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--gb);">🏛️</div>
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--gb); padding: 8px 14px; border-radius: 4px 15px 15px 15px; max-width: 80%; font-size: 0.85rem; line-height: 1.5;">
+            Filozoflar Arenası'na hoş geldiniz. Aşağıdaki zihinsel derinliği olan sorulardan birini seçerek tartışmayı başlatabilir veya kendi argümanınızı en alttaki alandan fırlatabilirsiniz.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Preset questions grids -->
+      <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+        <span style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase; letter-spacing: 1px;">Tartışma Başlatacak Sorular</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;" id="debatePresets">
+          <button class="mini-btn" id="btnDebateQ1" style="font-size: 0.72rem; text-align: left; padding: 8px; font-weight: 500;">⌛ Zaman gerçek midir yoksa zihnimizin bir illüzyonu mu?</button>
+          <button class="mini-btn" id="btnDebateQ2" style="font-size: 0.72rem; text-align: left; padding: 8px; font-weight: 500;">🌱 İnsanoğlu kaderinin mutlak efendisi midir?</button>
+          <button class="mini-btn" id="btnDebateQ3" style="font-size: 0.72rem; text-align: left; padding: 8px; font-weight: 500;">🧘 Evrenin ve hayatın asıl anlamı nedir?</button>
+          <button class="mini-btn" id="btnDebateQ4" style="font-size: 0.72rem; text-align: left; padding: 8px; font-weight: 500;">⚖️ Doğru ile yanlışı belirleyen evrensel ahlak var mıdır?</button>
+        </div>
+      </div>
+      
+      <!-- User response entry -->
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.3rem;">
+        <input type="text" id="debateUserInput" placeholder="Kendi argümanını yaz, filozoflara meydan oku..." style="flex: 1; padding: 10px 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; color: #fff; font-size: 0.88rem;" />
+        <button class="play-btn" id="btnDebateSend" style="padding: 10px 20px; font-size: 0.88rem; margin: 0; background: linear-gradient(135deg, var(--a1), var(--a3));">Fikir Belirt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="footer">
+
   <div class="footer-inner">
     <div class="footer-logo"><span>✦</span><span>Dreamscape</span></div>
     <p>Huzurlu anlar, keyifli vakitler 💙</p>

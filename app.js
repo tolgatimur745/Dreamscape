@@ -49,18 +49,72 @@ function toast(msg, col) {
 function $(id){ return document.getElementById(id); }
 function on(id, evt, fn){ var el=$(id); if(el) el.addEventListener(evt, fn); }
 
+/* ── Page Visibility API — tüm animasyonları duraklat ────── */
+var PAGE_VISIBLE = true;
+document.addEventListener('visibilitychange', function(){
+  PAGE_VISIBLE = !document.hidden;
+});
+
+/* ── Performans Yöneticisi ──────────────────────────────── */
+// FPS limiter — verilen FPS'e göre her frame için true/false döndür
+function makeFPSGate(targetFPS) {
+  var interval = 1000 / targetFPS;
+  var last = 0;
+  return function(now) {
+    if (now - last < interval) return false;
+    last = now;
+    return true;
+  };
+}
+
+// IntersectionObserver ile canvas'ları viewport'a göre durdur/çalıştır
+var CANVAS_VISIBLE = {}; // canvasId -> bool
+(function setupCanvasObserver() {
+  if (!window.IntersectionObserver) {
+    // Polyfill: hepsini görünür say
+    document.querySelectorAll('canvas').forEach(function(c) {
+      if (c.id) CANVAS_VISIBLE[c.id] = true;
+    });
+    return;
+  }
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.target.id) CANVAS_VISIBLE[e.target.id] = e.isIntersecting;
+    });
+  }, { threshold: 0.01 });
+  // Biraz gecikmeyle başlat — DOM tam yüklendikten sonra
+  setTimeout(function() {
+    document.querySelectorAll('canvas').forEach(function(c) {
+      if (c.id) { CANVAS_VISIBLE[c.id] = false; obs.observe(c); }
+    });
+  }, 500);
+})();
+
+function isCanvasActive(canvasId) {
+  return PAGE_VISIBLE && (CANVAS_VISIBLE[canvasId] !== false);
+}
+
 /* ── Navbar ──────────────────────────────────────────────── */
 try {
+  var _scrollTicking = false;
   window.addEventListener('scroll', function(){
-    $('navbar').classList.toggle('scrolled', window.scrollY > 50);
-  });
+    if (!_scrollTicking) {
+      requestAnimationFrame(function(){
+        $('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        _scrollTicking = false;
+      });
+      _scrollTicking = true;
+    }
+  }, {passive: true});
   function tick_clock(){
+    if (!PAGE_VISIBLE) return;
     var el = $('navTime');
     if(el) el.textContent = new Date().toLocaleTimeString('tr-TR');
   }
   setInterval(tick_clock, 1000); tick_clock();
   var SES_START = Date.now();
   setInterval(function(){
+    if (!PAGE_VISIBLE) return;
     var el=$('sessionTime');
     if(el) el.textContent='⏱️ Bu oturumda: '+Math.floor((Date.now()-SES_START)/60000)+' dk';
   }, 60000);
@@ -71,28 +125,39 @@ try {
   var pc = $('particleCanvas');
   var pcx = pc.getContext('2d');
   var PW, PH, PTS = [];
-  function presize(){ PW = pc.width = innerWidth; PH = pc.height = innerHeight; }
-  window.addEventListener('resize', presize); presize();
-  for(var pi=0;pi<120;pi++) PTS.push({
+  function presize(){
+    PW = pc.width = innerWidth;
+    PH = pc.height = innerHeight;
+  }
+  var _presizeTmr;
+  window.addEventListener('resize', function(){
+    clearTimeout(_presizeTmr);
+    _presizeTmr = setTimeout(presize, 200);
+  }, {passive:true});
+  presize();
+  /* 30 parçacık, 15 FPS — arkaplan dekorasyon için yeterli */
+  for(var pi=0;pi<30;pi++) PTS.push({
     x:Math.random()*PW, y:Math.random()*PH,
-    vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
-    r:Math.random()*1.5+.3, h:Math.random()*80+215, ph:Math.random()*Math.PI*2
+    vx:(Math.random()-.5)*.18, vy:(Math.random()-.5)*.18,
+    r:Math.random()*1.2+.4, h:Math.random()*80+215, ph:Math.random()*Math.PI*2
   });
-  (function ploop(){
+  var _pFPSGate = makeFPSGate(15);
+  (function ploop(now){
+    requestAnimationFrame(ploop);
+    if (!isCanvasActive('particleCanvas')) return;
+    if (!_pFPSGate(now || 0)) return;
     pcx.clearRect(0,0,PW,PH);
     PTS.forEach(function(p){
-      p.x+=p.vx; p.y+=p.vy; p.ph+=.022;
+      p.x+=p.vx; p.y+=p.vy; p.ph+=.04;
       if(p.x<0||p.x>PW) p.vx*=-1;
       if(p.y<0||p.y>PH) p.vy*=-1;
-      var a=.12+Math.abs(Math.sin(p.ph))*.42;
-      pcx.save(); pcx.globalAlpha=a;
-      pcx.fillStyle='hsl('+p.h+',80%,70%)';
-      pcx.shadowBlur=7; pcx.shadowColor='hsl('+p.h+',80%,70%)';
+      var a=.08+Math.abs(Math.sin(p.ph))*.28;
+      pcx.globalAlpha=a;
+      pcx.fillStyle='hsl('+p.h+',70%,65%)';
       pcx.beginPath(); pcx.arc(p.x,p.y,p.r,0,Math.PI*2); pcx.fill();
-      pcx.restore();
     });
-    requestAnimationFrame(ploop);
-  })();
+    pcx.globalAlpha=1;
+  })(0);
 } catch(e){ console.error('Particles error',e); }
 
 /* ── Helper: rounded rect ─────────────────────────────────── */
@@ -1301,14 +1366,16 @@ try {
     cg.appendChild(card);
   });
   function clocks_tick(){
+    if (!PAGE_VISIBLE) return;
+    var now = new Date();
     CITIES.forEach(function(city){
       var id='clk'+city.n.replace(/[\s]/g,'');
       var el=$(id),de=$(id+'d');
-      try{if(el)el.textContent=new Date().toLocaleTimeString('tr-TR',{timeZone:city.tz,hour12:false});}catch(e){}
-      try{if(de)de.textContent=new Date().toLocaleDateString('tr-TR',{timeZone:city.tz,weekday:'short',day:'2-digit',month:'short'});}catch(e){}
+      try{if(el)el.textContent=now.toLocaleTimeString('tr-TR',{timeZone:city.tz,hour12:false});}catch(e){}
+      try{if(de)de.textContent=now.toLocaleDateString('tr-TR',{timeZone:city.tz,weekday:'short',day:'2-digit',month:'short'});}catch(e){}
     });
   }
-  setInterval(clocks_tick,1000);clocks_tick();
+  setInterval(clocks_tick,2000);clocks_tick();
 } catch(e){ console.error('Clocks error',e); }
 
 /* ══════════════════════════════════════════════════════════
@@ -1540,7 +1607,11 @@ try {
         });
       });
     }
-    function starDraw() {
+    var _starFPS = makeFPSGate(24);
+    function starDraw(now) {
+      requestAnimationFrame(starDraw);
+      if (!isCanvasActive('starCanvas')) return;
+      if (!_starFPS(now || 0)) return;
       var W = starCanvas.width, H = starCanvas.height;
       sc.fillStyle = '#02030d'; sc.fillRect(0, 0, W, H);
       sc.save(); sc.strokeStyle = 'rgba(255,234,0,.3)'; sc.lineWidth = 1; sc.setLineDash([4,6]);
@@ -1553,10 +1624,10 @@ try {
       sc.setLineDash([]); sc.restore();
       starList.forEach(function(s) {
         s.ph += s.tw; var a = s.a * (0.6 + Math.abs(Math.sin(s.ph)) * 0.4);
-        sc.save(); sc.globalAlpha = a; sc.shadowBlur = s.name ? 14 : 4; sc.shadowColor = 'hsl(' + s.h + ',80%,75%)';
-        sc.fillStyle = 'hsl(' + s.h + ',75%,85%)'; sc.beginPath(); sc.arc(s.x, s.y, s.r, 0, 6.28); sc.fill(); sc.restore();
+        sc.globalAlpha = a;
+        sc.fillStyle = 'hsl(' + s.h + ',75%,85%)'; sc.beginPath(); sc.arc(s.x, s.y, s.r, 0, 6.28); sc.fill();
       });
-      requestAnimationFrame(starDraw);
+      sc.globalAlpha = 1;
     }
     starCanvas.addEventListener('click', function(e) {
       var rect = starCanvas.getBoundingClientRect();
@@ -2049,7 +2120,7 @@ try {
       pctx.shadowColor = '#00e5ff'; pctx.shadowBlur = 20;
       pctx.fillStyle = '#fff'; pctx.beginPath(); pctx.arc(b.x, b.y, b.r, 0, Math.PI*2); pctx.fill();
       pctx.shadowBlur = 0;
-      requestAnimationFrame(pong_draw);
+      if (PG.running) requestAnimationFrame(pong_draw);
     }
     pong_size();
     pongCanvas.addEventListener('mousemove', function(e) {
@@ -2679,7 +2750,11 @@ try {
       var col = ripple_color(rippleMode, ripples.length);
       ripples.push({x:x, y:y, r:0, maxR:Math.random()*120+80, col:col, a:1, speed:Math.random()*2+2});
     }
-    function ripple_draw() {
+    var _rippleFPS = makeFPSGate(30);
+    function ripple_draw(now) {
+      requestAnimationFrame(ripple_draw);
+      if (!isCanvasActive('rippleCanvas')) return;
+      if (!_rippleFPS(now || 0)) return;
       var W=rippleCanvas.width, H=rippleCanvas.height;
       rctx.fillStyle='rgba(1,2,13,.12)'; rctx.fillRect(0,0,W,H);
       ripples.forEach(function(rp, i) {
@@ -2689,7 +2764,6 @@ try {
         rctx.lineWidth = 2; rctx.stroke();
       });
       ripples = ripples.filter(function(rp){ return rp.a > 0; });
-      requestAnimationFrame(ripple_draw);
     }
     rippleCanvas.addEventListener('click', function(e) {
       var rect=rippleCanvas.getBoundingClientRect();
@@ -3211,64 +3285,65 @@ try {
 
 /* ══════════════════════════════════════════════════════════
    BALANCE RESET - Blackjack & Slot
+   (Olay tabanlı — polling setInterval kaldırıldı)
 ══════════════════════════════════════════════════════════ */
 try {
-  // Watch blackjack balance and add reset if needed
-  var bjResetAdded = false;
-  setInterval(function() {
+  /* Blackjack: her el bitişinde kontrol et */
+  function bj_check_balance() {
     if (typeof BJ === 'undefined') return;
-    var balEl = document.getElementById('bjBalance');
-    var resetBtn = document.getElementById('bjReset');
-    if (BJ.balance <= 0 && !resetBtn) {
-      var row = document.getElementById('bjBetRow');
-      if (row && !bjResetAdded) {
-        bjResetAdded = true;
-        var btn = document.createElement('button');
-        btn.className = 'bj-btn deal'; btn.id = 'bjReset';
-        btn.style.cssText = 'margin-top:.5rem;background:linear-gradient(135deg,#ff6b9d,#7c4dff)';
-        btn.textContent = '💰 Bakiyeyi Yenile (1000)';
-        btn.addEventListener('click', function() {
-          BJ.balance = 1000; BJ.bet = 50; BJ.wins = 0; BJ.losses = 0; BJ.pushes = 0;
-          if (balEl) balEl.textContent = 1000;
-          var betEl = document.getElementById('bjBet'); if (betEl) betEl.textContent = 50;
-          var wEl = document.getElementById('bjWins'); if (wEl) wEl.textContent = 0;
-          var lEl = document.getElementById('bjLosses'); if (lEl) lEl.textContent = 0;
-          var pEl = document.getElementById('bjPushes'); if (pEl) pEl.textContent = 0;
-          var res = document.getElementById('bjResult'); if (res) { res.textContent = ''; res.className = 'bj-result'; }
-          btn.remove(); bjResetAdded = false;
-          toast('Bakiye yenilendi! 💰', '#69f0ae');
-        });
-        row.parentNode.insertBefore(btn, row.nextSibling);
-      }
-    }
-  }, 1000);
-
-  // Watch slot balance
-  var slotResetAdded = false;
-  setInterval(function() {
+    if (BJ.balance > 0) return;
+    if (document.getElementById('bjReset')) return;
+    var row = document.getElementById('bjBetRow');
+    if (!row) return;
+    var btn = document.createElement('button');
+    btn.className = 'bj-btn deal'; btn.id = 'bjReset';
+    btn.style.cssText = 'margin-top:.5rem;background:linear-gradient(135deg,#ff6b9d,#7c4dff)';
+    btn.textContent = '💰 Bakiyeyi Yenile (1000)';
+    btn.addEventListener('click', function() {
+      BJ.balance = 1000; BJ.bet = 50; BJ.wins = 0; BJ.losses = 0; BJ.pushes = 0;
+      var balEl = document.getElementById('bjBalance'); if (balEl) balEl.textContent = 1000;
+      var betEl = document.getElementById('bjBet'); if (betEl) betEl.textContent = 50;
+      var wEl = document.getElementById('bjWins'); if (wEl) wEl.textContent = 0;
+      var lEl = document.getElementById('bjLosses'); if (lEl) lEl.textContent = 0;
+      var pEl = document.getElementById('bjPushes'); if (pEl) pEl.textContent = 0;
+      var res = document.getElementById('bjResult'); if (res) { res.textContent = ''; res.className = 'bj-result'; }
+      btn.remove();
+      toast('Bakiye yenilendi! 💰', '#69f0ae');
+    });
+    row.parentNode.insertBefore(btn, row.nextSibling);
+  }
+  /* Slot: her çevirişte kontrol et */
+  function slot_check_balance() {
     if (typeof SL === 'undefined') return;
-    var slotResetBtn = document.getElementById('slotReset');
-    if (SL.balance < 10 && !slotResetBtn && !slotResetAdded) {
-      slotResetAdded = true;
-      var spinBtn = document.getElementById('slotSpin');
-      if (spinBtn) {
-        var btn = document.createElement('button');
-        btn.className = 'slot-pull-btn'; btn.id = 'slotReset';
-        btn.style.cssText = 'background:linear-gradient(135deg,#ff6b9d,#7c4dff);margin-top:.5rem';
-        btn.textContent = '💰 500 Koin Yükle';
-        btn.addEventListener('click', function() {
-          SL.balance = 500; SL.wins = 0; SL.jackpots = 0;
-          var bEl = document.getElementById('slotBalance'); if (bEl) bEl.textContent = 500;
-          var wEl = document.getElementById('slotWins'); if (wEl) wEl.textContent = 0;
-          var jEl = document.getElementById('slotJP'); if (jEl) jEl.textContent = 0;
-          var res = document.getElementById('slotResult'); if (res) { res.textContent = 'Şansını dene!'; res.className = 'slot-result'; }
-          btn.remove(); slotResetAdded = false;
-          toast('500 koin yüklendi! 🎰', '#ffea00');
-        });
-        spinBtn.parentNode.insertBefore(btn, spinBtn.nextSibling);
-      }
-    }
-  }, 1000);
+    if (SL.balance >= 10) return;
+    if (document.getElementById('slotReset')) return;
+    var spinBtn = document.getElementById('slotSpin');
+    if (!spinBtn) return;
+    var btn = document.createElement('button');
+    btn.className = 'slot-pull-btn'; btn.id = 'slotReset';
+    btn.style.cssText = 'background:linear-gradient(135deg,#ff6b9d,#7c4dff);margin-top:.5rem';
+    btn.textContent = '💰 500 Koin Yükle';
+    btn.addEventListener('click', function() {
+      SL.balance = 500; SL.wins = 0; SL.jackpots = 0;
+      var bEl = document.getElementById('slotBalance'); if (bEl) bEl.textContent = 500;
+      var wEl = document.getElementById('slotWins'); if (wEl) wEl.textContent = 0;
+      var jEl = document.getElementById('slotJP'); if (jEl) jEl.textContent = 0;
+      var res = document.getElementById('slotResult'); if (res) { res.textContent = 'Şansını dene!'; res.className = 'slot-result'; }
+      btn.remove();
+      toast('500 koin yüklendi! 🎰', '#ffea00');
+    });
+    spinBtn.parentNode.insertBefore(btn, spinBtn.nextSibling);
+  }
+  /* Blackjack bitişlerini hook et */
+  var _bjEndOrig = (typeof bj_end === 'function') ? bj_end : null;
+  if (_bjEndOrig) {
+    bj_end = function(msg, cls) { _bjEndOrig(msg, cls); setTimeout(bj_check_balance, 300); };
+  }
+  /* Slot bitişini hook et — slotSpin click sonrasında çalışır */
+  var _slotSpinBtn = document.getElementById('slotSpin');
+  if (_slotSpinBtn) {
+    _slotSpinBtn.addEventListener('click', function(){ setTimeout(slot_check_balance, 4000); });
+  }
 } catch(e) { console.error('BalanceReset error', e); }
 
 /* ══════════════════════════════════════════════════════════
@@ -3319,20 +3394,31 @@ try {
       {em:'🖌️', ttl:'Serbest Çizim',  dsc:'Dijital çizim tahtası',   id:'canvas-sec'},
       {em:'🌈', ttl:'Palet Üretici',  dsc:'Renk paletleri',          id:'palette-sec'},
       {em:'🎹', ttl:'Virtual Piano',  dsc:'Piyano çal, müzik yap',   id:'piano'},
-      {em:'📖', ttl:'Emoji Hikaye',   dsc:'Emojilerle hikaye yaz',   id:'emojistory'}
+      {em:'📖', ttl:'Emoji Hikaye',   dsc:'Emojilerle hikaye yaz',   id:'emojistory'},
+      {em:'🌌', ttl:'Yerçekimi Sandboxı', dsc:'Gezegen yörüngeleri ve kozmik kütleçekim sandboxı',id:'gravity-sec'},
+      {em:'🎛️', ttl:'Zen Yapay Yaşam', dsc:'Lenia hücresel otomat ve kozmik organizma sandboxı',id:'lenia-sec'}
     ]},
     { label: '🌍 Keşif & Bilgi', items: [
       {em:'🗺️', ttl:'Dünya Kaşifi',   dsc:"Dünyanın güzel yerleri",  id:'world'},
       {em:'🌌', ttl:'Yıldız Haritası',dsc:'Takımyıldızları keşfet',  id:'stars'},
       {em:'🌙', ttl:'Ay Fazı',        dsc:'Bugünkü ay takvimi',      id:'moonphase'},
       {em:'💡', ttl:'Bilgi Kartları', dsc:'İlginç gerçekler',        id:'facts'},
-      {em:'🔭', ttl:'Kozmik Teleskop',dsc:'Derin uzay vizörü',       id:'telescope-sec'}
+      {em:'🔭', ttl:'Kozmik Teleskop',dsc:'Derin uzay vizörü',       id:'telescope-sec'},
+      {em:'🌌', ttl:'Nebula Ansiklopedisi',dsc:'Derin uzay nebulalarını keşfet',id:'nebula-info-sec'},
+      {em:'📏', ttl:'Evrenin Ölçeği',     dsc:'Mikro kozmostan makro kozmosa ölçek cetveli',id:'universe-scale-sec'},
+      {em:'🕳️', ttl:'Kara Delik',     dsc:'Schwarzschild bükümlü kütleçekim foton sandboxı',id:'blackhole-sec'},
+      {em:'🔮', ttl:'Rezonans Tablası', dsc:'Çınlama frekanslı kimatik plaka kum mandala çizici',id:'cymatics-sec'}
     ]},
     { label: '🔮 Gizemli & Eğlenceli', items: [
       {em:'🎱', ttl:'Sihirli 8 Top',  dsc:'Geleceğini öğren',        id:'magic8'},
       {em:'🃏', ttl:'Tarot Kartları', dsc:'Geçmiş, şimdi, gelecek',  id:'tarot'},
       {em:'🔮', ttl:'Sayı Büyüsü',    dsc:'Aklındaki sayıyı bilirim',id:'nummagic'},
-      {em:'💭', ttl:'Ya Şunu Seçsen?',dsc:'Zor ikilemler',           id:'wyr'}
+      {em:'💭', ttl:'Ya Şunu Seçsen?',dsc:'Zor ikilemler',           id:'wyr'},
+      {em:'🌀', ttl:'Kaos Fraktalı',      dsc:'Kaos oyunu fraktal çizici',id:'chaos-fractal-sec'},
+      {em:'🧩', ttl:'Paradokslar Bahçesi',dsc:'Zihinsel düşünce deneyleri & paradokslar',id:'paradox-sec'},
+      {em:'🌀', ttl:'Kaotik Sarkaç',   dsc:'Çift sarkaç kaos teorisi neon yörünge sandboxı',id:'double-pendulum-sec'},
+      {em:'👁️‍🗨️', ttl:'Kuantum Gözlemci',dsc:'Çift yarık dalga fonksiyonu çöküş simülatörü',id:'quantum-sec'},
+      {em:'🏛️', ttl:'Filozoflar Arenası',dsc:'Sokrates, Nietzsche, Aurelius simüle Sokratik tartışma',id:'debate-sec'}
     ]},
     { label: '🛠️ Araçlar & Kişisel', items: [
       {em:'🔑', ttl:'Şifre Üretici',  dsc:'Güvenli şifreler oluştur',id:'passgen'},
@@ -3342,11 +3428,17 @@ try {
       {em:'📓', ttl:'Şükran Günlüğü', dsc:'Günlük notlar',            id:'gratitude'},
       {em:'🟢', ttl:'Ruh Hali Çemberi',dsc:'Duygusal aura mandala visualizer',id:'aura-sec'},
       {em:'⏱️', ttl:'Odaklanma Saati',dsc:'Analog saat & ses mikseri',id:'zenclock-sec'},
-      {em:'📝', ttl:'Sezar Şifresi',  dsc:'Gizli mesajlar şifrele',  id:'cipher'},
-      {em:'🎵', ttl:'Ambiyans',       dsc:'Doğa & ortam sesleri',    id:'ambiance'},
-      {em:'🌿', ttl:'Nefes Egzersizi',dsc:'Rahatlama ve meditasyon', id:'breathe'},
-      {em:'📓', ttl:'Şükran Günlüğü', dsc:'Günlük iyilik notları',   id:'gratitude'},
-      {em:'📅', ttl:'Günlük Görev',   dsc:'Hedefler ve seri takibi', id:'daily'}
+      {em:'📅', ttl:'Günlük Görev',   dsc:'Hedefler ve seri takibi', id:'daily'},
+      {em:'🎡', ttl:'Kozmik Karar Çarkı',dsc:'Kararsız anlar için çark çevir',id:'wheel-sec'},
+      {em:'📊', ttl:'Metin Analizörü',dsc:'Kelime sayacı & duygu analizörü',id:'text-sec'},
+      {em:'📈', ttl:'Bioritim Grafik',dsc:'Fiziksel, duygusal, zihinsel ritim',id:'biorhythm-sec'},
+      {em:'⏱️', ttl:'Cam Kronometre',dsc:'Tur kayıtlı süreölçer & zamanlayıcı',id:'stopwatch-sec'},
+      {em:'📌', ttl:'Zen Yapışkan Notlar',dsc:'Tarayıcıda kalıcı renkli yapışkan notlar',id:'notes-sec'},
+      {em:'🪙', ttl:'Kripto Simülatörü',dsc:'Canlı dalgalanan borsa simülasyonu',id:'crypto-sec'},
+      {em:'⚖️', ttl:'Beden Kitle Endeksi',dsc:'Sürgülü BKE hesaplayıcı & sağlık',id:'bmi-sec'},
+      {em:'🎧', ttl:'İkili İşitsel Ritim',dsc:'Meditation & uyku ritimleri sentezleyici',id:'binaural-sec'},
+      {em:'💧', ttl:'Zen Su Takipçisi',  dsc:'Günlük su hedefini eğlenceli dalgalarla izle',id:'water-sec'},
+      {em:'✔️', ttl:'Zen Yapılacaklar',  dsc:'Motivasyonel yapılacak işler kontrol listesi',id:'todo-sec'}
     ]}
   ];
 
@@ -3490,13 +3582,14 @@ try {
       initNebulaParticles(parseInt(document.getElementById('nebulaCount').value, 10));
     }
     
-    function updateNebula() {
+    var _nebulaFPS = makeFPSGate(30);
+    function updateNebula(now) {
+      requestAnimationFrame(updateNebula);
+      if (!isCanvasActive('nebulaCanvas')) return;
+      if (!_nebulaFPS(now || 0)) return;
       var W = nebulaCanvas.width, H = nebulaCanvas.height;
-      // Semi-transparent background for beautiful smooth trailing effect
       nctx.fillStyle = 'rgba(4, 5, 13, 0.08)';
       nctx.fillRect(0, 0, W, H);
-      
-      // Draw Attractors (Black holes)
       nebulaAttractors.forEach(function(att) {
         nctx.beginPath();
         var glow = nctx.createRadialGradient(att.x, att.y, 2, att.x, att.y, att.size * 2.5);
@@ -3507,30 +3600,24 @@ try {
         nctx.fillStyle = glow;
         nctx.arc(att.x, att.y, att.size * 2.5, 0, Math.PI * 2);
         nctx.fill();
-        
-        // Inner core
         nctx.beginPath();
         nctx.fillStyle = '#000';
         nctx.arc(att.x, att.y, att.size * 0.8, 0, Math.PI * 2);
         nctx.fill();
       });
-      
-      // Update & Draw Particles with additive screen blending
       nctx.globalCompositeOperation = 'screen';
       nebulaParticles.forEach(function(p) {
-        // Gravitational pull from all active black holes
         if (nebulaAttractors.length > 0) {
           nebulaAttractors.forEach(function(att) {
             var dx = att.x - p.x;
             var dy = att.y - p.y;
-            var distSq = dx * dx + dy * dy + 1000; // soft factor
+            var distSq = dx * dx + dy * dy + 1000;
             var dist = Math.sqrt(distSq);
             var force = (nebulaGravityVal * 0.08 * att.mass) / distSq;
             p.vx += (dx / dist) * force;
             p.vy += (dy / dist) * force;
           });
         } else {
-          // Central default pull if no black hole placed
           var dx = W / 2 - p.x;
           var dy = H / 2 - p.y;
           var distSq = dx * dx + dy * dy + 2000;
@@ -3538,22 +3625,16 @@ try {
           p.vx += (dx / dist) * 0.05;
           p.vy += (dy / dist) * 0.05;
         }
-        
-        // Friction / drag
         p.vx *= 0.99;
         p.vy *= 0.99;
-        
         p.x += p.vx;
         p.y += p.vy;
-        
         nctx.beginPath();
         nctx.fillStyle = p.color;
         nctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         nctx.fill();
       });
       nctx.globalCompositeOperation = 'source-over';
-      
-      requestAnimationFrame(updateNebula);
     }
     
     // Listeners
@@ -3890,10 +3971,12 @@ try {
       });
     }
     
-    // Growth loop animation for gentle wind breathing
-    function bonsaiBreathingLoop() {
-      redrawBonsaiGarden();
+    var _bonsaiFPS = makeFPSGate(12);
+    function bonsaiBreathingLoop(now) {
       requestAnimationFrame(bonsaiBreathingLoop);
+      if (!isCanvasActive('bonsaiCanvas')) return;
+      if (!_bonsaiFPS(now || 0)) return;
+      redrawBonsaiGarden();
     }
     
     // Listeners
@@ -4046,7 +4129,12 @@ try {
       initFlowParticles();
     }
     
-    function drawFlowField() {
+    var _flowFPS = makeFPSGate(24);
+    function drawFlowField(now) {
+      requestAnimationFrame(drawFlowField);
+      if (!isCanvasActive('flowfieldCanvas')) return;
+      if (!_flowFPS(now || 0)) return;
+      
       var W = flowCanvas.width, H = flowCanvas.height;
       
       // Extremely low alpha fill to create smooth cosmic vector trails
@@ -4104,8 +4192,6 @@ try {
         fctx.fill();
       });
       fctx.globalCompositeOperation = 'source-over';
-      
-      requestAnimationFrame(drawFlowField);
     }
     
     // Mouse dragging handlers
@@ -4330,10 +4416,13 @@ try {
       sandGrid = nextGrid;
     }
     
-    function sandSimulationLoop() {
+    var _sandFPS = makeFPSGate(20);
+    function sandSimulationLoop(now) {
+      requestAnimationFrame(sandSimulationLoop);
+      if (!isCanvasActive('sandCanvas')) return;
+      if (!_sandFPS(now || 0)) return;
       updateSandPhysics();
       drawSandGrid();
-      requestAnimationFrame(sandSimulationLoop);
     }
     
     // Ink injection click listener
@@ -4553,7 +4642,7 @@ try {
       // Remove offscreen pipes
       flGame.pipes = flGame.pipes.filter(function(p) { return p.x > -50; });
       
-      requestAnimationFrame(updateFlappy);
+      if (flGame.running) requestAnimationFrame(updateFlappy);
     }
     
     function endFlappyGame() {
@@ -4760,7 +4849,7 @@ try {
       });
       shGame.sparks = shGame.sparks.filter(function(sp){ return sp.age < sp.maxAge; });
       
-      requestAnimationFrame(updateShooter);
+      if (shGame.running) requestAnimationFrame(updateShooter);
     }
     
     function endShooterGame() {
@@ -5251,7 +5340,12 @@ try {
     
     var telActiveObj = telObjects[0];
     
-    function drawTelescope() {
+    var _telFPS = makeFPSGate(24);
+    function drawTelescope(now) {
+      requestAnimationFrame(drawTelescope);
+      if (!isCanvasActive('telescopeCanvas')) return;
+      if (!_telFPS(now || 0)) return;
+      
       var W = telescopeCanvas.width;
       var H = telescopeCanvas.height;
       telCtx.fillStyle = '#020207';
@@ -5325,8 +5419,6 @@ try {
       telCtx.moveTo(W/2 - 15, H/2); telCtx.lineTo(W/2 + 15, H/2);
       telCtx.moveTo(W/2, H/2 - 15); telCtx.lineTo(W/2, H/2 + 15);
       telCtx.stroke();
-      
-      requestAnimationFrame(drawTelescope);
     }
     
     function focusOnObject(obj) {
@@ -5461,7 +5553,12 @@ try {
       }
     };
     
-    function drawAura() {
+    var _auFPS = makeFPSGate(20);
+    function drawAura(now) {
+      requestAnimationFrame(drawAura);
+      if (!isCanvasActive('auraCanvas')) return;
+      if (!_auFPS(now || 0)) return;
+      
       var W = auraCanvas.width;
       var H = auraCanvas.height;
       auCtx.fillStyle = 'rgba(3, 3, 9, 0.15)'; // trails
@@ -5516,7 +5613,6 @@ try {
       auCtx.fill();
       
       auCtx.restore();
-      requestAnimationFrame(drawAura);
     }
     
     function setAuraMood(moodKey) {
@@ -5667,13 +5763,17 @@ try {
     });
     
     // Decay fading loop
-    function decayKaleidoLoop() {
+    var _kalFPS = makeFPSGate(24);
+    function decayKaleidoLoop(now) {
+      requestAnimationFrame(decayKaleidoLoop);
+      if (!isCanvasActive('kaleidoCanvas')) return;
+      if (!_kalFPS(now || 0)) return;
+      
       var W = kaleidoCanvas.width, H = kaleidoCanvas.height;
       if (kalDecayVal > 0) {
         kctx.fillStyle = 'rgba(1, 1, 5, ' + (kalDecayVal / 1200) + ')';
         kctx.fillRect(0, 0, W, H);
       }
-      requestAnimationFrame(decayKaleidoLoop);
     }
     
     // Toolbar configuration
@@ -5777,7 +5877,12 @@ try {
       document.getElementById('orbitCount').textContent = planets.length + 1; // Planets + Central Sun
     }
     
-    function drawOrbit() {
+    var _orbFPS = makeFPSGate(24);
+    function drawOrbit(now) {
+      requestAnimationFrame(drawOrbit);
+      if (!isCanvasActive('orbitCanvas')) return;
+      if (!_orbFPS(now || 0)) return;
+      
       var W = orbitCanvas.width, H = orbitCanvas.height;
       obCtx.fillStyle = '#020207';
       obCtx.fillRect(0, 0, W, H);
@@ -5858,8 +5963,6 @@ try {
         obCtx.fillStyle = '#00e5ff';
         obCtx.fill();
       }
-      
-      requestAnimationFrame(drawOrbit);
     }
     
     // Slingshot click handlers
@@ -6249,5 +6352,3924 @@ try {
     updateTimerDisplay();
   }
 } catch(e) { console.error('ZenClock error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   44. KOZMİK KARAR ÇARKİ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var wheelCanvas = document.getElementById('wheelCanvas');
+  if (wheelCanvas) {
+    var wctx = wheelCanvas.getContext('2d');
+    var wheelOptions = ['Kitap Oku 📚', 'Film İzle 🎬', 'Yürüyüş Yap 🚶', 'Kod Yaz 💻', 'Meditasyon Yap 🧘', 'Müzik Dinle 🎵'];
+    var wheelColors = ['#7c4dff', '#ff6b9d', '#00e5ff', '#ffea00', '#00c853', '#ff7043'];
+    var startAngle = 0;
+    var arc = Math.PI / (wheelOptions.length / 2);
+    var spinTimeout = null;
+    var spinAngleStart = 10;
+    var spinTime = 0;
+    var spinTimeTotal = 0;
+
+    function drawRouletteWheel() {
+      if (!wheelCanvas) return;
+      var W = wheelCanvas.width;
+      var H = wheelCanvas.height;
+      var outsideRadius = W / 2 - 10;
+      var textRadius = W / 2 - 50;
+      var insideRadius = W / 2 - 110;
+
+      wctx.clearRect(0,0,W,H);
+      wctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      wctx.lineWidth = 2;
+
+      wctx.font = 'bold 11px Outfit, sans-serif';
+
+      for(var i = 0; i < wheelOptions.length; i++) {
+        var angle = startAngle + i * arc;
+        wctx.fillStyle = wheelColors[i % wheelColors.length];
+
+        wctx.beginPath();
+        wctx.arc(W/2, H/2, outsideRadius, angle, angle + arc, false);
+        wctx.arc(W/2, H/2, insideRadius, angle + arc, angle, true);
+        wctx.stroke();
+        wctx.fill();
+
+        wctx.save();
+        wctx.fillStyle = '#ffffff';
+        wctx.translate(W/2 + Math.cos(angle + arc / 2) * textRadius, H/2 + Math.sin(angle + arc / 2) * textRadius);
+        wctx.rotate(angle + arc / 2 + Math.PI / 2);
+        var text = wheelOptions[i];
+        wctx.fillText(text, -wctx.measureText(text).width / 2, 0);
+        wctx.restore();
+      }
+
+      // Draw Center Hub
+      wctx.fillStyle = '#020208';
+      wctx.beginPath();
+      wctx.arc(W/2, H/2, 25, 0, Math.PI*2);
+      wctx.fill();
+      wctx.strokeStyle = '#00e5ff';
+      wctx.lineWidth = 3;
+      wctx.stroke();
+    }
+
+    function rotateWheel() {
+      spinTime += 30;
+      if(spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
+      }
+      var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+      startAngle += (spinAngle * Math.PI / 180);
+      drawRouletteWheel();
+      spinTimeout = setTimeout(rotateWheel, 30);
+    }
+
+    function easeOut(t, b, c, d) {
+      var ts = (t /= d) * t;
+      var tc = ts * t;
+      return b + c * (tc + -3 * ts + 3 * t);
+    }
+
+    function spin() {
+      spinAngleStart = Math.random() * 10 + 10;
+      spinTime = 0;
+      spinTimeTotal = Math.random() * 3000 + 4000;
+      rotateWheel();
+    }
+
+    function stopRotateWheel() {
+      clearTimeout(spinTimeout);
+      var degrees = startAngle * 180 / Math.PI + 90;
+      var arcd = arc * 180 / Math.PI;
+      var index = Math.floor((360 - degrees % 360) / arcd);
+      if (index < 0) index = wheelOptions.length + index;
+      var text = wheelOptions[index % wheelOptions.length];
+      toast('🎡 Tavsiye: ' + text, '#00e5ff');
+    }
+
+    function updateOptionsList() {
+      var list = document.getElementById('listOptions');
+      if (!list) return;
+      list.innerHTML = '';
+      wheelOptions.forEach(function(opt, idx) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:var(--r1);font-size:0.8rem;border:1px solid rgba(255,255,255,0.04);';
+        row.innerHTML = '<span>' + opt + '</span><button class="mini-btn" style="padding:2px 6px;font-size:0.7rem;background:rgba(255,107,157,0.1);color:#ff6b9d;border-color:rgba(255,107,157,0.2);" onclick="removeWheelOption(' + idx + ')">🗑️</button>';
+        list.appendChild(row);
+      });
+      arc = Math.PI / (wheelOptions.length / 2);
+      drawRouletteWheel();
+    }
+
+    window.removeWheelOption = function(idx) {
+      if (wheelOptions.length <= 2) {
+        toast('⚠️ Çarkta en az 2 seçenek bulunmalıdır!', '#ff7043');
+        return;
+      }
+      wheelOptions.splice(idx, 1);
+      updateOptionsList();
+    };
+
+    document.getElementById('btnSpinWheel').addEventListener('click', function() {
+      spin();
+    });
+
+    document.getElementById('btnAddOption').addEventListener('click', function() {
+      var input = document.getElementById('txtNewOption');
+      var val = input.value.trim();
+      if(!val) return;
+      if(val.length > 20) {
+        toast('⚠️ Seçenek 20 karakterden kısa olmalıdır!', '#ff7043');
+        return;
+      }
+      wheelOptions.push(val);
+      input.value = '';
+      updateOptionsList();
+      toast('➕ Eklendi: ' + val, '#69f0ae');
+    });
+
+    updateOptionsList();
+  }
+} catch(e) { console.error('Karar Carki error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   45. METİN ANALİZÖRÜ & KELİME SAYACİ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var textInput = document.getElementById('txtAnalyzerInput');
+  if (textInput) {
+    var positiveWords = ['güzel', 'iyi', 'mutlu', 'huzur', 'harika', 'sevgi', 'aşk', 'teşekkür', 'başarı', 'neşe', 'keyif', 'sakin'];
+    var negativeWords = ['kötü', 'üzgün', 'kızgın', 'stres', 'öfke', 'nefret', 'acı', 'korku', 'yorgun', 'huzursuz', 'sıkıcı', 'dert'];
+    
+    var zenQuotes = [
+      "Zihnini boşalt, su gibi formsuz ve şekilsiz ol. 🌊",
+      "Sessizlik en güçlü sestir. İçindeki huzuru keşfet. 🧘",
+      "Geçmiş bir rüyadır, gelecek bir fantezi. Sadece şu an gerçektir. ✨",
+      "Fırtınanın ortasında dinginliği bulmak, gerçek güçtür. 🌀",
+      "Her gün yeni bir başlangıçtır; derin bir nefes al ve gülümse. 🌸"
+    ];
+
+    function analyzeText() {
+      var text = textInput.value;
+      var chars = text.length;
+      var words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+      
+      // Calculate reading time (average 200 words per minute)
+      var readingTimeSeconds = Math.round((words / 200) * 60);
+      var timeText = readingTimeSeconds + ' sn';
+      if (readingTimeSeconds >= 60) {
+        timeText = Math.floor(readingTimeSeconds / 60) + ' dk ' + (readingTimeSeconds % 60) + ' sn';
+      }
+
+      // Sentiment analysis
+      var cleanText = text.toLowerCase();
+      var posCount = 0;
+      var negCount = 0;
+      
+      positiveWords.forEach(function(w) {
+        var regex = new RegExp('\\b' + w, 'g');
+        var matches = cleanText.match(regex);
+        if (matches) posCount += matches.length;
+      });
+
+      negativeWords.forEach(function(w) {
+        var regex = new RegExp('\\b' + w, 'g');
+        var matches = cleanText.match(regex);
+        if (matches) negCount += matches.length;
+      });
+
+      var sentimentEl = document.getElementById('statSentiment');
+      if (sentimentEl) {
+        if (words === 0) {
+          sentimentEl.innerHTML = '🧘 Dingin';
+          sentimentEl.style.color = '#00c853';
+        } else if (posCount > negCount) {
+          sentimentEl.innerHTML = '😊 Pozitif';
+          sentimentEl.style.color = '#ffea00';
+        } else if (negCount > posCount) {
+          sentimentEl.innerHTML = '😢 Melankoli';
+          sentimentEl.style.color = '#ff6b9d';
+        } else {
+          sentimentEl.innerHTML = '🧘 Dingin';
+          sentimentEl.style.color = '#00c853';
+        }
+      }
+
+      document.getElementById('statWords').textContent = words;
+      document.getElementById('statChars').textContent = chars;
+      document.getElementById('statReadTime').textContent = timeText;
+    }
+
+    textInput.addEventListener('input', analyzeText);
+
+    document.getElementById('btnCleanAnalyzer').addEventListener('click', function() {
+      textInput.value = '';
+      analyzeText();
+      toast('🗑️ Metin temizlendi', '#546e7a');
+    });
+
+    document.getElementById('btnRandomZenText').addEventListener('click', function() {
+      var rand = zenQuotes[Math.floor(Math.random() * zenQuotes.length)];
+      textInput.value = rand;
+      analyzeText();
+      toast('💡 Zen sözü eklendi', '#7c4dff');
+    });
+  }
+} catch(e) { console.error('Metin Analizoru error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   46. BİORİTİM HESAPLAYICI
+   ══════════════════════════════════════════════════════════ */
+try {
+  var svgBiorhythm = document.getElementById('svgBiorhythm');
+  if (svgBiorhythm) {
+    function calculateBiorhythm(birthDate, targetDate) {
+      var diffTime = Math.abs(targetDate - birthDate);
+      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      return {
+        physical: Math.sin((2 * Math.PI * diffDays) / 23),
+        emotional: Math.sin((2 * Math.PI * diffDays) / 28),
+        intellectual: Math.sin((2 * Math.PI * diffDays) / 33)
+      };
+    }
+
+    function drawBiorhythmChart() {
+      var birthVal = document.getElementById('dateBirth').value;
+      if (!birthVal) return;
+      var birthDate = new Date(birthVal);
+      var today = new Date();
+      
+      svgBiorhythm.innerHTML = '';
+      
+      var width = 800;
+      var height = 250;
+      var centerY = height / 2;
+      
+      // Draw grid lines
+      var gridY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      gridY.setAttribute('x1', '0'); gridY.setAttribute('y1', centerY);
+      gridY.setAttribute('x2', width); gridY.setAttribute('y2', centerY);
+      gridY.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+      gridY.setAttribute('stroke-width', '1.5');
+      gridY.setAttribute('stroke-dasharray', '4,4');
+      svgBiorhythm.appendChild(gridY);
+
+      // Label today line
+      var todayX = width / 2;
+      var gridToday = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      gridToday.setAttribute('x1', todayX); gridToday.setAttribute('y1', '0');
+      gridToday.setAttribute('x2', todayX); gridToday.setAttribute('y2', height);
+      gridToday.setAttribute('stroke', 'rgba(255,234,0,0.4)');
+      gridToday.setAttribute('stroke-width', '1.5');
+      svgBiorhythm.appendChild(gridToday);
+
+      // Label Today Text
+      var textToday = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textToday.setAttribute('x', todayX + 5);
+      textToday.setAttribute('y', '20');
+      textToday.setAttribute('fill', '#ffea00');
+      textToday.setAttribute('font-size', '10px');
+      textToday.setAttribute('font-weight', 'bold');
+      textToday.textContent = 'Bugün 📍';
+      svgBiorhythm.appendChild(textToday);
+
+      // Generate paths
+      var physPoints = [];
+      var emotPoints = [];
+      var intelPoints = [];
+      
+      var daysRange = 7; // Plot 7 days (-3 to +3)
+      var stepX = width / (daysRange - 1);
+      
+      for (var i = 0; i < daysRange; i++) {
+        var offsetDays = i - 3;
+        var date = new Date(today);
+        date.setDate(today.getDate() + offsetDays);
+        
+        var bios = calculateBiorhythm(birthDate, date);
+        
+        var x = i * stepX;
+        var yPhys = centerY - (bios.physical * (height / 2.5));
+        var yEmot = centerY - (bios.emotional * (height / 2.5));
+        var yIntel = centerY - (bios.intellectual * (height / 2.5));
+        
+        physPoints.push(x + ',' + yPhys);
+        emotPoints.push(x + ',' + yEmot);
+        intelPoints.push(x + ',' + yIntel);
+
+        // Draw day labels at center line
+        var dayText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        dayText.setAttribute('x', x - 12);
+        dayText.setAttribute('y', centerY + 18);
+        dayText.setAttribute('fill', 'rgba(255,255,255,0.4)');
+        dayText.setAttribute('font-size', '9px');
+        var dayLabel = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+        dayText.textContent = dayLabel;
+        svgBiorhythm.appendChild(dayText);
+      }
+      
+      // Render Paths
+      var pathColors = { phys: '#00e5ff', emot: '#ff6b9d', intel: '#ffea00' };
+      
+      var pPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      pPath.setAttribute('d', 'M ' + physPoints.join(' L '));
+      pPath.setAttribute('fill', 'none'); pPath.setAttribute('stroke', pathColors.phys);
+      pPath.setAttribute('stroke-width', '2.5'); svgBiorhythm.appendChild(pPath);
+
+      var ePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      ePath.setAttribute('d', 'M ' + emotPoints.join(' L '));
+      ePath.setAttribute('fill', 'none'); ePath.setAttribute('stroke', pathColors.emot);
+      ePath.setAttribute('stroke-width', '2.5'); svgBiorhythm.appendChild(ePath);
+
+      var iPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      iPath.setAttribute('d', 'M ' + intelPoints.join(' L '));
+      iPath.setAttribute('fill', 'none'); iPath.setAttribute('stroke', pathColors.intel);
+      iPath.setAttribute('stroke-width', '2.5'); svgBiorhythm.appendChild(iPath);
+
+      // Draw interactive circle markers for today
+      var todayBios = calculateBiorhythm(birthDate, today);
+      var markerData = [
+        { y: centerY - (todayBios.physical * (height / 2.5)), color: pathColors.phys },
+        { y: centerY - (todayBios.emotional * (height / 2.5)), color: pathColors.emot },
+        { y: centerY - (todayBios.intellectual * (height / 2.5)), color: pathColors.intel }
+      ];
+
+      markerData.forEach(function(m) {
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', todayX);
+        circle.setAttribute('cy', m.y);
+        circle.setAttribute('r', '6');
+        circle.setAttribute('fill', m.color);
+        circle.setAttribute('stroke', '#020208');
+        circle.setAttribute('stroke-width', '2');
+        svgBiorhythm.appendChild(circle);
+      });
+      
+      toast('📈 Bioritim grafiği güncellendi!', '#ffea00');
+    }
+
+    document.getElementById('btnCalcBiorhythm').addEventListener('click', drawBiorhythmChart);
+    
+    // Initial draw
+    setTimeout(drawBiorhythmChart, 1000);
+  }
+} catch(e) { console.error('Biorhythm error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   47. CAM KRONOMETRE & SÜREÖLÇER
+   ══════════════════════════════════════════════════════════ */
+try {
+  var stopwatchTab = document.getElementById('tabStopwatch');
+  if (stopwatchTab) {
+    var timerTab = document.getElementById('tabTimer');
+    var isTimerMode = false;
+    
+    var timeDisplay = document.getElementById('timeDisplay');
+    var displayModeLabel = document.getElementById('displayModeLabel');
+    var timerInputs = document.getElementById('timerInputs');
+    var lapContainer = document.getElementById('lapContainer');
+    
+    var startBtn = document.getElementById('btnStopwatchStart');
+    var resetBtn = document.getElementById('btnStopwatchReset');
+    var lapList = document.getElementById('lapList');
+    
+    // Web Audio Oscillator context
+    var audioCtxTimer = null;
+    function playBeep(freq, type, duration) {
+      try {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!audioCtxTimer) audioCtxTimer = new AudioCtx();
+        var osc = audioCtxTimer.createOscillator();
+        var gain = audioCtxTimer.createGain();
+        osc.connect(gain); gain.connect(audioCtxTimer.destination);
+        osc.type = type || 'sine';
+        osc.frequency.value = freq || 440;
+        gain.gain.setValueAtTime(0.2, audioCtxTimer.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxTimer.currentTime + duration);
+        osc.start(); osc.stop(audioCtxTimer.currentTime + duration);
+      } catch(ex){}
+    }
+
+    // Logic variables
+    var swActive = false;
+    var swTime = 0; // ms
+    var swInterval = null;
+    var lastSwTime = 0;
+    var laps = [];
+
+    var tmActive = false;
+    var tmDuration = 0; // seconds
+    var tmInterval = null;
+    var tmTotalTime = 0;
+
+    function formatTime(ms) {
+      var minutes = Math.floor(ms / 60000);
+      var seconds = Math.floor((ms % 60000) / 1000);
+      var centiseconds = Math.floor((ms % 1000) / 10);
+      return String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0') + '.' + String(centiseconds).padStart(2,'0');
+    }
+
+    function formatTimerTime(sec) {
+      var minutes = Math.floor(sec / 60);
+      var seconds = sec % 60;
+      return String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0');
+    }
+
+    function updateProgressRing(pct) {
+      var circle = document.getElementById('timerProgressRing');
+      if (!circle) return;
+      var offset = 628 - (pct * 628);
+      circle.style.strokeDashoffset = offset;
+    }
+
+    function toggleMode(mode) {
+      isTimerMode = mode === 'timer';
+      stopwatchTab.classList.toggle('active', !isTimerMode);
+      timerTab.classList.toggle('active', isTimerMode);
+      
+      resetAll();
+      
+      displayModeLabel.textContent = isTimerMode ? 'Geri Sayım' : 'Kronometre';
+      timerInputs.style.display = isTimerMode ? 'flex' : 'none';
+      lapContainer.style.display = isTimerMode ? 'none' : 'flex';
+      timeDisplay.style.display = isTimerMode ? 'none' : 'block';
+    }
+
+    function resetAll() {
+      // Clear all
+      clearInterval(swInterval);
+      clearInterval(tmInterval);
+      swActive = false;
+      tmActive = false;
+      swTime = 0;
+      laps = [];
+      lapList.innerHTML = '';
+      timeDisplay.textContent = '00:00.00';
+      startBtn.textContent = '▶ Başlat';
+      updateProgressRing(1);
+    }
+
+    stopwatchTab.addEventListener('click', function() { toggleMode('stopwatch'); });
+    timerTab.addEventListener('click', function() { toggleMode('timer'); });
+
+    startBtn.addEventListener('click', function() {
+      if (!isTimerMode) {
+        // Stopwatch logic
+        if (swActive) {
+          // Pause
+          clearInterval(swInterval);
+          swActive = false;
+          startBtn.textContent = '▶ Başlat';
+          resetBtn.textContent = '🔄 Sıfırla';
+          toast('⏱️ Kronometre durduruldu', '#ff7043');
+        } else {
+          // Start
+          swActive = true;
+          lastSwTime = Date.now();
+          startBtn.textContent = '⏸ Duraklat';
+          resetBtn.textContent = '🚩 Tur Kaydet';
+          swInterval = setInterval(function() {
+            var now = Date.now();
+            swTime += (now - lastSwTime);
+            lastSwTime = now;
+            timeDisplay.textContent = formatTime(swTime);
+          }, 30);
+          toast('⏱️ Kronometre başladı!', '#00e5ff');
+        }
+      } else {
+        // Timer logic
+        if (tmActive) {
+          // Pause
+          clearInterval(tmInterval);
+          tmActive = false;
+          startBtn.textContent = '▶ Başlat';
+          toast('⏳ Geri Sayım durduruldu', '#ff7043');
+        } else {
+          // Start
+          if (tmDuration <= 0) {
+            var m = parseInt(document.getElementById('timerMin').value, 10) || 0;
+            var s = parseInt(document.getElementById('timerSec').value, 10) || 0;
+            tmDuration = (m * 60) + s;
+            if (tmDuration <= 0) {
+              toast('⚠️ Geçerli bir süre girin!', '#ff7043');
+              return;
+            }
+            tmTotalTime = tmDuration;
+          }
+          tmActive = true;
+          startBtn.textContent = '⏸ Duraklat';
+          timeDisplay.style.display = 'block';
+          timeDisplay.textContent = formatTimerTime(tmDuration);
+          
+          tmInterval = setInterval(function() {
+            tmDuration--;
+            if (tmDuration < 0) {
+              clearInterval(tmInterval);
+              tmActive = false;
+              tmDuration = 0;
+              timeDisplay.textContent = '00:00';
+              startBtn.textContent = '▶ Başlat';
+              updateProgressRing(0);
+              playBeep(880, 'triangle', 0.8);
+              toast('🔔 ZAMAN DOLDU!', '#ff6b9d');
+            } else {
+              timeDisplay.textContent = formatTimerTime(tmDuration);
+              updateProgressRing(tmDuration / tmTotalTime);
+              if (tmDuration <= 5 && tmDuration > 0) {
+                // Short warning tick
+                playBeep(520, 'sine', 0.1);
+              }
+            }
+          }, 1000);
+          toast('⏳ Geri sayım başladı!', '#7c4dff');
+        }
+      }
+    });
+
+    resetBtn.addEventListener('click', function() {
+      if (!isTimerMode) {
+        if (swActive) {
+          // Lap feature
+          laps.push(swTime);
+          var li = document.createElement('div');
+          li.style.cssText = 'display:flex;justify-content:space-between;background:rgba(255,255,255,0.03);padding:6px 12px;border-radius:var(--r1);font-family:monospace;font-size:0.83rem;border:1px solid rgba(255,255,255,0.04);';
+          li.innerHTML = '<span>Tur ' + laps.length + '</span><strong>' + formatTime(swTime) + '</strong>';
+          lapList.insertBefore(li, lapList.firstChild);
+          playBeep(440, 'sine', 0.08);
+        } else {
+          resetAll();
+          toast('🔄 Kronometre sıfırlandı', '#546e7a');
+        }
+      } else {
+        clearInterval(tmInterval);
+        tmActive = false;
+        tmDuration = 0;
+        timeDisplay.style.display = 'none';
+        startBtn.textContent = '▶ Başlat';
+        updateProgressRing(1);
+        toast('🔄 Geri sayım sıfırlandı', '#546e7a');
+      }
+    });
+  }
+} catch(e) { console.error('Stopwatch error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   48. KOZMİK YAPISKAN NOTLAR
+   ══════════════════════════════════════════════════════════ */
+try {
+  var notesGrid = document.getElementById('notesGrid');
+  if (notesGrid) {
+    var activeNoteColor = 'purple';
+    
+    var colorHex = {
+      purple: '#7c4dff',
+      cyan: '#00e5ff',
+      pink: '#ff6b9d',
+      gold: '#ffea00'
+    };
+
+    // Color picker events
+    document.querySelectorAll('#noteColorPicker .pal-color').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#noteColorPicker .pal-color').forEach(function(b){b.classList.remove('sel');});
+        btn.classList.add('sel');
+        activeNoteColor = btn.dataset.color;
+      });
+    });
+
+    var savedNotes = [];
+    try {
+      savedNotes = JSON.parse(localStorage.getItem('dreamscape_notes')) || [];
+    } catch(ex){ savedNotes = []; }
+
+    if (savedNotes.length === 0) {
+      savedNotes = [
+        { text: 'İlk notunu yazmaya başla ✍️ Notlar tarayıcı hafızasında saklanır.', color: 'purple' },
+        { text: 'Bol bol su içmeyi ve derin nefes almayı unutma! 🧘', color: 'cyan' }
+      ];
+    }
+
+    function renderNotes() {
+      notesGrid.innerHTML = '';
+      savedNotes.forEach(function(note, idx) {
+        var card = document.createElement('div');
+        card.className = 'game-card';
+        card.style.cssText = 'padding:1.2rem;display:flex;flex-direction:column;gap:0.8rem;border-top:3px solid ' + colorHex[note.color] + ';box-shadow:0 8px 24px rgba(0,0,0,0.3);position:relative;';
+        
+        var ta = document.createElement('textarea');
+        ta.value = note.text;
+        ta.style.cssText = 'width:100%;height:100px;background:transparent;border:none;color:#fff;font-family:inherit;font-size:0.85rem;line-height:1.5;resize:none;outline:none;';
+        
+        ta.addEventListener('input', function() {
+          savedNotes[idx].text = ta.value;
+          saveNotesToStorage();
+        });
+
+        var delBtn = document.createElement('button');
+        delBtn.className = 'mini-btn';
+        delBtn.innerHTML = '🗑️';
+        delBtn.style.cssText = 'align-self:flex-end;padding:3px 8px;font-size:0.75rem;background:rgba(255,107,157,0.1);color:#ff6b9d;border-color:rgba(255,107,157,0.2);margin-top:auto;';
+        delBtn.addEventListener('click', function() {
+          savedNotes.splice(idx, 1);
+          saveNotesToStorage();
+          renderNotes();
+          toast('🗑️ Not silindi', '#ff6b9d');
+        });
+
+        card.appendChild(ta);
+        card.appendChild(delBtn);
+        notesGrid.appendChild(card);
+      });
+    }
+
+    function saveNotesToStorage() {
+      try {
+        localStorage.setItem('dreamscape_notes', JSON.stringify(savedNotes));
+      } catch(ex){}
+    }
+
+    document.getElementById('btnAddNote').addEventListener('click', function() {
+      savedNotes.push({ text: '', color: activeNoteColor });
+      saveNotesToStorage();
+      renderNotes();
+      toast('📌 Yeni not eklendi!', '#00e5ff');
+      
+      // Auto-focus new note textarea
+      setTimeout(function() {
+        var textareas = notesGrid.querySelectorAll('textarea');
+        if (textareas.length > 0) {
+          textareas[textareas.length - 1].focus();
+        }
+      }, 50);
+    });
+
+    renderNotes();
+  }
+} catch(e) { console.error('StickyNotes error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   49. KRİPTO MARKET SİMÜLATÖRÜ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var walletBalanceEl = document.getElementById('walletBalance');
+  if (walletBalanceEl) {
+    // Wallet configuration with average cost and proportional cost tracking
+    var wallet = {
+      balance: 10000.0,
+      assets: { BTC: 0.0, ETH: 0.0, SOL: 0.0, DOGE: 0.0, ADA: 0.0, AVAX: 0.0 },
+      totalSpent: { BTC: 0.0, ETH: 0.0, SOL: 0.0, DOGE: 0.0, ADA: 0.0, AVAX: 0.0 }
+    };
+
+    // Initial asset prices
+    var prices = { BTC: 67420.0, ETH: 3480.0, SOL: 148.5, DOGE: 0.15, ADA: 0.45, AVAX: 35.0 };
+    var trends = { BTC: 1.25, ETH: -0.82, SOL: 4.12, DOGE: -1.45, ADA: 0.50, AVAX: -2.10 };
+    
+    // Hold last 15 prices for drawing sparklines
+    var priceHistory = {
+      BTC: Array(15).fill(67420.0),
+      ETH: Array(15).fill(3480.0),
+      SOL: Array(15).fill(148.5),
+      DOGE: Array(15).fill(0.15),
+      ADA: Array(15).fill(0.45),
+      AVAX: Array(15).fill(35.0)
+    };
+
+    // Update cüzdan UI & calculate Total Portfolio and P&L
+    function updateWalletUI() {
+      walletBalanceEl.textContent = wallet.balance.toFixed(2) + ' CC';
+      
+      var tokens = ['BTC', 'ETH', 'SOL', 'DOGE', 'ADA', 'AVAX'];
+      var totalPortfolioVal = wallet.balance;
+
+      tokens.forEach(function(tok) {
+        var qty = wallet.assets[tok];
+        var currentPrice = prices[tok];
+        var spent = wallet.totalSpent[tok];
+        var avgCost = qty > 0 ? spent / qty : 0.0;
+        
+        // Update quantities & Average Cost in HTML
+        var qtyEl = document.getElementById('wallet' + tok);
+        var avgEl = document.getElementById('avg' + tok);
+        var pnlAssetEl = document.getElementById('pnl' + tok);
+        
+        if (qtyEl) qtyEl.textContent = qty.toFixed(tok === 'BTC' || tok === 'ETH' ? 4 : 2);
+        if (avgEl) avgEl.textContent = avgCost > 0 ? '$' + avgCost.toFixed(tok === 'DOGE' || tok === 'ADA' ? 3 : 2) : '$0.00';
+        
+        var assetVal = qty * currentPrice;
+        totalPortfolioVal += assetVal;
+
+        // P&L for single asset
+        if (qty > 0) {
+          var assetPNLCC = assetVal - spent;
+          var assetPNLPct = (spent > 0 ? (assetVal / spent - 1) * 100 : 0.0);
+          if (pnlAssetEl) {
+            pnlAssetEl.textContent = (assetPNLCC >= 0 ? '+' : '') + assetPNLCC.toFixed(2) + ' CC (' + (assetPNLPct >= 0 ? '+' : '') + assetPNLPct.toFixed(1) + '%)';
+            pnlAssetEl.style.color = assetPNLCC >= 0 ? '#00c853' : '#ff1744';
+          }
+        } else {
+          if (pnlAssetEl) {
+            pnlAssetEl.textContent = '--';
+            pnlAssetEl.style.color = 'var(--tx3)';
+          }
+        }
+      });
+
+      // Total Portfolio Value and overall P&L
+      var totalValEl = document.getElementById('walletValue');
+      var totalPNLEl = document.getElementById('walletTotalPNL');
+      
+      if (totalValEl) totalValEl.textContent = totalPortfolioVal.toFixed(2) + ' CC';
+      
+      var overallPNLCC = totalPortfolioVal - 10000.0; // P&L relative to initial 10,000 CC capital
+      var overallPNLPct = (totalPortfolioVal / 10000.0 - 1) * 100;
+      
+      if (totalPNLEl) {
+        totalPNLEl.textContent = (overallPNLCC >= 0 ? '+' : '') + overallPNLCC.toFixed(2) + ' CC (' + (overallPNLPct >= 0 ? '+' : '') + overallPNLPct.toFixed(2) + '%)';
+        totalPNLEl.style.color = overallPNLCC >= 0 ? '#00c853' : '#ff1744';
+      }
+    }
+
+    // Sparkline Drawing using SVG
+    function drawSparkline(tok) {
+      var svg = document.getElementById('spark' + tok);
+      if (!svg) return;
+      var path = svg.querySelector('path');
+      if (!path) return;
+
+      var hist = priceHistory[tok];
+      var min = Math.min.apply(null, hist);
+      var max = Math.max.apply(null, hist);
+      var range = max - min;
+      if (range === 0) range = 1.0;
+
+      var width = 65;
+      var height = 24;
+      var padding = 2;
+
+      var points = [];
+      for (var i = 0; i < hist.length; i++) {
+        var x = (i / (hist.length - 1)) * width;
+        var y = height - padding - ((hist[i] - min) / range) * (height - 2 * padding);
+        points.push(x + ',' + y);
+      }
+
+      path.setAttribute('d', 'M' + points.join(' L'));
+      
+      var lastChange = trends[tok];
+      var color = lastChange >= 0 ? '#00c853' : '#ff1744';
+      path.setAttribute('stroke', color);
+    }
+
+    // Market fiyatlarını canlı güncelle (500ms intervals!)
+    function tickPrices() {
+      if (!PAGE_VISIBLE) return;
+      
+      var tokens = ['BTC', 'ETH', 'SOL', 'DOGE', 'ADA', 'AVAX'];
+      tokens.forEach(function(tok) {
+        var baseVol = 1.8;
+        if (tok === 'DOGE') baseVol = 6.5; // Very high volatility for meme coin!
+        if (tok === 'SOL' || tok === 'AVAX') baseVol = 3.0; // Active assets
+        
+        var pctChange = (Math.random() - 0.495) * baseVol; // Fluctuation range
+        prices[tok] = Math.max(0.001, prices[tok] * (1 + pctChange / 100));
+        trends[tok] = pctChange;
+
+        // Push to history
+        priceHistory[tok].push(prices[tok]);
+        if (priceHistory[tok].length > 15) priceHistory[tok].shift();
+
+        // Update UI
+        var priceEl = document.getElementById('price' + tok);
+        var trendEl = document.getElementById('trend' + tok);
+        
+        if (priceEl) priceEl.textContent = '$' + prices[tok].toFixed(tok === 'DOGE' || tok === 'ADA' ? 3 : (tok === 'SOL' || tok === 'AVAX' ? 2 : 0));
+        if (trendEl) {
+          trendEl.textContent = (pctChange >= 0 ? '+' : '') + pctChange.toFixed(2) + '%';
+          trendEl.style.color = pctChange >= 0 ? '#00c853' : '#ff1744';
+        }
+
+        drawSparkline(tok);
+      });
+
+      updateWalletUI();
+    }
+
+    // Trade action function
+    window.tradeCrypto = function(tok, action) {
+      var currentPrice = prices[tok];
+      var inputEl = document.getElementById('tradeAmt' + tok);
+      if (!inputEl) return;
+      
+      var tradeAmt = parseFloat(inputEl.value);
+      if (isNaN(tradeAmt) || tradeAmt <= 0) {
+        toast('⚠️ Geçersiz miktar girdiniz!', '#ff7043');
+        return;
+      }
+      
+      if (action === 'buy') {
+        var cost = tradeAmt * currentPrice;
+        if (wallet.balance < cost) {
+          toast('⚠️ Yetersiz Bakiye! Bu işlem için ' + cost.toFixed(2) + ' CC gerekiyor.', '#ff7043');
+          return;
+        }
+        
+        wallet.balance -= cost;
+        wallet.assets[tok] += tradeAmt;
+        wallet.totalSpent[tok] += cost;
+        
+        updateWalletUI();
+        toast('✅ Alındı: ' + tradeAmt + ' ' + tok, '#69f0ae');
+      } else {
+        if (wallet.assets[tok] < tradeAmt) {
+          toast('⚠️ Yetersiz Varlık! Satmak istediğiniz kadar ' + tok + ' yok.', '#ff7043');
+          return;
+        }
+        
+        var revenue = tradeAmt * currentPrice;
+        
+        // Bookkeeping for proportional average cost reduction when selling
+        var fractionSold = tradeAmt / wallet.assets[tok];
+        wallet.totalSpent[tok] -= wallet.totalSpent[tok] * fractionSold;
+        
+        wallet.balance += revenue;
+        wallet.assets[tok] -= tradeAmt;
+        
+        updateWalletUI();
+        toast('💰 Satıldı: ' + tradeAmt + ' ' + tok, '#ffea00');
+      }
+    };
+
+    // Binding event listeners dynamically
+    var tokensList = ['BTC', 'ETH', 'SOL', 'DOGE', 'ADA', 'AVAX'];
+    tokensList.forEach(function(tok) {
+      var buyBtn = document.getElementById('btnBuy' + tok);
+      var sellBtn = document.getElementById('btnSell' + tok);
+      if (buyBtn) {
+        buyBtn.addEventListener('click', function(){ tradeCrypto(tok, 'buy'); });
+      }
+      if (sellBtn) {
+        sellBtn.addEventListener('click', function(){ tradeCrypto(tok, 'sell'); });
+      }
+      // Initialize sparklines
+      drawSparkline(tok);
+    });
+
+    setInterval(tickPrices, 500); // 500ms ticker interval!
+    updateWalletUI();
+  }
+} catch(e) { console.error('CryptoSimulator error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   50. BEDEN KİTLE ENDEKSİ (BKE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var rangeHeight = document.getElementById('rangeHeight');
+  if (rangeHeight) {
+    var rangeWeight = document.getElementById('rangeWeight');
+    var lblHeight = document.getElementById('lblHeight');
+    var lblWeight = document.getElementById('lblWeight');
+    
+    var bmiScore = document.getElementById('bmiScore');
+    var bmiCategory = document.getElementById('bmiCategory');
+    var bmiAdvice = document.getElementById('bmiAdvice');
+
+    function calculateBMI() {
+      var height = parseInt(rangeHeight.value, 10) / 100; // to meters
+      var weight = parseInt(rangeWeight.value, 10);
+      
+      lblHeight.textContent = rangeHeight.value + ' cm';
+      lblWeight.textContent = rangeWeight.value + ' kg';
+      
+      var score = weight / (height * height);
+      bmiScore.textContent = score.toFixed(1);
+
+      if (score < 18.5) {
+        bmiCategory.textContent = 'Zayıf';
+        bmiCategory.style.cssText = 'background:rgba(0,229,255,0.12); color:#00e5ff; border:1px solid rgba(0,229,255,0.25);';
+        bmiAdvice.innerHTML = 'Kilonuz idealin biraz altında. Besleyici gıdalar tüketmeli ve kas yapıcı hafif egzersizler yapmalısınız. <a href="#breathe" style="color:#00e5ff;font-weight:700;">Nefes egzersizi</a> ile zihninizi dinginleştirebilirsiniz.';
+      } else if (score >= 18.5 && score < 25.0) {
+        bmiCategory.textContent = 'Normal Kilolu';
+        bmiCategory.style.cssText = 'background:rgba(0,200,83,0.12); color:#00c853; border:1px solid rgba(0,200,83,0.25);';
+        bmiAdvice.innerHTML = 'Tebrikler, harika dengedesiniz! Bu formunuzu korumak için bol su tüketin ve <a href="#zenclock-sec" style="color:#00c853;font-weight:700;">doğa sesleriyle odaklanma</a> egzersizleri yapın.';
+      } else if (score >= 25.0 && score < 30.0) {
+        bmiCategory.textContent = 'Fazla Kilolu';
+        bmiCategory.style.cssText = 'background:rgba(255,234,0,0.12); color:#ffea00; border:1px solid rgba(255,234,0,0.25);';
+        bmiAdvice.innerHTML = 'Kilonuz idealin biraz üzerinde. Dengeli beslenme, hafif kardiyo ve <a href="#breathe" style="color:#ffea00;font-weight:700;">Zen nefes ritimleri</a> ile metabolizmanızı destekleyebilirsiniz.';
+      } else {
+        bmiCategory.textContent = 'Obez';
+        bmiCategory.style.cssText = 'background:rgba(255,23,71,0.12); color:#ff1744; border:1px solid rgba(255,23,71,0.25);';
+        bmiAdvice.innerHTML = 'Kilonuz sağlık sınırlarının üzerinde bulunuyor. Aktif kalmaya çalışmalı ve bir uzman eşliğinde hareket etmelisiniz. <a href="#breathe" style="color:#ff1744;font-weight:700;">Derin nefes dinlenmeleri</a> stresinizi azaltacaktır.';
+      }
+    }
+
+    rangeHeight.addEventListener('input', calculateBMI);
+    rangeWeight.addEventListener('input', calculateBMI);
+    
+    // Initial calculate
+    calculateBMI();
+  }
+} catch(e) { console.error('BMI Calculator error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   51. İKİLİ İŞİTSEL RİTİM (BINAURAL BEATS)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var btnPlayBB = document.getElementById('btnPlayBB');
+  if (btnPlayBB) {
+    var rangeCarrier = document.getElementById('rangeCarrier');
+    var rangeBeat = document.getElementById('rangeBeat');
+    var rangeBBVol = document.getElementById('rangeBBVol');
+    
+    var lblCarrier = document.getElementById('lblCarrier');
+    var lblBeat = document.getElementById('lblBeat');
+    var lblBBVol = document.getElementById('lblBBVol');
+    
+    var bbVisualizer = document.getElementById('bbVisualizer');
+    var bbStatusIcon = document.getElementById('bbStatusIcon');
+    
+    // Audio nodes
+    var bbAudioCtx = null;
+    var carrierOsc = null;
+    var beatOsc = null;
+    var bbMerger = null;
+    var bbGain = null;
+    var bbIsPlaying = false;
+
+    function initBBAudio() {
+      bbAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      carrierOsc = bbAudioCtx.createOscillator();
+      beatOsc = bbAudioCtx.createOscillator();
+      
+      carrierOsc.type = 'sine';
+      beatOsc.type = 'sine';
+      
+      var carrierFreq = parseFloat(rangeCarrier.value);
+      var beatFreq = parseFloat(rangeBeat.value);
+      
+      carrierOsc.frequency.setValueAtTime(carrierFreq, bbAudioCtx.currentTime);
+      beatOsc.frequency.setValueAtTime(carrierFreq + beatFreq, bbAudioCtx.currentTime);
+      
+      // Dual channel merger for left/right panning separation
+      bbMerger = bbAudioCtx.createChannelMerger(2);
+      
+      // Connect Sol (Left) -> carrier
+      carrierOsc.connect(bbMerger, 0, 0);
+      // Connect Sağ (Right) -> beat (carrier + beat diff)
+      beatOsc.connect(bbMerger, 0, 1);
+      
+      bbGain = bbAudioCtx.createGain();
+      bbGain.gain.setValueAtTime(parseFloat(rangeBBVol.value) / 100, bbAudioCtx.currentTime);
+      
+      bbMerger.connect(bbGain);
+      bbGain.connect(bbAudioCtx.destination);
+      
+      carrierOsc.start();
+      beatOsc.start();
+    }
+
+    function startBB() {
+      try {
+        initBBAudio();
+        bbIsPlaying = true;
+        btnPlayBB.textContent = '⏹ Ritmi Durdur';
+        btnPlayBB.style.background = 'linear-gradient(135deg, var(--a2), #ff1744)';
+        if (bbVisualizer) bbVisualizer.classList.add('playing');
+        if (bbStatusIcon) bbStatusIcon.textContent = '🧘';
+        toast('🎧 İkili İşitsel Ritim Başlatıldı. Kulaklıklarınızı takın!', '#69f0ae');
+      } catch (err) {
+        console.error('Binaural beats audio start failed', err);
+        toast('⚠️ Ses Sentezleyici başlatılamadı.', '#ff7043');
+      }
+    }
+
+    function stopBB() {
+      bbIsPlaying = false;
+      btnPlayBB.textContent = '▶ Ritmi Başlat';
+      btnPlayBB.style.background = '';
+      if (bbVisualizer) bbVisualizer.classList.remove('playing');
+      if (bbStatusIcon) bbStatusIcon.textContent = '🎧';
+      
+      if (carrierOsc) {
+        try { carrierOsc.stop(); } catch(e){}
+        carrierOsc.disconnect();
+      }
+      if (beatOsc) {
+        try { beatOsc.stop(); } catch(e){}
+        beatOsc.disconnect();
+      }
+      if (bbGain) bbGain.disconnect();
+      if (bbAudioCtx) {
+        bbAudioCtx.close();
+        bbAudioCtx = null;
+      }
+      toast('Ritim durduruldu.', '#ffea00');
+    }
+
+    btnPlayBB.addEventListener('click', function() {
+      if (bbIsPlaying) {
+        stopBB();
+      } else {
+        startBB();
+      }
+    });
+
+    // Update frequencies on input
+    function updateBBFreqs() {
+      var carrierVal = parseFloat(rangeCarrier.value);
+      var beatVal = parseFloat(rangeBeat.value);
+      
+      if (lblCarrier) lblCarrier.textContent = carrierVal + ' Hz';
+      if (lblBeat) lblBeat.textContent = beatVal + ' Hz';
+      
+      if (bbIsPlaying && carrierOsc && beatOsc && bbAudioCtx) {
+        carrierOsc.frequency.setValueAtTime(carrierVal, bbAudioCtx.currentTime);
+        beatOsc.frequency.setValueAtTime(carrierVal + beatVal, bbAudioCtx.currentTime);
+      }
+    }
+
+    rangeCarrier.addEventListener('input', updateBBFreqs);
+    rangeBeat.addEventListener('input', updateBBFreqs);
+    
+    // Update volume on input
+    rangeBBVol.addEventListener('input', function() {
+      var volVal = parseFloat(rangeBBVol.value);
+      if (lblBBVol) lblBBVol.textContent = volVal + '%';
+      if (bbIsPlaying && bbGain && bbAudioCtx) {
+        bbGain.gain.setValueAtTime(volVal / 100, bbAudioCtx.currentTime);
+      }
+    });
+
+    // Preset loaders
+    function loadBBPreset(carrier, beat, activeBtnId) {
+      rangeCarrier.value = carrier;
+      rangeBeat.value = beat;
+      updateBBFreqs();
+      
+      document.querySelectorAll('#binaural-sec .mini-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      var activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      toast('Preset yüklendi: ' + (beat) + 'Hz Beat', '#00e5ff');
+    }
+
+    var pFocus = document.getElementById('bbPresetFocus');
+    if (pFocus) pFocus.addEventListener('click', function(){ loadBBPreset(200, 10, 'bbPresetFocus'); });
+    
+    var pMed = document.getElementById('bbPresetMed');
+    if (pMed) pMed.addEventListener('click', function(){ loadBBPreset(150, 6, 'bbPresetMed'); });
+    
+    var pSleep = document.getElementById('bbPresetSleep');
+    if (pSleep) pSleep.addEventListener('click', function(){ loadBBPreset(100, 2.5, 'bbPresetSleep'); });
+    
+    var pRelax = document.getElementById('bbPresetRelax');
+    if (pRelax) pRelax.addEventListener('click', function(){ loadBBPreset(200, 8, 'bbPresetRelax'); });
+  }
+} catch(e) { console.error('BinauralBeats error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   52. ZEN GÜNLÜK SU TAKİPÇİSİ (WATER TRACKER)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var waterTotalText = document.getElementById('waterTotalText');
+  if (waterTotalText) {
+    var waterLiquid = document.getElementById('waterLiquid');
+    var waterPercent = document.getElementById('waterPercent');
+    var waterLogList = document.getElementById('waterLogList');
+    var inputCustomWater = document.getElementById('inputCustomWater');
+    
+    var waterGoal = 2500;
+    var waterTotal = 0;
+    var waterLogs = [];
+
+    // Load logs from LocalStorage
+    function loadWaterData() {
+      var dateKey = 'zen_water_' + new Date().toDateString().replace(/ /g, '_');
+      try {
+        var stored = localStorage.getItem(dateKey);
+        if (stored) {
+          var parsed = JSON.parse(stored);
+          waterTotal = parsed.total || 0;
+          waterLogs = parsed.logs || [];
+        } else {
+          waterTotal = 0;
+          waterLogs = [];
+        }
+      } catch (err) {
+        waterTotal = 0;
+        waterLogs = [];
+      }
+      updateWaterUI();
+    }
+
+    function saveWaterData() {
+      var dateKey = 'zen_water_' + new Date().toDateString().replace(/ /g, '_');
+      var data = { total: waterTotal, logs: waterLogs };
+      try {
+        localStorage.setItem(dateKey, JSON.stringify(data));
+      } catch (err) {
+        console.error('Failed to save water tracking logs', err);
+      }
+    }
+
+    function updateWaterUI() {
+      if (waterTotalText) waterTotalText.textContent = waterTotal + ' / ' + waterGoal + ' ml';
+      
+      var pct = Math.min(100, Math.round((waterTotal / waterGoal) * 100));
+      if (waterPercent) waterPercent.textContent = pct + '%';
+      if (waterLiquid) waterLiquid.style.height = pct + '%';
+      
+      // Render list
+      if (waterLogList) {
+        waterLogList.innerHTML = '';
+        if (waterLogs.length === 0) {
+          waterLogList.innerHTML = '<div style="color: var(--tx3); text-align: center; font-style: italic; padding: 10px 0;">Henüz kayıt yok. Sağlığınız için su için!</div>';
+          return;
+        }
+        
+        waterLogs.forEach(function(item, idx) {
+          var row = document.createElement('div');
+          row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding: 5px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); margin-bottom:2px;';
+          row.innerHTML = '<span>💧 ' + item.amount + ' ml</span><span style="color:var(--tx3);">' + item.time + '</span>';
+          waterLogList.appendChild(row);
+        });
+      }
+    }
+
+    function addWater(amount) {
+      if (isNaN(amount) || amount <= 0) return;
+      var now = new Date();
+      var timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      
+      waterTotal += amount;
+      waterLogs.unshift({ amount: amount, time: timeStr });
+      
+      saveWaterData();
+      updateWaterUI();
+      toast('💧 +' + amount + ' ml su eklendi!', '#00e5ff');
+    }
+
+    document.getElementById('btnAddWater250').addEventListener('click', function(){ addWater(250); });
+    document.getElementById('btnAddWater500').addEventListener('click', function(){ addWater(500); });
+    document.getElementById('btnAddWater750').addEventListener('click', function(){ addWater(750); });
+    
+    document.getElementById('btnAddWaterCustom').addEventListener('click', function() {
+      if (inputCustomWater) {
+        var val = parseInt(inputCustomWater.value, 10);
+        if (isNaN(val) || val <= 0) {
+          toast('⚠️ Lütfen geçerli bir miktar girin.', '#ff7043');
+          return;
+        }
+        addWater(val);
+        inputCustomWater.value = '';
+      }
+    });
+
+    document.getElementById('btnResetWater').addEventListener('click', function() {
+      waterTotal = 0;
+      waterLogs = [];
+      saveWaterData();
+      updateWaterUI();
+      toast('Tüketim kaydı sıfırlandı.', '#ffea00');
+    });
+
+    loadWaterData();
+  }
+} catch(e) { console.error('WaterTracker error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   53. ZEN YAPILACAKLAR (TODO LIST)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var todoList = document.getElementById('todoList');
+  if (todoList) {
+    var todoInput = document.getElementById('todoInput');
+    var btnTodoAdd = document.getElementById('btnTodoAdd');
+    var todoProgressBar = document.getElementById('todoProgressBar');
+    var todoProgressText = document.getElementById('todoProgressText');
+    var todoQuote = document.getElementById('todoQuote');
+    
+    var todos = [];
+    var todoFilter = 'all';
+
+    var quotesList = [
+      'Odaklanma başarının anahtarıdır. 🌟',
+      'Zihnini hafiflet, hedeflerine ulaş! 🧘',
+      'Her küçük adım büyük bir fark yaratır. 🌿',
+      'Odaklan ve anı yaşa. ✨',
+      'Sadelik, zihinsel güçtür. 💫',
+      'Bugünün işini yarına bırakma. 🔥',
+      'Huzurlu bir zihin, verimli bir gündür. 🌀'
+    ];
+
+    function loadTodos() {
+      try {
+        var stored = localStorage.getItem('zen_todo_list');
+        if (stored) {
+          todos = JSON.parse(stored);
+        } else {
+          // Add default starter todos
+          todos = [
+            { id: 1, text: 'Nefes egzersizi yap 🌿', completed: false },
+            { id: 2, text: 'Bol su tüket 💧', completed: true },
+            { id: 3, text: 'Kozmik borsa simülatörünü incele 🪙', completed: false }
+          ];
+        }
+      } catch (err) {
+        todos = [];
+      }
+      renderTodos();
+    }
+
+    function saveTodos() {
+      try {
+        localStorage.setItem('zen_todo_list', JSON.stringify(todos));
+      } catch (err) {
+        console.error('Failed to save todos', err);
+      }
+    }
+
+    function renderTodos() {
+      todoList.innerHTML = '';
+      
+      var filtered = todos.filter(function(t) {
+        if (todoFilter === 'active') return !t.completed;
+        if (todoFilter === 'completed') return t.completed;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        var empty = document.createElement('li');
+        empty.style.cssText = 'color:var(--tx3); text-align:center; font-style:italic; padding: 20px 0;';
+        empty.textContent = todoFilter === 'completed' ? 'Tamamlanan görev bulunmuyor.' : (todoFilter === 'active' ? 'Tüm görevler tamamlandı! 🎉' : 'Listeniz bomboş. Yeni bir hedef ekleyin!');
+        todoList.appendChild(empty);
+      } else {
+        filtered.forEach(function(todo) {
+          var li = document.createElement('li');
+          li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); padding:10px 14px; border-radius:10px; transition:var(--t); cursor:pointer;';
+          li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+          if (todo.completed) {
+            li.style.background = 'rgba(255,255,255,0.01)';
+            li.style.borderColor = 'transparent';
+          }
+          
+          var left = document.createElement('div');
+          left.style.cssText = 'display:flex; align-items:center; gap:10px;';
+          
+          var cb = document.createElement('div');
+          cb.style.cssText = 'width:18px; height:18px; border-radius:50%; border:2px solid var(--a1); display:flex; align-items:center; justify-content:center; font-size:0.65rem; transition:var(--t);';
+          if (todo.completed) {
+            cb.style.background = 'var(--a4)';
+            cb.style.borderColor = 'var(--a4)';
+            cb.textContent = '✓';
+          }
+          
+          var txt = document.createElement('span');
+          txt.textContent = todo.text;
+          txt.style.fontSize = '0.85rem';
+          if (todo.completed) {
+            txt.style.textDecoration = 'line-through';
+            txt.style.color = 'var(--tx3)';
+          }
+          
+          left.appendChild(cb);
+          left.appendChild(txt);
+          
+          var del = document.createElement('button');
+          del.innerHTML = '🗑️';
+          del.style.cssText = 'background:none; border:none; color:var(--tx3); cursor:pointer; font-size:0.9rem; transition:var(--t); padding: 2px 6px;';
+          del.addEventListener('click', function(e) {
+            e.stopPropagation();
+            deleteTodo(todo.id);
+          });
+          del.addEventListener('mouseenter', function(){ del.style.color = 'var(--a2)'; });
+          del.addEventListener('mouseleave', function(){ del.style.color = 'var(--tx3)'; });
+
+          li.appendChild(left);
+          li.appendChild(del);
+          
+          li.addEventListener('click', function() {
+            toggleTodo(todo.id);
+          });
+
+          todoList.appendChild(li);
+        });
+      }
+
+      // Update progress bar
+      var total = todos.length;
+      var completed = todos.filter(function(t){ return t.completed; }).length;
+      var pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      if (todoProgressBar) todoProgressBar.style.width = pct + '%';
+      if (todoProgressText) todoProgressText.textContent = 'Tamamlanan: ' + completed + ' / ' + total + ' (%' + pct + ')';
+    }
+
+    function addTodo() {
+      var text = todoInput.value.trim();
+      if (!text) {
+        toast('⚠️ Lütfen bir görev tanımı yazın.', '#ff7043');
+        return;
+      }
+      
+      var newTodo = {
+        id: Date.now(),
+        text: text,
+        completed: false
+      };
+      
+      todos.push(newTodo);
+      todoInput.value = '';
+      saveTodos();
+      renderTodos();
+      toast('📝 Görev eklendi!', '#69f0ae');
+    }
+
+    function toggleTodo(id) {
+      todos = todos.map(function(t) {
+        if (t.id === id) {
+          var newStatus = !t.completed;
+          if (newStatus && todoQuote) {
+            // Select random motivation quote
+            todoQuote.textContent = quotesList[Math.floor(Math.random() * quotesList.length)];
+          }
+          return { id: t.id, text: t.text, completed: newStatus };
+        }
+        return t;
+      });
+      saveTodos();
+      renderTodos();
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(function(t){ return t.id !== id; });
+      saveTodos();
+      renderTodos();
+      toast('Görev silindi.', '#ffea00');
+    }
+
+    btnTodoAdd.addEventListener('click', addTodo);
+    todoInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') addTodo(); });
+
+    document.getElementById('btnTodoClear').addEventListener('click', function() {
+      var initialLen = todos.length;
+      todos = todos.filter(function(t){ return t.completed; });
+      if (todos.length < initialLen) {
+        saveTodos();
+        renderTodos();
+        toast('Tamamlananlar temizlendi!', '#7c4dff');
+      }
+    });
+
+    // Filters
+    function applyFilter(f, btnId) {
+      todoFilter = f;
+      document.querySelectorAll('#todo-sec .mini-btn').forEach(function(b) {
+        if(b.id !== 'btnTodoClear') b.classList.remove('active');
+      });
+      var btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('active');
+      renderTodos();
+    }
+
+    document.getElementById('todoFilterAll').addEventListener('click', function(){ applyFilter('all', 'todoFilterAll'); });
+    document.getElementById('todoFilterActive').addEventListener('click', function(){ applyFilter('active', 'todoFilterActive'); });
+    document.getElementById('todoFilterCompleted').addEventListener('click', function(){ applyFilter('completed', 'todoFilterCompleted'); });
+
+    loadTodos();
+  }
+} catch(e) { console.error('Todo error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   58. KOZMİK YERÇEKİMİ SANDBOXI (N-BODY GRAVITY SIMULATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var gravityCanvas = document.getElementById('gravityCanvas');
+  if (gravityCanvas) {
+    var gCtx = gravityCanvas.getContext('2d');
+    var spawnPlanetBtn = document.getElementById('gravitySpawnPlanet');
+    var spawnStarBtn = document.getElementById('gravitySpawnStar');
+    var spawnBHBtn = document.getElementById('gravitySpawnBH');
+    var presetSolarBtn = document.getElementById('gravityPresetSolar');
+    var presetBinaryBtn = document.getElementById('gravityPresetBinary');
+    var presetChaosBtn = document.getElementById('gravityPresetChaos');
+    var btnGravityTrails = document.getElementById('btnGravityTrails');
+    var btnGravityClear = document.getElementById('btnGravityClear');
+
+    var gw = gravityCanvas.width;
+    var gh = gravityCanvas.height;
+
+    // Simulation states
+    var bodies = [];
+    var G = 0.15; // Gravitational constant
+    var softening = 12; // Prevents division by zero or extreme velocity spikes
+    var drawTrails = true;
+    var activeSpawnType = 'planet'; // planet, star, bh
+
+    // Slingshot variables
+    var isDragging = false;
+    var dragStart = { x: 0, y: 0 };
+    var dragCurrent = { x: 0, y: 0 };
+
+    // Set interactive canvas scale
+    function getCanvasCoordinates(clientX, clientY) {
+      var rect = gravityCanvas.getBoundingClientRect();
+      return {
+        x: (clientX - rect.left) * (gw / rect.width),
+        y: (clientY - rect.top) * (gh / rect.height)
+      };
+    }
+
+    // Body constructor
+    function Body(x, y, vx, vy, mass, type) {
+      this.id = Math.random().toString(36).substr(2, 9);
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.mass = mass;
+      this.type = type; // 'planet', 'star', 'bh'
+      
+      // Dynamic visual attributes
+      if (type === 'planet') {
+        this.radius = Math.max(4, Math.pow(mass, 0.4) * 1.2);
+        this.color = '#69f0ae';
+        this.glow = '#69f0ae';
+      } else if (type === 'star') {
+        this.radius = Math.max(10, Math.pow(mass, 0.35) * 1.5);
+        this.color = '#ffea00';
+        this.glow = '#ffea00';
+      } else { // black hole
+        this.radius = Math.max(12, Math.pow(mass, 0.32) * 1.6);
+        this.color = '#a29bfe';
+        this.glow = '#7c4dff';
+      }
+
+      this.trail = [];
+    }
+
+    // Add preset templates
+    function loadPreset(presetName) {
+      bodies = [];
+      var cx = gw / 2;
+      var cy = gh / 2;
+
+      if (presetName === 'solar') {
+        // Central Star
+        bodies.push(new Body(cx, cy, 0, 0, 1500, 'star'));
+        
+        // Planet 1 (Inner, Fast)
+        // Orbit speed: v = sqrt(G * M / r)
+        var r1 = 100;
+        var v1 = Math.sqrt((G * 1500) / r1);
+        bodies.push(new Body(cx, cy - r1, v1, 0, 15, 'planet'));
+
+        // Planet 2 (Middle)
+        var r2 = 160;
+        var v2 = Math.sqrt((G * 1500) / r2);
+        bodies.push(new Body(cx, cy - r2, v2, 0, 45, 'planet'));
+
+        // Planet 3 (Outer, with a tiny Moon!)
+        var r3 = 240;
+        var v3 = Math.sqrt((G * 1500) / r3);
+        var planet3 = new Body(cx, cy - r3, v3, 0, 80, 'planet');
+        bodies.push(planet3);
+        
+        // Moon orbiting Planet 3
+        var rm = 20;
+        var vm = Math.sqrt((G * 80) / rm); // Relative velocity to planet
+        bodies.push(new Body(cx, cy - r3 - rm, v3 + vm, 0, 0.5, 'planet'));
+
+        toast('Güneş Sistemi yörüngeleri yerleştirildi. 🌌', '#69f0ae');
+      } 
+      else if (presetName === 'binary') {
+        // Two equal stars dancing around center of mass
+        var dist = 110;
+        var mass = 800;
+        var orbitSpeed = Math.sqrt((G * mass) / (2 * dist));
+
+        bodies.push(new Body(cx - dist, cy, 0, orbitSpeed, mass, 'star'));
+        bodies.push(new Body(cx + dist, cy, 0, -orbitSpeed, mass, 'star'));
+
+        toast('Çift Yıldız dansı simüle ediliyor. ♊', '#ffea00');
+      } 
+      else if (presetName === 'chaos') {
+        // Chaotic Three-Body Problem (Lagrange triangular coordinates)
+        var d = 130;
+        var mass = 1000;
+        var speedVal = 1.35; // Fine-tuned chaotic orbit velocity
+
+        bodies.push(new Body(cx, cy - d, -speedVal, 0, mass, 'star'));
+        bodies.push(new Body(cx - d * 0.86, cy + d * 0.5, speedVal * 0.5, -speedVal * 0.86, mass, 'star'));
+        bodies.push(new Body(cx + d * 0.86, cy + d * 0.5, speedVal * 0.5, speedVal * 0.86, mass, 'star'));
+
+        toast('Üç-Cisim Problemi kaotik yörüngeleri başladı! 🌀', '#7c4dff');
+      }
+    }
+
+    // Initialize with solar preset
+    loadPreset('solar');
+
+    // Select active type controls
+    function setSpawnType(type, btn) {
+      activeSpawnType = type;
+      document.querySelectorAll('#gravity-sec .mini-btn').forEach(function(b) {
+        if (b.id.indexOf('gravitySpawn') !== -1) {
+          b.classList.remove('active');
+          b.style.borderColor = '';
+        }
+      });
+      btn.classList.add('active');
+      if (type === 'planet') btn.style.borderColor = 'rgba(105,240,174,0.3)';
+      else if (type === 'star') btn.style.borderColor = 'rgba(255,234,0,0.3)';
+      else btn.style.borderColor = 'rgba(124,77,255,0.3)';
+    }
+
+    spawnPlanetBtn.addEventListener('click', function(){ setSpawnType('planet', spawnPlanetBtn); });
+    spawnStarBtn.addEventListener('click', function(){ setSpawnType('star', spawnStarBtn); });
+    spawnBHBtn.addEventListener('click', function(){ setSpawnType('bh', spawnBHBtn); });
+
+    // Presets listeners
+    presetSolarBtn.addEventListener('click', function(){ loadPreset('solar'); });
+    presetBinaryBtn.addEventListener('click', function(){ loadPreset('binary'); });
+    presetChaosBtn.addEventListener('click', function(){ loadPreset('chaos'); });
+
+    // Switch trails
+    btnGravityTrails.addEventListener('click', function() {
+      drawTrails = !drawTrails;
+      btnGravityTrails.textContent = drawTrails ? '💫 Yörünge İzleri: Açık' : '💫 Yörünge İzleri: Kapalı';
+      if (!drawTrails) {
+        bodies.forEach(function(b) { b.trail = []; });
+      }
+      toast(drawTrails ? 'Yörünge izleri açıldı.' : 'Yörünge izleri gizlendi.', '#00e5ff');
+    });
+
+    btnGravityClear.addEventListener('click', function() {
+      bodies = [];
+      toast('Tüm evren boşaltıldı.', '#ff1744');
+    });
+
+    // Capture Drag slingshot actions
+    gravityCanvas.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      var pos = getCanvasCoordinates(e.clientX, e.clientY);
+      dragStart = pos;
+      dragCurrent = pos;
+    });
+
+    gravityCanvas.addEventListener('mousemove', function(e) {
+      if (isDragging) {
+        dragCurrent = getCanvasCoordinates(e.clientX, e.clientY);
+      }
+    });
+
+    document.addEventListener('mouseup', function(e) {
+      if (isDragging) {
+        isDragging = false;
+        var endPos = getCanvasCoordinates(e.clientX, e.clientY);
+        
+        // Calculate launching velocity vector (pulling back shoots forward like a slingshot)
+        var vx = (dragStart.x - endPos.x) * 0.08;
+        var vy = (dragStart.y - endPos.y) * 0.08;
+
+        // Choose mass depending on spawning active type
+        var mass = 30;
+        if (activeSpawnType === 'star') mass = 800;
+        else if (activeSpawnType === 'bh') mass = 12000;
+
+        // Create and register body
+        bodies.push(new Body(dragStart.x, dragStart.y, vx, vy, mass, activeSpawnType));
+        toast('Yeni cisim fırlatıldı! 🚀', '#69f0ae');
+      }
+    });
+
+    // Touch events support for slingshot
+    gravityCanvas.addEventListener('touchstart', function(e) {
+      isDragging = true;
+      var touch = e.touches[0];
+      var pos = getCanvasCoordinates(touch.clientX, touch.clientY);
+      dragStart = pos;
+      dragCurrent = pos;
+    });
+
+    gravityCanvas.addEventListener('touchmove', function(e) {
+      if (isDragging) {
+        var touch = e.touches[0];
+        dragCurrent = getCanvasCoordinates(touch.clientX, touch.clientY);
+      }
+    });
+
+    gravityCanvas.addEventListener('touchend', function(e) {
+      if (isDragging) {
+        isDragging = false;
+        // Launch using last recorded coordinates
+        var vx = (dragStart.x - dragCurrent.x) * 0.08;
+        var vy = (dragStart.y - dragCurrent.y) * 0.08;
+
+        var mass = 30;
+        if (activeSpawnType === 'star') mass = 800;
+        else if (activeSpawnType === 'bh') mass = 12000;
+
+        bodies.push(new Body(dragStart.x, dragStart.y, vx, vy, mass, activeSpawnType));
+      }
+    });
+
+    // ── PHYSICS INTEGRATOR ENGINE ────────────────────────────
+    function updateGravityPhysics() {
+      var n = bodies.length;
+      if (n === 0) return;
+
+      // 1. Calculate N-Body gravitational forces and accumulate acceleration vectors
+      for (var i = 0; i < n; i++) {
+        var b1 = bodies[i];
+        for (var j = i + 1; j < n; j++) {
+          var b2 = bodies[j];
+
+          var dx = b2.x - b1.x;
+          var dy = b2.y - b1.y;
+          var distSq = dx * dx + dy * dy;
+          var dist = Math.sqrt(distSq);
+
+          // Merge bodies upon overlapping collision! (Larger eats smaller)
+          if (dist < b1.radius + b2.radius) {
+            var eater = b1.mass >= b2.mass ? b1 : b2;
+            var food = b1.mass >= b2.mass ? b2 : b1;
+
+            // Conservation of Momentum: v_new = (m1*v1 + m2*v2) / (m1+m2)
+            var totalMass = eater.mass + food.mass;
+            eater.vx = (eater.vx * eater.mass + food.vx * food.mass) / totalMass;
+            eater.vy = (eater.vy * eater.mass + food.vy * food.mass) / totalMass;
+
+            // Center of Mass Position: x_new = (m1*x1 + m2*x2) / (m1+m2)
+            eater.x = (eater.x * eater.mass + food.x * food.mass) / totalMass;
+            eater.y = (eater.y * eater.mass + food.y * food.mass) / totalMass;
+
+            eater.mass = totalMass;
+            
+            // Scale up visuals slightly
+            if (eater.type === 'planet') {
+              eater.radius = Math.max(4, Math.pow(totalMass, 0.4) * 1.2);
+            } else if (eater.type === 'star') {
+              eater.radius = Math.max(10, Math.pow(totalMass, 0.35) * 1.5);
+            } else {
+              eater.radius = Math.max(12, Math.pow(totalMass, 0.32) * 1.6);
+            }
+
+            // Remove absorbed food body
+            bodies.splice(bodies.indexOf(food), 1);
+            n--; // decrement length index
+            
+            toast('💥 Cisim çarpışması! Dev yutma gerçekleşti.', '#ff7043');
+            break;
+          }
+
+          // Acceleration Math with softening factor to guarantee zero division exceptions
+          var distSoftSq = distSq + (softening * softening);
+          var force = (G * b1.mass * b2.mass) / distSoftSq;
+
+          var forceX = force * (dx / (dist + 0.001));
+          var forceY = force * (dy / (dist + 0.001));
+
+          // b1 gains velocity
+          b1.vx += forceX / b1.mass;
+          b1.vy += forceY / b1.mass;
+
+          // b2 gains equal opposite velocity
+          b2.vx -= forceX / b2.mass;
+          b2.vy -= forceY / b2.mass;
+        }
+      }
+
+      // 2. Translate coordinates & record trails
+      bodies.forEach(function(b) {
+        b.x += b.vx;
+        b.y += b.vy;
+
+        // Slowly decay velocity if out of logical space bounds to attract back
+        if (Math.abs(b.x - cx) > 1000 || Math.abs(b.y - cy) > 1000) {
+          b.vx *= 0.98;
+          b.vy *= 0.98;
+        }
+
+        if (drawTrails) {
+          b.trail.push({ x: b.x, y: b.y });
+          if (b.trail.length > 100) {
+            b.trail.shift();
+          }
+        }
+      });
+    }
+
+    var cx = gw / 2;
+    var cy = gh / 2;
+
+    // ── RENDER ENGINE ────────────────────────────────────────
+    function drawGravity() {
+      if (!isCanvasActive('gravityCanvas')) return;
+
+      // Draw trails or clear space
+      gCtx.fillStyle = '#030408';
+      gCtx.fillRect(0, 0, gw, gh);
+
+      // Perform mechanics equations updates
+      updateGravityPhysics();
+
+      // 1. Draw yörünge izleri (trails)
+      if (drawTrails) {
+        bodies.forEach(function(b) {
+          if (b.trail.length < 2) return;
+          gCtx.strokeStyle = b.color;
+          gCtx.lineWidth = 1.0;
+          gCtx.globalAlpha = 0.28;
+          gCtx.beginPath();
+          gCtx.moveTo(b.trail[0].x, b.trail[0].y);
+          for (var k = 1; k < b.trail.length; k++) {
+            gCtx.lineTo(b.trail[k].x, b.trail[k].y);
+          }
+          gCtx.stroke();
+          gCtx.globalAlpha = 1.0; // restore alpha
+        });
+      }
+
+      // 2. Draw active slingshot rubber band line
+      if (isDragging) {
+        gCtx.strokeStyle = 'rgba(255,255,255,0.45)';
+        gCtx.lineWidth = 1.5;
+        gCtx.setLineDash([4, 4]);
+        gCtx.beginPath();
+        gCtx.moveTo(dragStart.x, dragStart.y);
+        gCtx.lineTo(dragCurrent.x, dragCurrent.y);
+        gCtx.stroke();
+        gCtx.setLineDash([]); // clear dash
+
+        // Draw visual size guide
+        gCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        gCtx.beginPath();
+        var tempRadius = activeSpawnType === 'planet' ? 6 : (activeSpawnType === 'star' ? 18 : 22);
+        gCtx.arc(dragStart.x, dragStart.y, tempRadius, 0, Math.PI * 2);
+        gCtx.fill();
+      }
+
+      // 3. Draw bodies
+      bodies.forEach(function(b) {
+        gCtx.save();
+        gCtx.shadowBlur = b.type === 'planet' ? 8 : (b.type === 'star' ? 20 : 35);
+        gCtx.shadowColor = b.glow;
+
+        if (b.type === 'bh') {
+          // Render black hole with purple glowing aura Ring
+          var radGrad = gCtx.createRadialGradient(b.x, b.y, b.radius * 0.2, b.x, b.y, b.radius);
+          radGrad.addColorStop(0, '#000000');
+          radGrad.addColorStop(0.5, '#000000');
+          radGrad.addColorStop(0.7, '#7c4dff');
+          radGrad.addColorStop(1, 'rgba(162,155,254,0.0)');
+          gCtx.fillStyle = radGrad;
+          gCtx.beginPath();
+          gCtx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          gCtx.fill();
+        } else {
+          // Normal star/planet solids
+          gCtx.fillStyle = b.color;
+          gCtx.beginPath();
+          gCtx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          gCtx.fill();
+        }
+
+        gCtx.restore();
+      });
+    }
+
+    // Animation Tick Loop
+    function gravityLoop() {
+      drawGravity();
+      requestAnimationFrame(gravityLoop);
+    }
+    gravityLoop();
+  }
+} catch(e) { console.error('GravitySandbox error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   54. NEBULA ANSİKLOPEDİSİ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var nebulaTabs = document.querySelectorAll('.nebula-tab');
+  if (nebulaTabs.length > 0) {
+    var NEB_DATA = {
+      orion: {
+        title: 'Orion Nebulası', catalog: 'M42', dist: '1344 IY', size: '24 IY', discovery: '1610',
+        bg: 'radial-gradient(circle at 30% 40%, rgba(124,77,255,0.45), transparent 60%), radial-gradient(circle at 70% 60%, rgba(255,107,157,0.45), transparent 60%)',
+        desc: 'Orion Bulutsusu, Samanyolu Galaksisi\'nde yer alan devasa bir dağınık bulutsudur. Dünya\'ya en yakın aktif yıldız oluşum bölgesi olduğu için yıldız doğumlarının incelenmesinde kritik rol oynar.'
+      },
+      crab: {
+        title: 'Yengeç Nebulası', catalog: 'M1', dist: '6500 IY', size: '11 IY', discovery: '1731',
+        bg: 'radial-gradient(circle at 40% 30%, rgba(0,229,255,0.45), transparent 60%), radial-gradient(circle at 60% 70%, rgba(124,77,255,0.45), transparent 60%)',
+        desc: 'Yengeç Bulutsusu, 1054 yılında Çinli astronomlar tarafından gündüz gözüyle görüldüğü kaydedilen tarihi bir süpernova patlamasının kalıntısıdır. Merkezinde saniyede 30 kez dönen bir pulsar yer alır.'
+      },
+      helix: {
+        title: 'Sarmal Nebula', catalog: 'NGC 7293', dist: '650 IY', size: '2.5 IY', discovery: '1824',
+        bg: 'radial-gradient(circle at 50% 50%, rgba(255,234,0,0.35), rgba(255,107,157,0.45) 50%, transparent 80%)',
+        desc: 'Sarmal Bulutsusu, "Tanrının Gözü" olarak da anılır. Güneş benzeri bir yıldızın ömrünün sonuna geldiğinde dış katmanlarını uzaya fırlatmasıyla oluşmuş görkemli bir gezegenimsi bulutsudur.'
+      },
+      eagle: {
+        title: 'Kartal Nebulası', catalog: 'M16', dist: '7000 IY', size: '70 IY', discovery: '1745',
+        bg: 'radial-gradient(circle at 30% 60%, rgba(105,240,174,0.45), transparent 60%), radial-gradient(circle at 70% 40%, rgba(0,229,255,0.45), transparent 60%)',
+        desc: 'Kartal Bulutsusu, aktif bir yıldız oluşum bölgesidir. İçerisinde Hubble Teleskobu tarafından görüntülenen ve yıldız tohumlarının filizlendiği devasa gaz sütunları olan meşhur "Yaratılış Sütunları"nı barındırır.'
+      }
+    };
+
+    function selectNebula(key) {
+      var d = NEB_DATA[key];
+      if (!d) return;
+      
+      document.getElementById('nebulaTitle').textContent = d.title;
+      document.getElementById('nebulaCatalog').textContent = d.catalog;
+      document.getElementById('nebulaDist').textContent = d.dist;
+      document.getElementById('nebulaSize').textContent = d.size;
+      document.getElementById('nebulaDiscovery').textContent = d.discovery;
+      document.getElementById('nebulaDesc').textContent = d.desc;
+      
+      var backdrop = document.getElementById('nebulaBackdrop');
+      if (backdrop) {
+        backdrop.style.background = d.bg;
+      }
+      
+      nebulaTabs.forEach(function(tab) {
+        tab.classList.remove('active');
+        tab.style.borderLeft = '';
+        if (tab.dataset.neb === key) {
+          tab.classList.add('active');
+          tab.style.borderLeft = '3px solid var(--a3)';
+        }
+      });
+    }
+
+    nebulaTabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        selectNebula(tab.dataset.neb);
+      });
+    });
+  }
+} catch(e) { console.error('NebulaCatalog error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   55. EVRENİN ÖLÇEĞİ (SCALE OF THE UNIVERSE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var rangeScale = document.getElementById('rangeScale');
+  if (rangeScale) {
+    var scaleTitle = document.getElementById('scaleTitle');
+    var scaleUnit = document.getElementById('scaleUnit');
+    var scaleDesc = document.getElementById('scaleDesc');
+    var scaleGraphic = document.getElementById('scaleGraphic');
+    var scaleMidCircle = document.getElementById('scaleMidCircle');
+    var scaleOuterCircle = document.getElementById('scaleOuterCircle');
+
+    var SCALE_DATA = [
+      { name: 'Kuark', unit: '10⁻¹⁸ metre', graphic: '⚛️', desc: 'Evrendeki bilinen en temel parçacıklardan biridir. Proton ve nötronları oluştururlar. Tek başlarına serbest halde bulunamazlar.', mid: '40px', outer: '90px' },
+      { name: 'Proton', unit: '10⁻¹⁵ metre', graphic: '🪐', desc: 'Atom çekirdeğini oluşturan artı yüklü parçacıktır. Üç kuarkın güçlü nükleer kuvvetle birleşmesiyle oluşur.', mid: '55px', outer: '110px' },
+      { name: 'Hidrojen Atomu', unit: '10⁻¹⁰ metre', graphic: '⚛️', desc: 'Evrendeki en basit ve en bol bulunan elementtir. Bir proton ve çevresindeki bir elektrondan oluşur.', mid: '70px', outer: '130px' },
+      { name: 'DNA Sarmalı', unit: '10⁻⁹ metre', graphic: '🧬', desc: 'Tüm canlı organizmaların genetik kodlarını taşıyan çift sarmallı dev moleküldür. Hücrelerin yönetici merkezidir.', mid: '85px', outer: '150px' },
+      { name: 'Alyuvar Hücresi', unit: '10⁻⁵ metre', graphic: '🔴', desc: 'Kanımızda oksijen taşımakla görevli kırmızı hücrelerdir. Çapları yaklaşık 7 mikrometredir.', mid: '100px', outer: '165px' },
+      { name: 'İnsan Boyutu', unit: '10⁰ metre', graphic: '👤', desc: 'Kozmik cetvelin tam ortasında, mikro-kozmos ile makro-kozmosun kesişim noktasındaki karmaşık yaşam formuyuz.', mid: '115px', outer: '175px' },
+      { name: 'Dünya', unit: '10⁷ metre', graphic: '🌍', desc: 'Üzerinde yaşadığımız, yaşam barındırdığı bilinen tek mavi gök cismidir. Çapı yaklaşık 12.742 kilometredir.', mid: '130px', outer: '180px' },
+      { name: 'Güneş Sistemi', unit: '10¹³ metre', graphic: '☀️', desc: 'Merkezinde Güneş\'in olduğu, çekim gücüyle bağlı sekiz gezegen ve uydularından oluşan kozmik mahallemiz.', mid: '145px', outer: '185px' },
+      { name: 'Samanyolu Galaksisi', unit: '10²¹ metre', graphic: '🌌', desc: 'Güneşimizin de dahil olduğu, yüz milyarlarca yıldız barındıran sarmal yapılı dev gök ada sistemidir.', mid: '160px', outer: '190px' },
+      { name: 'Gözlemlenebilir Evren', unit: '10²⁶ metre', graphic: '🌌', desc: 'Büyük Patlama\'dan bu yana ışığı bize ulaşabilen tüm evren bölümüdür. Genişliği yaklaşık 93 milyar ışık yılıdır.', mid: '175px', outer: '195px' }
+    ];
+
+    function updateScale() {
+      var idx = parseInt(rangeScale.value, 10);
+      var item = SCALE_DATA[idx];
+      if (!item) return;
+
+      scaleTitle.textContent = item.name;
+      scaleUnit.textContent = item.unit;
+      scaleDesc.textContent = item.desc;
+      scaleGraphic.textContent = item.graphic;
+      
+      // Animate circles size to reflect relative scale changes
+      scaleMidCircle.style.width = item.mid;
+      scaleMidCircle.style.height = item.mid;
+      scaleOuterCircle.style.width = item.outer;
+      scaleOuterCircle.style.height = item.outer;
+    }
+
+    rangeScale.addEventListener('input', updateScale);
+    updateScale();
+  }
+} catch(e) { console.error('UniverseScale error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   56. KAOS TEORİSİ & SERPINSKI FRAKTALI
+   ══════════════════════════════════════════════════════════ */
+try {
+  var chaosCanvas = document.getElementById('chaosCanvas');
+  if (chaosCanvas) {
+    var cCtx = chaosCanvas.getContext('2d');
+    var btnChaosStart = document.getElementById('btnChaosStart');
+    var btnChaosClear = document.getElementById('btnChaosClear');
+    var rangeChaosSpeed = document.getElementById('rangeChaosSpeed');
+    var lblChaosSpeed = document.getElementById('lblChaosSpeed');
+    var chaosPointCount = document.getElementById('chaosPointCount');
+
+    var chaosRunning = false;
+    var chaosAnimId = null;
+    var curPoint = { x: 200, y: 180 };
+    var totalPoints = 0;
+    var speed = 50;
+    
+    // Triangle vertices coordinates
+    var vertices = [
+      { x: 200, y: 25 },     // Top
+      { x: 30, y: 335 },    // Bottom Left
+      { x: 370, y: 335 }    // Bottom Right
+    ];
+    
+    var colorMode = 'cyan'; // 'cyan', 'fire', 'forest'
+
+    function drawVertices() {
+      cCtx.fillStyle = '#fff';
+      vertices.forEach(function(v) {
+        cCtx.beginPath();
+        cCtx.arc(v.x, v.y, 4, 0, Math.PI * 2);
+        cCtx.fill();
+      });
+    }
+
+    function clearChaos() {
+      cCtx.fillStyle = '#06070c';
+      cCtx.fillRect(0, 0, chaosCanvas.width, chaosCanvas.height);
+      drawVertices();
+      totalPoints = 0;
+      if (chaosPointCount) chaosPointCount.textContent = '0';
+      // Pick random starting point
+      curPoint = { x: Math.random() * 400, y: Math.random() * 360 };
+    }
+
+    function getPointColor() {
+      if (colorMode === 'fire') {
+        var rng = Math.random();
+        return rng < 0.4 ? '#ffea00' : (rng < 0.8 ? '#ff7043' : '#ff1744');
+      }
+      if (colorMode === 'forest') {
+        return Math.random() < 0.5 ? '#69f0ae' : '#00b894';
+      }
+      // Cosmic Neon
+      return Math.random() < 0.5 ? '#00e5ff' : '#7c4dff';
+    }
+
+    function drawPoints() {
+      if (!chaosRunning) return;
+      
+      if (isCanvasActive('chaosCanvas')) {
+        cCtx.fillStyle = getPointColor();
+        
+        for (var i = 0; i < speed; i++) {
+          // Pick random vertex
+          var targetVertex = vertices[Math.floor(Math.random() * vertices.length)];
+          
+          // Find midpoint
+          curPoint.x = (curPoint.x + targetVertex.x) / 2;
+          curPoint.y = (curPoint.y + targetVertex.y) / 2;
+          
+          cCtx.fillRect(curPoint.x, curPoint.y, 1, 1);
+          totalPoints++;
+        }
+        
+        if (chaosPointCount) chaosPointCount.textContent = totalPoints.toLocaleString('tr-TR');
+      }
+      
+      chaosAnimId = requestAnimationFrame(drawPoints);
+    }
+
+    btnChaosStart.addEventListener('click', function() {
+      if (chaosRunning) {
+        chaosRunning = false;
+        cancelAnimationFrame(chaosAnimId);
+        btnChaosStart.textContent = '▶ Çizimi Başlat';
+        btnChaosStart.style.background = '';
+        toast('Fraktal çizimi duraklatıldı.', '#ffea00');
+      } else {
+        chaosRunning = true;
+        btnChaosStart.textContent = '⏹ Çizimi Durdur';
+        btnChaosStart.style.background = 'linear-gradient(135deg, var(--a2), #ff1744)';
+        drawPoints();
+        toast('🌀 Kaos oyunu başladı! Fraktal inşa ediliyor.', '#69f0ae');
+      }
+    });
+
+    btnChaosClear.addEventListener('click', function() {
+      var wasRunning = chaosRunning;
+      if (chaosRunning) {
+        chaosRunning = false;
+        cancelAnimationFrame(chaosAnimId);
+        btnChaosStart.textContent = '▶ Çizimi Başlat';
+        btnChaosStart.style.background = '';
+      }
+      clearChaos();
+      toast('Çizim alanı temizlendi.', '#ffea00');
+    });
+
+    rangeChaosSpeed.addEventListener('input', function() {
+      speed = parseInt(rangeChaosSpeed.value, 10);
+      if (lblChaosSpeed) lblChaosSpeed.textContent = speed + ' Nokta';
+    });
+
+    // Color selectors
+    function applyColorMode(mode, btnId) {
+      colorMode = mode;
+      document.querySelectorAll('#chaos-fractal-sec .mini-btn').forEach(function(b) {
+        if (b.id !== 'btnChaosClear') b.classList.remove('active');
+      });
+      var btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('active');
+    }
+
+    document.getElementById('chaosColCyan').addEventListener('click', function(){ applyColorMode('cyan', 'chaosColCyan'); });
+    document.getElementById('chaosColFire').addEventListener('click', function(){ applyColorMode('fire', 'chaosColFire'); });
+    document.getElementById('chaosColForest').addEventListener('click', function(){ applyColorMode('forest', 'chaosColForest'); });
+
+    clearChaos();
+  }
+} catch(e) { console.error('ChaosGame error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   57. DÜŞÜNCE DENEYLERİ & PARADOKSLAR BAHÇESİ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var paradoxTitle = document.getElementById('paradoxTitle');
+  if (paradoxTitle) {
+    var paradoxCategory = document.getElementById('paradoxCategory');
+    var paradoxAuthor = document.getElementById('paradoxAuthor');
+    var paradoxDesc = document.getElementById('paradoxDesc');
+    var btnParadoxOptA = document.getElementById('btnParadoxOptA');
+    var btnParadoxOptB = document.getElementById('btnParadoxOptB');
+    var paradoxResults = document.getElementById('paradoxResults');
+    var paradoxButtons = document.getElementById('paradoxButtons');
+    
+    var lblParadoxOptA = document.getElementById('lblParadoxOptA');
+    var pctParadoxOptA = document.getElementById('pctParadoxOptA');
+    var barParadoxOptA = document.getElementById('barParadoxOptA');
+    var lblParadoxOptB = document.getElementById('lblParadoxOptB');
+    var pctParadoxOptB = document.getElementById('pctParadoxOptB');
+    var barParadoxOptB = document.getElementById('barParadoxOptB');
+    
+    var btnPrevParadox = document.getElementById('btnPrevParadox');
+    var btnNextParadox = document.getElementById('btnNextParadox');
+    var btnParadoxResetVote = document.getElementById('btnParadoxResetVote');
+
+    var curParadoxIdx = 0;
+
+    var PARADOX_DECK = [
+      {
+        cat: 'Kuantum Fiziği', title: 'Schrödinger\'in Kedisi', author: 'Erwin Schrödinger (1935)',
+        desc: 'Bir kedi; zehirli gaz kapsülü, radyoaktif tetikleyici ve sayaç bulunan kapalı bir kutuya konur. Kuantum kurallarına göre kutu açılana kadar parçacık %50 olasılıkla sönmüştür ve kedi hem canlı hem de ölüdür.',
+        optA: 'Kutu açılana kadar kedi hem ölü hem canlıdır.',
+        optB: 'Kedi gözlemden bağımsız olarak sadece tek bir durumdadır.',
+        votes: [47, 53]
+      },
+      {
+        cat: 'Astrofizik', title: 'Fermi Paradoksu', author: 'Enrico Fermi (1950)',
+        desc: 'Evrende milyarlarca yıldız ve Dünya benzeri gezegen var. Samanyolu milyarlarca yıl yaşındadır. Teknik olarak evrenin kolonileştirilmiş olması gerekirdi. O halde, "Herkes nerede?"',
+        optA: 'Dış zeka var ama biz henüz algılayamıyoruz.',
+        optB: 'Evrende yalnızız ya da iletişim kuramadan yok oluyorlar.',
+        votes: [62, 38]
+      },
+      {
+        cat: 'Klasik Felsefe', title: 'Theseus\'un Gemisi', author: 'Plutarhos (MS 75)',
+        desc: 'Gemi limanda dururken çürüyen her tahtası yenisiyle değiştirilir. Sonunda geminin tüm parçaları yenilenmiş olur. Bu gemi hala "aynı" gemi midir yoksa yeni bir gemi mi?',
+        optA: 'Evet, geminin kimliği ve ruhu süreklidir.',
+        optB: 'Hayır, tüm fiziksel parçalar değiştiği için yeni bir gemidir.',
+        votes: [54, 46]
+      },
+      {
+        cat: 'Matematiksel Mantık', title: 'Zeno\'nun Oku', author: 'Elealı Zeno (MÖ 450)',
+        desc: 'Fırlatılan bir ok, uçuşunun her anında belirli bir konumda hareketsiz durmaktadır. Zaman anların toplamı olduğuna göre ve ok her anda hareketsizse, ok nasıl hareket edebilir?',
+        optA: 'Ok hareketsizdir, hareket bir illüzyondur.',
+        optB: 'Konumlar anlıktır, zaman sürekli akış halindedir.',
+        votes: [29, 71]
+      }
+    ];
+
+    function getVoteKey(idx) {
+      return 'zen_paradox_vote_' + idx;
+    }
+
+    function renderParadox() {
+      var d = PARADOX_DECK[curParadoxIdx];
+      if (!d) return;
+
+      paradoxCategory.textContent = d.cat;
+      paradoxTitle.textContent = d.title;
+      paradoxAuthor.textContent = d.author;
+      paradoxDesc.textContent = d.desc;
+      
+      btnParadoxOptA.querySelector('span').textContent = d.optA;
+      btnParadoxOptB.querySelector('span').textContent = d.optB;
+      
+      // Check if voted
+      var voted = localStorage.getItem(getVoteKey(curParadoxIdx));
+      if (voted) {
+        paradoxButtons.style.display = 'none';
+        paradoxResults.style.display = 'flex';
+        
+        lblParadoxOptA.textContent = d.optA;
+        lblParadoxOptB.textContent = d.optB;
+        
+        var vA = d.votes[0];
+        var vB = d.votes[1];
+        if (voted === 'a') vA += 1;
+        else vB += 1;
+        
+        var tot = vA + vB;
+        var pctA = Math.round((vA / tot) * 100);
+        var pctB = 100 - pctA;
+        
+        pctParadoxOptA.textContent = pctA + '%';
+        pctParadoxOptB.textContent = pctB + '%';
+        
+        barParadoxOptA.style.width = pctA + '%';
+        barParadoxOptB.style.width = pctB + '%';
+      } else {
+        paradoxButtons.style.display = 'grid';
+        paradoxResults.style.display = 'none';
+      }
+    }
+
+    function vote(opt) {
+      localStorage.setItem(getVoteKey(curParadoxIdx), opt);
+      renderParadox();
+      toast('🗳️ Fikriniz kaydedildi! Genel sonuçlar gösteriliyor.', '#69f0ae');
+    }
+
+    btnParadoxOptA.addEventListener('click', function(){ vote('a'); });
+    btnParadoxOptB.addEventListener('click', function(){ vote('b'); });
+    
+    btnParadoxResetVote.addEventListener('click', function() {
+      localStorage.removeItem(getVoteKey(curParadoxIdx));
+      renderParadox();
+      toast('Oyunuz sıfırlandı. Yeniden oylayabilirsiniz.', '#ffea00');
+    });
+
+    btnPrevParadox.addEventListener('click', function() {
+      curParadoxIdx = (curParadoxIdx - 1 + PARADOX_DECK.length) % PARADOX_DECK.length;
+      renderParadox();
+    });
+
+    btnNextParadox.addEventListener('click', function() {
+      curParadoxIdx = (curParadoxIdx + 1) % PARADOX_DECK.length;
+      renderParadox();
+    });
+
+    renderParadox();
+  }
+} catch(e) { console.error('ParadoxesGarden error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   58. ZEN AKIŞKAN SIVI TUVALİ (FLUID DYNAMICS SANDBOX)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var fluidCanvas = document.getElementById('fluidCanvas');
+  if (fluidCanvas) {
+    var fCtx = fluidCanvas.getContext('2d');
+    var rangeFluidVisc = document.getElementById('rangeFluidVisc');
+    var rangeFluidDecay = document.getElementById('rangeFluidDecay');
+    var btnFluidClear = document.getElementById('btnFluidClear');
+
+    var fluidWidth = fluidCanvas.width;
+    var fluidHeight = fluidCanvas.height;
+
+    // Real-time grid vector force fields
+    var gridCols = 40;
+    var gridRows = 20;
+    var flowField = [];
+    
+    for (var r = 0; r < gridRows; r++) {
+      flowField.push([]);
+      for (var c = 0; c < gridCols; c++) {
+        flowField[r].push({ vx: 0, vy: 0 });
+      }
+    }
+
+    var particles = [];
+    var maxParticles = 600;
+    var inkColor = 'cyan'; // 'cyan', 'magenta', 'gold', 'emerald', 'rainbow'
+    var isFluidPainting = false;
+    var lastMouse = { x: 0, y: 0 };
+
+    // Initialize particles
+    for (var i = 0; i < maxParticles; i++) {
+      particles.push({
+        x: Math.random() * fluidWidth,
+        y: Math.random() * fluidHeight,
+        vx: 0,
+        vy: 0,
+        age: Math.random() * 100,
+        hue: Math.random() * 360
+      });
+    }
+
+    function addForce(x, y, vx, vy) {
+      var col = Math.floor((x / fluidWidth) * gridCols);
+      var row = Math.floor((y / fluidHeight) * gridRows);
+      
+      if (col >= 0 && col < gridCols && row >= 0 && row < gridRows) {
+        // Smoothly inject velocity force vectors into neighboring cells
+        for (var dr = -1; dr <= 1; dr++) {
+          for (var dc = -1; dc <= 1; dr++) {
+            var rIdx = row + dr;
+            var cIdx = col + dc;
+            if (rIdx >= 0 && rIdx < gridRows && cIdx >= 0 && cIdx < gridCols) {
+              var w = 1.0 / (1 + Math.hypot(dr, dc));
+              flowField[rIdx][cIdx].vx += vx * w * 0.8;
+              flowField[rIdx][cIdx].vy += vy * w * 0.8;
+            }
+          }
+        }
+      }
+    }
+
+    function getForceAt(x, y) {
+      var col = Math.floor((x / fluidWidth) * gridCols);
+      var row = Math.floor((y / fluidHeight) * gridRows);
+      if (col >= 0 && col < gridCols && row >= 0 && row < gridRows) {
+        return flowField[row][col];
+      }
+      return { vx: 0, vy: 0 };
+    }
+
+    function updateFluidPhysics() {
+      // 1. Decay and diffuse flow field vectors
+      var visc = rangeFluidVisc ? parseFloat(rangeFluidVisc.value) / 10 : 0.3;
+      var decay = rangeFluidDecay ? parseFloat(rangeFluidDecay.value) / 100 : 0.97;
+
+      for (var r = 0; r < gridRows; r++) {
+        for (var c = 0; c < gridCols; c++) {
+          var v = flowField[r][c];
+          v.vx *= decay;
+          v.vy *= decay;
+          
+          // Simple neighborhood diffusion (viscosity)
+          var left = c > 0 ? flowField[r][c-1].vx : 0;
+          var right = c < gridCols - 1 ? flowField[r][c+1].vx : 0;
+          var top = r > 0 ? flowField[r-1][c].vx : 0;
+          var bottom = r < gridRows - 1 ? flowField[r+1][c].vx : 0;
+          v.vx += (left + right + top + bottom - 4 * v.vx) * visc * 0.1;
+        }
+      }
+
+      // 2. Update and draw particles
+      particles.forEach(function(p) {
+        p.age++;
+        var f = getForceAt(p.x, p.y);
+        
+        // Accumulate velocity
+        p.vx = p.vx * 0.9 + f.vx * 0.1;
+        p.vy = p.vy * 0.9 + f.vy * 0.1;
+        
+        // Move particle
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Wrap boundaries
+        if (p.x < 0 || p.x > fluidWidth || p.y < 0 || p.y > fluidHeight || p.age > 120) {
+          p.x = Math.random() * fluidWidth;
+          p.y = Math.random() * fluidHeight;
+          p.vx = 0;
+          p.vy = 0;
+          p.age = 0;
+        }
+      });
+    }
+
+    function drawFluid() {
+      if (!isCanvasActive('fluidCanvas')) return;
+      
+      // Draw trailing black layer for motion blur
+      fCtx.fillStyle = 'rgba(4,5,10,0.06)';
+      fCtx.fillRect(0, 0, fluidWidth, fluidHeight);
+
+      updateFluidPhysics();
+
+      // Render glowing particle streams
+      particles.forEach(function(p) {
+        var size = 1 + Math.hypot(p.vx, p.vy) * 0.8;
+        var opacity = Math.min(1.0, (120 - p.age) / 30);
+        
+        fCtx.save();
+        fCtx.shadowBlur = 10;
+        
+        if (inkColor === 'cyan') {
+          fCtx.fillStyle = 'rgba(0, 229, 255, ' + opacity + ')';
+          fCtx.shadowColor = '#00e5ff';
+        } else if (inkColor === 'magenta') {
+          fCtx.fillStyle = 'rgba(255, 107, 157, ' + opacity + ')';
+          fCtx.shadowColor = '#ff6b9d';
+        } else if (inkColor === 'gold') {
+          fCtx.fillStyle = 'rgba(255, 234, 0, ' + opacity + ')';
+          fCtx.shadowColor = '#ffea00';
+        } else if (inkColor === 'emerald') {
+          fCtx.fillStyle = 'rgba(105, 240, 174, ' + opacity + ')';
+          fCtx.shadowColor = '#69f0ae';
+        } else {
+          // Rainbow
+          fCtx.fillStyle = 'hsla(' + ((p.hue + Date.now()/50)%360) + ', 85%, 65%, ' + opacity + ')';
+          fCtx.shadowColor = 'hsl(' + ((p.hue + Date.now()/50)%360) + ', 85%, 65%)';
+        }
+        
+        fCtx.beginPath();
+        fCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        fCtx.fill();
+        fCtx.restore();
+      });
+    }
+
+    // Capture dragging gestures
+    function handleFluidMove(clientX, clientY, rect) {
+      var x = (clientX - rect.left) * (fluidWidth / rect.width);
+      var y = (clientY - rect.top) * (fluidHeight / rect.height);
+      
+      if (isFluidPainting) {
+        var dx = x - lastMouse.x;
+        var dy = y - lastMouse.y;
+        
+        // Boost injected vector speeds
+        addForce(x, y, dx * 1.5, dy * 1.5);
+        
+        // Draw splash immediately
+        for (var k = 0; k < 5; k++) {
+          var pIdx = Math.floor(Math.random() * maxParticles);
+          var p = particles[pIdx];
+          p.x = x + (Math.random() - 0.5) * 15;
+          p.y = y + (Math.random() - 0.5) * 15;
+          p.vx = dx * 0.8;
+          p.vy = dy * 0.8;
+          p.age = 0;
+        }
+      }
+      
+      lastMouse.x = x;
+      lastMouse.y = y;
+    }
+
+    fluidCanvas.addEventListener('mousedown', function(e) {
+      isFluidPainting = true;
+      var rect = fluidCanvas.getBoundingClientRect();
+      lastMouse.x = (e.clientX - rect.left) * (fluidWidth / rect.width);
+      lastMouse.y = (e.clientY - rect.top) * (fluidHeight / rect.height);
+    });
+
+    fluidCanvas.addEventListener('mousemove', function(e) {
+      var rect = fluidCanvas.getBoundingClientRect();
+      handleFluidMove(e.clientX, e.clientY, rect);
+    });
+
+    document.addEventListener('mouseup', function() {
+      isFluidPainting = false;
+    });
+
+    // Touch events support
+    fluidCanvas.addEventListener('touchstart', function(e) {
+      isFluidPainting = true;
+      var rect = fluidCanvas.getBoundingClientRect();
+      var touch = e.touches[0];
+      lastMouse.x = (touch.clientX - rect.left) * (fluidWidth / rect.width);
+      lastMouse.y = (touch.clientY - rect.top) * (fluidHeight / rect.height);
+    });
+
+    fluidCanvas.addEventListener('touchmove', function(e) {
+      var rect = fluidCanvas.getBoundingClientRect();
+      var touch = e.touches[0];
+      handleFluidMove(touch.clientX, touch.clientY, rect);
+    });
+
+    fluidCanvas.addEventListener('touchend', function() {
+      isFluidPainting = false;
+    });
+
+    btnFluidClear.addEventListener('click', function() {
+      fCtx.fillStyle = '#04050a';
+      fCtx.fillRect(0, 0, fluidWidth, fluidHeight);
+      for (var r = 0; r < gridRows; r++) {
+        for (var c = 0; c < gridCols; c++) {
+          flowField[r][c].vx = 0;
+          flowField[r][c].vy = 0;
+        }
+      }
+      particles.forEach(function(p) {
+        p.vx = 0; p.vy = 0; p.age = 0;
+      });
+      toast('Sıvı tuvali temizlendi.', '#ffea00');
+    });
+
+    // Color bindings
+    function setInkColor(col, btnId) {
+      inkColor = col;
+      document.querySelectorAll('#fluid-sec .mini-btn').forEach(function(btn) {
+        if (btn.id !== 'btnFluidClear') btn.classList.remove('active');
+      });
+      var activeBtn = document.getElementById(btnId);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    document.getElementById('fluidColCyan').addEventListener('click', function(){ setInkColor('cyan', 'fluidColCyan'); });
+    document.getElementById('fluidColMagenta').addEventListener('click', function(){ setInkColor('magenta', 'fluidColMagenta'); });
+    document.getElementById('fluidColGold').addEventListener('click', function(){ setInkColor('gold', 'fluidColGold'); });
+    document.getElementById('fluidColEmerald').addEventListener('click', function(){ setInkColor('emerald', 'fluidColEmerald'); });
+    document.getElementById('fluidColRainbow').addEventListener('click', function(){ setInkColor('rainbow', 'fluidColRainbow'); });
+
+    // Tick loops
+    function fluidLoop() {
+      drawFluid();
+      requestAnimationFrame(fluidLoop);
+    }
+    fluidLoop();
+  }
+} catch(e) { console.error('FluidSandbox error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   59. ZEN YAPAY YAŞAM (LENIA CONTINUUM LIFE SIMULATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var leniaCanvas = document.getElementById('leniaCanvas');
+  if (leniaCanvas) {
+    var lCtx = leniaCanvas.getContext('2d');
+    var btnLeniaStart = document.getElementById('btnLeniaStart');
+    var btnLeniaClear = document.getElementById('btnLeniaClear');
+    var rangeLeniaSpeed = document.getElementById('rangeLeniaSpeed');
+    var lblLeniaSpeed = document.getElementById('lblLeniaSpeed');
+
+    var leniaW = leniaCanvas.width;
+    var leniaH = leniaCanvas.height;
+
+    // Fast cellular grid map
+    var leniaSize = 64;
+    var cells = Array(leniaSize * leniaSize).fill(0);
+    var nextCells = Array(leniaSize * leniaSize).fill(0);
+
+    var leniaRunning = false;
+    var leniaAnimId = null;
+    var lPainting = false;
+
+    // Lenia parameter variables
+    var lMu = 0.15;
+    var lSigma = 0.025;
+
+    // Helper map indexes
+    function idx(x, y) {
+      return ((y + leniaSize) % leniaSize) * leniaSize + ((x + leniaSize) % leniaSize);
+    }
+
+    function initLeniaGrid() {
+      cells.fill(0);
+      nextCells.fill(0);
+      // Seed a beautiful default creature at center
+      paintLeniaPreset('seed1');
+      renderLeniaCanvas();
+    }
+
+    function renderLeniaCanvas() {
+      lCtx.fillStyle = '#030407';
+      lCtx.fillRect(0, 0, leniaW, leniaH);
+
+      var scaleX = leniaW / leniaSize;
+      var scaleY = leniaH / leniaSize;
+
+      for (var y = 0; y < leniaSize; y++) {
+        for (var x = 0; x < leniaSize; x++) {
+          var val = cells[idx(x, y)];
+          if (val > 0.02) {
+            lCtx.save();
+            lCtx.shadowBlur = 8;
+            lCtx.shadowColor = 'rgba(105, 240, 174, ' + val + ')';
+            
+            // Draw continuous organisms with glowing emerald gradients
+            lCtx.fillStyle = 'rgba(105, 240, 174, ' + val + ')';
+            lCtx.beginPath();
+            lCtx.arc(x * scaleX + scaleX/2, y * scaleY + scaleY/2, scaleX * 0.75 * val, 0, Math.PI * 2);
+            lCtx.fill();
+            lCtx.restore();
+          }
+        }
+      }
+    }
+
+    function updateLeniaState() {
+      var speedMultiplier = rangeLeniaSpeed ? parseInt(rangeLeniaSpeed.value, 10) : 2;
+      
+      for (var s = 0; s < speedMultiplier; s++) {
+        for (var y = 0; y < leniaSize; y++) {
+          for (var x = 0; x < leniaSize; x++) {
+            
+            // 1. Calculate neighborhood average weighted by custom kernel ring
+            var sum = 0;
+            var weights = 0;
+            
+            for (var dy = -4; dy <= 4; dy++) {
+              for (var dx = -4; dx <= 4; dx++) {
+                var d = Math.hypot(dx, dy);
+                if (d > 0.5 && d <= 4.2) {
+                  // Ring-shaped convolution kernel
+                  var w = Math.exp(-Math.pow((d - 2.8), 2) / 0.8);
+                  sum += cells[idx(x + dx, y + dy)] * w;
+                  weights += w;
+                }
+              }
+            }
+            
+            var avg = weights > 0 ? sum / weights : 0;
+            
+            // 2. Growth function G(avg): bell shape around lMu
+            var growth = Math.exp(-Math.pow((avg - lMu), 2) / Math.pow(lSigma, 2)) * 2 - 1.0;
+            
+            // 3. Integrate growth state
+            var currentVal = cells[idx(x, y)];
+            var nextVal = currentVal + 0.05 * growth;
+            nextCells[idx(x, y)] = Math.max(0.0, Math.min(1.0, nextVal));
+          }
+        }
+        
+        // Swap buffers
+        var temp = cells;
+        cells = nextCells;
+        nextCells = temp;
+      }
+    }
+
+    function leniaStep() {
+      if (!leniaRunning) return;
+      if (isCanvasActive('leniaCanvas')) {
+        updateLeniaState();
+        renderLeniaCanvas();
+      }
+      leniaAnimId = requestAnimationFrame(leniaStep);
+    }
+
+    btnLeniaStart.addEventListener('click', function() {
+      if (leniaRunning) {
+        leniaRunning = false;
+        cancelAnimationFrame(leniaAnimId);
+        btnLeniaStart.textContent = '▶ Yaşamı Başlat';
+        btnLeniaStart.style.background = '';
+        toast('Hücresel yaşam donduruldu.', '#ffea00');
+      } else {
+        leniaRunning = true;
+        btnLeniaStart.textContent = '⏹ Yaşamı Durdur';
+        btnLeniaStart.style.background = 'linear-gradient(135deg, var(--a2), #ff1744)';
+        leniaStep();
+        toast('🧬 Hücresel Yapay Yaşam başladı!', '#69f0ae');
+      }
+    });
+
+    btnLeniaClear.addEventListener('click', function() {
+      if (leniaRunning) {
+        leniaRunning = false;
+        cancelAnimationFrame(leniaAnimId);
+        btnLeniaStart.textContent = '▶ Yaşamı Başlat';
+        btnLeniaStart.style.background = '';
+      }
+      cells.fill(0);
+      nextCells.fill(0);
+      renderLeniaCanvas();
+      toast('Tüm organizmalar temizlendi.', '#ffea00');
+    });
+
+    // Custom seeding on canvas
+    function seedBrush(clientX, clientY, rect) {
+      var cx = Math.floor((clientX - rect.left) * (leniaSize / rect.width));
+      var cy = Math.floor((clientY - rect.top) * (leniaSize / rect.height));
+      
+      for (var dy = -2; dy <= 2; dy++) {
+        for (var dx = -2; dx <= 2; dx++) {
+          var d = Math.hypot(dx, dy);
+          if (d <= 2) {
+            var targetX = (cx + dx + leniaSize) % leniaSize;
+            var targetY = (cy + dy + leniaSize) % leniaSize;
+            cells[idx(targetX, targetY)] = Math.min(1.0, cells[idx(targetX, targetY)] + 0.6 * (1 - d/2.2));
+          }
+        }
+      }
+      renderLeniaCanvas();
+    }
+
+    leniaCanvas.addEventListener('mousedown', function(e) {
+      lPainting = true;
+      var rect = leniaCanvas.getBoundingClientRect();
+      seedBrush(e.clientX, e.clientY, rect);
+    });
+
+    leniaCanvas.addEventListener('mousemove', function(e) {
+      if (lPainting) {
+        var rect = leniaCanvas.getBoundingClientRect();
+        seedBrush(e.clientX, e.clientY, rect);
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      lPainting = false;
+    });
+
+    // Organisms seed presets
+    function paintLeniaPreset(preset) {
+      cells.fill(0);
+      var mid = Math.floor(leniaSize / 2);
+      
+      if (preset === 'seed1') {
+        // Gezgin Hücre - ring layout
+        for (var r = 0; r < 5; r++) {
+          for (var a = 0; a < 360; a += 15) {
+            var rad = a * Math.PI / 180;
+            var px = Math.round(mid + Math.cos(rad) * 3);
+            var py = Math.round(mid + Math.sin(rad) * 3);
+            cells[idx(px, py)] = 0.55;
+          }
+        }
+      } else if (preset === 'seed2') {
+        // Salyangoz - spiral shape
+        for (var i = 0; i < 20; i++) {
+          var rad = (i * 18) * Math.PI / 180;
+          var rSize = 1 + i * 0.18;
+          var px = Math.round(mid + Math.cos(rad) * rSize);
+          var py = Math.round(mid + Math.sin(rad) * rSize);
+          cells[idx(px, py)] = 0.6;
+        }
+      } else if (preset === 'seed3') {
+        // Çift Pulsar - two rings
+        for (var dy = -4; dy <= 4; dy++) {
+          for (var dx = -4; dx <= 4; dx++) {
+            var d1 = Math.hypot(dx - 3, dy);
+            var d2 = Math.hypot(dx + 3, dy);
+            if (d1 >= 1.5 && d1 <= 2.8) cells[idx(mid + dx - 3, mid + dy)] = 0.6;
+            if (d2 >= 1.5 && d2 <= 2.8) cells[idx(mid + dx + 3, mid + dy)] = 0.6;
+          }
+        }
+      } else {
+        // Kaotik blobs
+        for (var k = 0; k < 80; k++) {
+          var px = mid + Math.floor((Math.random() - 0.5) * 16);
+          var py = mid + Math.floor((Math.random() - 0.5) * 16);
+          cells[idx(px, py)] = Math.random() * 0.8;
+        }
+      }
+      renderLeniaCanvas();
+    }
+
+    document.getElementById('btnLeniaSeed1').addEventListener('click', function(){ paintLeniaPreset('seed1'); toast('🧬 Gezgin Hücre ekildi.', '#00e5ff'); });
+    document.getElementById('btnLeniaSeed2').addEventListener('click', function(){ paintLeniaPreset('seed2'); toast('🐌 Salyangoz ekildi.', '#00e5ff'); });
+    document.getElementById('btnLeniaSeed3').addEventListener('click', function(){ paintLeniaPreset('seed3'); toast('🌀 Çift Pulsar ekildi.', '#00e5ff'); });
+    document.getElementById('btnLeniaSeed4').addEventListener('click', function(){ paintLeniaPreset('seed4'); toast('🫧 Kaotik organizmalar ekildi.', '#00e5ff'); });
+
+    rangeLeniaSpeed.addEventListener('input', function() {
+      var val = parseInt(rangeLeniaSpeed.value, 10);
+      var labels = ['Yavaş', 'Normal', 'Hızlı', 'Kozmik'];
+      if (lblLeniaSpeed) lblLeniaSpeed.textContent = labels[val - 1];
+    });
+
+    initLeniaGrid();
+  }
+} catch(e) { console.error('Lenia error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   60. REZONANS TABLASI (CHLADNI CYMATICS PLATE SIMULATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var cymaticsCanvas = document.getElementById('cymaticsCanvas');
+  if (cymaticsCanvas) {
+    var cCtx = cymaticsCanvas.getContext('2d');
+    var btnCymaticsPlay = document.getElementById('btnCymaticsPlay');
+    var rangeCymaticsFreq = document.getElementById('rangeCymaticsFreq');
+    var lblCymaticsFreq = document.getElementById('lblCymaticsFreq');
+    var rangeCymaticsVol = document.getElementById('rangeCymaticsVol');
+    var lblCymaticsVol = document.getElementById('lblCymaticsVol');
+
+    var cyW = cymaticsCanvas.width;
+    var cyH = cymaticsCanvas.height;
+
+    // Chladni sand grains
+    var grains = [];
+    var maxGrains = 1200;
+    
+    // Wave parameters
+    var nParam = 2;
+    var mParam = 4;
+
+    // Web Audio oscillators
+    var cyAudioCtx = null;
+    var cyOsc = null;
+    var cyGain = null;
+    var cyIsPlaying = false;
+
+    function initGrains() {
+      grains = [];
+      for (var i = 0; i < maxGrains; i++) {
+        grains.push({
+          x: Math.random() * cyW,
+          y: Math.random() * cyH
+        });
+      }
+    }
+
+    // Chladni wave equation amplitude:
+    // z = sin(n * pi * x) * sin(m * pi * y) - sin(m * pi * x) * sin(n * pi * y)
+    function chladni(x, y) {
+      // Normalize coordinate: x, y in range [0, 1]
+      var nx = x / cyW;
+      var ny = y / cyH;
+      
+      var term1 = Math.sin(nParam * Math.PI * nx) * Math.sin(mParam * Math.PI * ny);
+      var term2 = Math.sin(mParam * Math.PI * nx) * Math.sin(nParam * Math.PI * ny);
+      
+      return term1 - term2;
+    }
+
+    function drawCymatics() {
+      if (!isCanvasActive('cymaticsCanvas')) return;
+      
+      // Black background
+      cCtx.fillStyle = '#05060b';
+      cCtx.fillRect(0, 0, cyW, cyH);
+
+      // Render Chladni metal board boundaries
+      cCtx.strokeStyle = 'rgba(255,255,255,0.03)';
+      cCtx.lineWidth = 1;
+      cCtx.beginPath();
+      cCtx.arc(cyW/2, cyH/2, cyW * 0.45, 0, Math.PI * 2);
+      cCtx.stroke();
+
+      // Displace sand grains
+      // Step size is scaled directly by Chladni amplitude at that position.
+      // High vibration = high step, Low vibration = settles to rest!
+      cCtx.fillStyle = 'rgba(255, 234, 0, 0.75)';
+      cCtx.save();
+      cCtx.shadowBlur = 4;
+      cCtx.shadowColor = '#ffea00';
+      
+      grains.forEach(function(g) {
+        var amp = chladni(g.x, g.y);
+        var absAmp = Math.abs(amp);
+        
+        // Random walk step size
+        var step = absAmp * 4.0; 
+        g.x += (Math.random() - 0.5) * step;
+        g.y += (Math.random() - 0.5) * step;
+        
+        // Keep within bounds
+        if (g.x < 10) g.x = 10;
+        if (g.x > cyW - 10) g.x = cyW - 10;
+        if (g.y < 10) g.y = 10;
+        if (g.y > cyH - 10) g.y = cyH - 10;
+        
+        // Draw grain
+        cCtx.fillRect(g.x, g.y, 1.5, 1.5);
+      });
+      
+      cCtx.restore();
+    }
+
+    function initCymaticsAudio() {
+      cyAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      cyOsc = cyAudioCtx.createOscillator();
+      cyGain = cyAudioCtx.createGain();
+      
+      cyOsc.type = 'sine';
+      var freq = parseFloat(rangeCymaticsFreq.value);
+      cyOsc.frequency.setValueAtTime(freq, cyAudioCtx.currentTime);
+      
+      var vol = parseFloat(rangeCymaticsVol.value) / 100;
+      cyGain.gain.setValueAtTime(vol * 0.15, cyAudioCtx.currentTime); // Limit maximum sine tone volume
+      
+      cyOsc.connect(cyGain);
+      cyGain.connect(cyAudioCtx.destination);
+      
+      cyOsc.start();
+    }
+
+    function startCymatics() {
+      try {
+        initCymaticsAudio();
+        cyIsPlaying = true;
+        btnCymaticsPlay.textContent = '⏹ Titreşimi Durdur';
+        btnCymaticsPlay.style.background = 'linear-gradient(135deg, var(--a2), #ff1744)';
+        toast('🔮 Rezonans Tablası Titreşiyor! Ses dalgaları kumları çiziyor.', '#69f0ae');
+      } catch (err) {
+        console.error('Audio synthesizer init failed', err);
+        toast('⚠️ Rezonans sesi başlatılamadı.', '#ff7043');
+      }
+    }
+
+    function stopCymatics() {
+      cyIsPlaying = false;
+      btnCymaticsPlay.textContent = '▶ Titreşimi Başlat';
+      btnCymaticsPlay.style.background = '';
+      
+      if (cyOsc) {
+        try { cyOsc.stop(); } catch(e){}
+        cyOsc.disconnect();
+      }
+      if (cyGain) cyGain.disconnect();
+      if (cyAudioCtx) {
+        cyAudioCtx.close();
+        cyAudioCtx = null;
+      }
+      toast('Titreşim durduruldu.', '#ffea00');
+    }
+
+    btnCymaticsPlay.addEventListener('click', function() {
+      if (cyIsPlaying) stopCymatics();
+      else startCymatics();
+    });
+
+    rangeCymaticsFreq.addEventListener('input', function() {
+      var freq = parseFloat(rangeCymaticsFreq.value);
+      if (lblCymaticsFreq) lblCymaticsFreq.textContent = freq + ' Hz';
+      
+      if (cyIsPlaying && cyOsc && cyAudioCtx) {
+        cyOsc.frequency.setValueAtTime(freq, cyAudioCtx.currentTime);
+      }
+      
+      // Update wave shape integers proportionally based on frequency ranges
+      nParam = 2 + Math.floor(freq / 280);
+      mParam = 4 + Math.floor(freq / 180);
+      
+      // Disperse grains slightly to let them form the new geometry
+      grains.forEach(function(g) {
+        g.x += (Math.random() - 0.5) * 15;
+        g.y += (Math.random() - 0.5) * 15;
+      });
+    });
+
+    rangeCymaticsVol.addEventListener('input', function() {
+      var vol = parseFloat(rangeCymaticsVol.value);
+      if (lblCymaticsVol) lblCymaticsVol.textContent = vol + '%';
+      if (cyIsPlaying && cyGain && cyAudioCtx) {
+        cyGain.gain.setValueAtTime((vol / 100) * 0.15, cyAudioCtx.currentTime);
+      }
+    });
+
+    // Preset selectors
+    function loadCymaticsPreset(freq, n, m, btnId) {
+      rangeCymaticsFreq.value = freq;
+      if (lblCymaticsFreq) lblCymaticsFreq.textContent = freq + ' Hz';
+      nParam = n;
+      mParam = m;
+      
+      if (cyIsPlaying && cyOsc && cyAudioCtx) {
+        cyOsc.frequency.setValueAtTime(freq, cyAudioCtx.currentTime);
+      }
+      
+      document.querySelectorAll('#cymatics-sec .mini-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      var activeBtn = document.getElementById(btnId);
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      // Spread grains slightly
+      grains.forEach(function(g) {
+        g.x += (Math.random() - 0.5) * 20;
+        g.y += (Math.random() - 0.5) * 20;
+      });
+      toast('Desen yüklendi: ' + freq + ' Hz rezonansı.', '#00e5ff');
+    }
+
+    document.getElementById('btnCymaticsPattern1').addEventListener('click', function(){ loadCymaticsPreset(342, 2, 4, 'btnCymaticsPattern1'); });
+    document.getElementById('btnCymaticsPattern2').addEventListener('click', function(){ loadCymaticsPreset(512, 3, 5, 'btnCymaticsPattern2'); });
+    document.getElementById('btnCymaticsPattern3').addEventListener('click', function(){ loadCymaticsPreset(880, 4, 6, 'btnCymaticsPattern3'); });
+    document.getElementById('btnCymaticsPattern4').addEventListener('click', function(){ loadCymaticsPreset(1240, 5, 7, 'btnCymaticsPattern4'); });
+
+    initGrains();
+    
+    // Conclude visual tick
+    function cymaticsLoop() {
+      drawCymatics();
+      requestAnimationFrame(cymaticsLoop);
+    }
+    cymaticsLoop();
+  }
+} catch(e) { console.error('Cymatics error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   61. KAOTİK ÇİFT SARKAÇ SIMULATOR (RK4 SOLVER PHYSICS)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var pendulumCanvas = document.getElementById('pendulumCanvas');
+  if (pendulumCanvas) {
+    var pCtx = pendulumCanvas.getContext('2d');
+    var btnPendSingle = document.getElementById('btnPendSingle');
+    var btnPendDual = document.getElementById('btnPendDual');
+    var btnPendClear = document.getElementById('btnPendClear');
+    var rangePendLength = document.getElementById('rangePendLength');
+    var rangePendDamp = document.getElementById('rangePendDamp');
+    var rangePendGrav = document.getElementById('rangePendGrav');
+
+    var pW = pendulumCanvas.width;
+    var pH = pendulumCanvas.height;
+
+    // Lagrangian Pendulum arm states: [theta, omega]
+    var armL1 = 90;
+    var armL2 = 80;
+    var massM1 = 10;
+    var massM2 = 10;
+
+    var pendulumA = {
+      t1: Math.PI / 2,
+      t2: Math.PI / 2,
+      w1: 0.0,
+      w2: 0.0,
+      trail: []
+    };
+
+    var pendulumB = {
+      t1: Math.PI / 2 + 0.0001, // 0.0001 rad microscopic difference!
+      t2: Math.PI / 2,
+      w1: 0.0,
+      w2: 0.0,
+      trail: []
+    };
+
+    var isDualMode = true;
+    var isDraggingArm = null; // 'a1', 'a2', 'b1', 'b2'
+    var isTracing = true;
+
+    // Lagrangian Mechanics equations returning [d_omega1/dt, d_omega2/dt]
+    function calculateEquations(t1, t2, w1, w2) {
+      var g = parseFloat(rangePendGrav.value) / 10 * 9.81;
+      
+      var delta = t1 - t2;
+      var mu = 1 + massM1 / massM2;
+      
+      // Arm 1 Acceleration: alpha1
+      var num1 = g * (Math.sin(t2) * Math.cos(delta) - mu * Math.sin(t1)) - (armL2 * w2 * w2 + armL1 * w1 * w1 * Math.cos(delta)) * Math.sin(delta);
+      var den1 = armL1 * (mu - Math.cos(delta) * Math.cos(delta));
+      var alpha1 = num1 / den1;
+
+      // Arm 2 Acceleration: alpha2
+      var num2 = g * mu * (Math.sin(t1) * Math.cos(delta) - Math.sin(t2)) + (mu * armL1 * w1 * w1 + armL2 * w2 * w2 * Math.cos(delta)) * Math.sin(delta);
+      var den2 = armL2 * (mu - Math.cos(delta) * Math.cos(delta));
+      var alpha2 = num2 / den2;
+
+      return [alpha1, alpha2];
+    }
+
+    // Runge-Kutta 4th-Order Integration
+    function rk4Step(p) {
+      var dt = 0.12; // Physics step size
+      var damp = 1.0 - (parseFloat(rangePendDamp.value) / 10000); // friction damping
+
+      // k1
+      var acc1 = calculateEquations(p.t1, p.t2, p.w1, p.w2);
+      
+      // k2
+      var t1_2 = p.t1 + 0.5 * dt * p.w1;
+      var t2_2 = p.t2 + 0.5 * dt * p.w2;
+      var w1_2 = p.w1 + 0.5 * dt * acc1[0];
+      var w2_2 = p.w2 + 0.5 * dt * acc1[1];
+      var acc2 = calculateEquations(t1_2, t2_2, w1_2, w2_2);
+
+      // k3
+      var t1_3 = p.t1 + 0.5 * dt * w1_2;
+      var t2_3 = p.t2 + 0.5 * dt * w2_2;
+      var w1_3 = p.w1 + 0.5 * dt * acc2[0];
+      var w2_3 = p.w2 + 0.5 * dt * acc2[1];
+      var acc3 = calculateEquations(t1_3, t2_3, w1_3, w2_3);
+
+      // k4
+      var t1_4 = p.t1 + dt * w1_3;
+      var t2_4 = p.t2 + dt * w2_3;
+      var w1_4 = p.w1 + dt * acc3[0];
+      var w2_4 = p.w2 + dt * acc3[1];
+      var acc4 = calculateEquations(t1_4, t2_4, w1_4, w2_4);
+
+      // Final step weighted sums
+      p.t1 += (dt / 6) * (p.w1 + 2 * w1_2 + 2 * w1_3 + w1_4);
+      p.t2 += (dt / 6) * (p.w2 + 2 * w2_2 + 2 * w2_3 + w2_4);
+      
+      p.w1 += (dt / 6) * (acc1[0] + 2 * acc2[0] + 2 * acc3[0] + acc4[0]);
+      p.w2 += (dt / 6) * (acc1[1] + 2 * acc2[1] + 2 * acc3[1] + acc4[1]);
+      
+      // Apply friction sönümleme
+      p.w1 *= damp;
+      p.w2 *= damp;
+    }
+
+    function updatePendPhysics() {
+      armL1 = parseFloat(rangePendLength.value);
+      armL2 = armL1 * 0.85;
+
+      if (!isDraggingArm) {
+        rk4Step(pendulumA);
+        if (isDualMode) {
+          rk4Step(pendulumB);
+        }
+      }
+    }
+
+    function drawPendulums() {
+      if (!isCanvasActive('pendulumCanvas')) return;
+
+      pCtx.fillStyle = '#030407';
+      pCtx.fillRect(0, 0, pW, pH);
+
+      updatePendPhysics();
+
+      var cx = pW / 2;
+      var cy = pH * 0.42;
+
+      // 1. Draw trails first
+      if (isTracing) {
+        pCtx.lineWidth = 1.5;
+        pCtx.save();
+        
+        // Draw A trail (Cyan)
+        if (pendulumA.trail.length > 1) {
+          pCtx.strokeStyle = '#00e5ff';
+          pCtx.shadowBlur = 5;
+          pCtx.shadowColor = '#00e5ff';
+          pCtx.beginPath();
+          pCtx.moveTo(pendulumA.trail[0].x, pendulumA.trail[0].y);
+          for (var i = 1; i < pendulumA.trail.length; i++) {
+            pCtx.lineTo(pendulumA.trail[i].x, pendulumA.trail[i].y);
+          }
+          pCtx.stroke();
+        }
+
+        // Draw B trail (Pink)
+        if (isDualMode && pendulumB.trail.length > 1) {
+          pCtx.strokeStyle = '#ff6b9d';
+          pCtx.shadowBlur = 5;
+          pCtx.shadowColor = '#ff6b9d';
+          pCtx.beginPath();
+          pCtx.moveTo(pendulumB.trail[0].x, pendulumB.trail[0].y);
+          for (var j = 1; j < pendulumB.trail.length; j++) {
+            pCtx.lineTo(pendulumB.trail[j].x, pendulumB.trail[j].y);
+          }
+          pCtx.stroke();
+        }
+        pCtx.restore();
+      }
+
+      // 2. Draw pendulum joints & lines
+      function renderSingle(p, colorArm, colorTip) {
+        var x1 = cx + armL1 * Math.sin(p.t1);
+        var y1 = cy + armL1 * Math.cos(p.t1);
+        
+        var x2 = x1 + armL2 * Math.sin(p.t2);
+        var y2 = y1 + armL2 * Math.cos(p.t2);
+
+        // Record trails
+        p.trail.push({ x: x2, y: y2 });
+        if (p.trail.length > 250) p.trail.shift();
+
+        pCtx.save();
+        pCtx.lineWidth = 3.5;
+        pCtx.strokeStyle = 'rgba(255,255,255,0.06)';
+        
+        // Connect arm lines
+        pCtx.beginPath();
+        pCtx.moveTo(cx, cy);
+        pCtx.lineTo(x1, y1);
+        pCtx.lineTo(x2, y2);
+        pCtx.stroke();
+
+        // Joint nodes
+        pCtx.fillStyle = colorArm;
+        pCtx.beginPath();
+        pCtx.arc(x1, y1, 6, 0, Math.PI * 2);
+        pCtx.fill();
+
+        // Glowing end tip node
+        pCtx.fillStyle = colorTip;
+        pCtx.shadowBlur = 15;
+        pCtx.shadowColor = colorTip;
+        pCtx.beginPath();
+        pCtx.arc(x2, y2, 8, 0, Math.PI * 2);
+        pCtx.fill();
+        pCtx.restore();
+      }
+
+      // Draw pivot center
+      pCtx.fillStyle = '#fff';
+      pCtx.beginPath();
+      pCtx.arc(cx, cy, 5, 0, Math.PI * 2);
+      pCtx.fill();
+
+      renderSingle(pendulumA, '#a29bfe', '#00e5ff');
+      if (isDualMode) {
+        renderSingle(pendulumB, '#fd79a8', '#ff6b9d');
+      }
+    }
+
+    // Arm dragging checks
+    function handlePendDrag(clientX, clientY, rect) {
+      var x = (clientX - rect.left) * (pW / rect.width);
+      var y = (clientY - rect.top) * (pH / rect.height);
+      
+      var cx = pW / 2;
+      var cy = pH * 0.42;
+      
+      var angle = Math.atan2(x - cx, y - cy);
+      
+      if (isDraggingArm === 'a1') {
+        pendulumA.t1 = angle;
+        pendulumB.t1 = angle + 0.0001; // Align B with tiny offset!
+        pendulumA.w1 = 0; pendulumB.w1 = 0;
+        pendulumA.w2 = 0; pendulumB.w2 = 0;
+      }
+    }
+
+    pendulumCanvas.addEventListener('mousedown', function(e) {
+      var rect = pendulumCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (pW / rect.width);
+      var y = (e.clientY - rect.top) * (pH / rect.height);
+      
+      var cx = pW / 2;
+      var cy = pH * 0.42;
+      
+      // Simple collision checks to trigger upper joints dragging
+      var x1 = cx + armL1 * Math.sin(pendulumA.t1);
+      var y1 = cy + armL1 * Math.cos(pendulumA.t1);
+      
+      if (Math.hypot(x - x1, y - y1) < 25) {
+        isDraggingArm = 'a1';
+        pendulumA.trail = [];
+        pendulumB.trail = [];
+      }
+    });
+
+    pendulumCanvas.addEventListener('mousemove', function(e) {
+      if (isDraggingArm) {
+        var rect = pendulumCanvas.getBoundingClientRect();
+        handlePendDrag(e.clientX, e.clientY, rect);
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDraggingArm = null;
+    });
+
+    btnPendSingle.addEventListener('click', function() {
+      isDualMode = false;
+      document.getElementById('btnPendSingle').classList.add('active');
+      document.getElementById('btnPendDual').classList.remove('active');
+      pendulumA.trail = [];
+    });
+
+    btnPendDual.addEventListener('click', function() {
+      isDualMode = true;
+      document.getElementById('btnPendDual').classList.add('active');
+      document.getElementById('btnPendSingle').classList.remove('active');
+      pendulumA.trail = [];
+      pendulumB.trail = [];
+      // Reset positions with tiny delta
+      pendulumB.t1 = pendulumA.t1 + 0.0001;
+      pendulumB.t2 = pendulumA.t2;
+      pendulumB.w1 = 0; pendulumB.w2 = 0;
+    });
+
+    btnPendClear.addEventListener('click', function() {
+      pendulumA.trail = [];
+      pendulumB.trail = [];
+      toast('Çizim izleri silindi.', '#ffea00');
+    });
+
+    rangePendLength.addEventListener('input', function() {
+      if (lblPendLength) {
+        var val = parseInt(rangePendLength.value, 10);
+        lblPendLength.textContent = val < 80 ? 'Kısa' : (val > 120 ? 'Uzun' : 'Orta');
+      }
+    });
+
+    rangePendDamp.addEventListener('input', function() {
+      if (lblPendDamp) {
+        var val = parseInt(rangePendDamp.value, 10);
+        lblPendDamp.textContent = val === 0 ? 'Sıfır Damping' : (val > 20 ? 'Yüksek' : 'Çok Düşük');
+      }
+    });
+
+    rangePendGrav.addEventListener('input', function() {
+      if (lblPendGrav) {
+        var val = parseInt(rangePendGrav.value, 10);
+        lblPendGrav.textContent = val === 0 ? 'Yerçekimsiz Space' : (val > 15 ? 'Jüpiter Çekimi' : '1.0g (Dünya)');
+      }
+    });
+
+    // Loops tick
+    function pendulumLoop() {
+      drawPendulums();
+      requestAnimationFrame(pendulumLoop);
+    }
+    pendulumLoop();
+  }
+} catch(e) { console.error('Pendulum error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   62. KOZMİK KARA DELİK (EVENT HORIZON SIMULATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var blackholeCanvas = document.getElementById('blackholeCanvas');
+  if (blackholeCanvas) {
+    var bCtx = blackholeCanvas.getContext('2d');
+    var btnBHShoot = document.getElementById('btnBHShoot');
+    var btnBHEmit = document.getElementById('btnBHEmit');
+    var rangeBHMass = document.getElementById('rangeBHMass');
+    var lblBHMass = document.getElementById('lblBHMass');
+    var rangeBHDisc = document.getElementById('rangeBHDisc');
+    var lblBHDisc = document.getElementById('lblBHDisc');
+    var rangeBHSpeed = document.getElementById('rangeBHSpeed');
+    var lblBHSpeed = document.getElementById('lblBHSpeed');
+
+    var bhW = blackholeCanvas.width;
+    var bhH = blackholeCanvas.height;
+
+    // Draggable Black Hole Singularity center
+    var bhCenter = { x: bhW / 2, y: bhH / 2 };
+    var isDraggingBH = false;
+
+    var bhParticles = [];
+    var maxBHParticles = 300;
+    var accretionDust = [];
+    var maxDust = 250;
+    var continuousEmit = true;
+
+    // Initialize Keplerian accretion dust disk
+    for (var i = 0; i < maxDust; i++) {
+      var r = 35 + Math.random() * 110;
+      var angle = Math.random() * Math.PI * 2;
+      accretionDust.push({
+        r: r,
+        angle: angle,
+        size: 0.6 + Math.random() * 0.8
+      });
+    }
+
+    function shootPhoton() {
+      // Shoot foton streams from left borders
+      var py = 40 + Math.random() * (bhH - 80);
+      var speed = rangeBHSpeed ? parseFloat(rangeBHSpeed.value) : 8;
+      
+      bhParticles.push({
+        x: 10,
+        y: py,
+        vx: speed,
+        vy: (bhCenter.y - py) * 0.015 + (Math.random() - 0.5) * 0.5, // Aim roughly at center
+        trail: [],
+        age: 0,
+        captured: false
+      });
+    }
+
+    function updateBlackHolePhysics() {
+      var mass = parseFloat(rangeBHMass.value);
+      var rs = mass * 8; // Event Horizon capturing threshold radius!
+      
+      // Update accretion dust angles
+      var discSpeed = rangeBHDisc ? parseFloat(rangeBHDisc.value) : 1.5;
+      accretionDust.forEach(function(dust) {
+        // Accretion speed is slower farther out: Kepler's 3rd law
+        var angVel = (discSpeed / 10) * Math.pow(45 / dust.r, 1.5);
+        dust.angle += angVel;
+      });
+
+      // Update photons/particles moving around the black hole
+      bhParticles.forEach(function(p) {
+        if (p.captured) return;
+        
+        p.age++;
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 35) p.trail.shift();
+
+        // Calculate gravity attraction vector
+        var dx = bhCenter.x - p.x;
+        var dy = bhCenter.y - p.y;
+        var dist = Math.hypot(dx, dy);
+
+        if (dist < rs) {
+          // CAPTURED into the Event Horizon singularity!
+          p.captured = true;
+          return;
+        }
+
+        // Relativistic acceleration math: f = -G*M / r^2 corrected with orbit decays
+        var forceVal = (mass * 16) / (dist * dist * dist);
+        var ax = dx * forceVal;
+        var ay = dy * forceVal;
+
+        p.vx += ax;
+        p.vy += ay;
+
+        // Update positions
+        p.x += p.vx;
+        p.y += p.vy;
+      });
+
+      // Remove captured or out-of-bounds fotons
+      bhParticles = bhParticles.filter(function(p) {
+        return !p.captured && p.x > 0 && p.x < bhW && p.y > 0 && p.y < bhH && p.age < 150;
+      });
+
+      if (continuousEmit && Math.random() < 0.25) {
+        shootPhoton();
+      }
+    }
+
+    function drawBlackHole() {
+      if (!isCanvasActive('blackholeCanvas')) return;
+
+      updateBlackHolePhysics();
+
+      // Clear dark cosmos canvas
+      bCtx.fillStyle = '#020204';
+      bCtx.fillRect(0, 0, bhW, bhH);
+
+      var mass = parseFloat(rangeBHMass.value);
+      var rs = mass * 8;
+
+      // 1. Render Keplerian Accretion Dust Disk
+      accretionDust.forEach(function(dust) {
+        var dx = Math.cos(dust.angle) * dust.r;
+        // Tilt the disk vertically to create an angled 3D Event Horizon accretion ring!
+        var dy = Math.sin(dust.angle) * dust.r * 0.45; 
+        
+        var x = bhCenter.x + dx;
+        var y = bhCenter.y + dy;
+
+        // Render dust particles with orange glowing colors
+        bCtx.fillStyle = 'rgba(255, 112, 67, 0.4)';
+        bCtx.fillRect(x, y, dust.size, dust.size);
+      });
+
+      // 2. Render bending fotons trails
+      bhParticles.forEach(function(p) {
+        if (p.trail.length < 2) return;
+        bCtx.lineWidth = 1.8;
+        bCtx.strokeStyle = 'rgba(0, 229, 255, 0.8)';
+        
+        bCtx.beginPath();
+        bCtx.moveTo(p.trail[0].x, p.trail[0].y);
+        for (var i = 1; i < p.trail.length; i++) {
+          bCtx.lineTo(p.trail[i].x, p.trail[i].y);
+        }
+        bCtx.stroke();
+      });
+
+      // 3. Render central glowing Accretion aura & event horizon
+      bCtx.save();
+      // Outer glowing aura
+      var auraGrad = bCtx.createRadialGradient(bhCenter.x, bhCenter.y, rs, bhCenter.x, bhCenter.y, rs * 2.8);
+      auraGrad.addColorStop(0, 'rgba(255, 112, 67, 0.45)');
+      auraGrad.addColorStop(0.3, 'rgba(255, 234, 0, 0.15)');
+      auraGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      bCtx.fillStyle = auraGrad;
+      bCtx.beginPath();
+      bCtx.arc(bhCenter.x, bhCenter.y, rs * 2.8, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // Absolute black Singularity (Event Horizon) sphere
+      bCtx.shadowBlur = 20;
+      bCtx.shadowColor = '#ff7043';
+      bCtx.fillStyle = '#000000';
+      bCtx.beginPath();
+      bCtx.arc(bhCenter.x, bhCenter.y, rs, 0, Math.PI * 2);
+      bCtx.fill();
+      bCtx.restore();
+    }
+
+    btnBHShoot.addEventListener('click', function() {
+      for (var k = 0; k < 6; k++) {
+        setTimeout(shootPhoton, k * 60);
+      }
+      toast('💫 Fotonlar uzay-zamana fırlatıldı!', '#69f0ae');
+    });
+
+    btnBHEmit.addEventListener('click', function() {
+      continuousEmit = !continuousEmit;
+      btnBHEmit.classList.toggle('active', continuousEmit);
+      if (btnBHEmit.classList.contains('active')) {
+        btnBHEmit.style.borderColor = 'var(--a3)';
+        btnBHEmit.style.color = 'var(--a3)';
+        toast('Emitter sürekli çalışıyor.', '#00e5ff');
+      } else {
+        btnBHEmit.style.borderColor = '';
+        btnBHEmit.style.color = '';
+        toast('Emitter kapatıldı.', '#ffea00');
+      }
+    });
+
+    // Singularity dragging coordinates
+    function bhCoordinates(clientX, clientY, rect) {
+      var x = (clientX - rect.left) * (bhW / rect.width);
+      var y = (clientY - rect.top) * (bhH / rect.height);
+      bhCenter.x = x;
+      bhCenter.y = y;
+    }
+
+    blackholeCanvas.addEventListener('mousedown', function(e) {
+      var rect = blackholeCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (bhW / rect.width);
+      var y = (e.clientY - rect.top) * (bhH / rect.height);
+      
+      if (Math.hypot(x - bhCenter.x, y - bhCenter.y) < 40) {
+        isDraggingBH = true;
+      }
+    });
+
+    blackholeCanvas.addEventListener('mousemove', function(e) {
+      if (isDraggingBH) {
+        var rect = blackholeCanvas.getBoundingClientRect();
+        bhCoordinates(e.clientX, e.clientY, rect);
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDraggingBH = false;
+    });
+
+    // Touch support
+    blackholeCanvas.addEventListener('touchstart', function(e) {
+      var rect = blackholeCanvas.getBoundingClientRect();
+      var touch = e.touches[0];
+      var x = (touch.clientX - rect.left) * (bhW / rect.width);
+      var y = (touch.clientY - rect.top) * (bhH / rect.height);
+      
+      if (Math.hypot(x - bhCenter.x, y - bhCenter.y) < 40) {
+        isDraggingBH = true;
+      }
+    });
+
+    blackholeCanvas.addEventListener('touchmove', function(e) {
+      if (isDraggingBH) {
+        var rect = blackholeCanvas.getBoundingClientRect();
+        var touch = e.touches[0];
+        bhCoordinates(touch.clientX, touch.clientY, rect);
+      }
+    });
+
+    blackholeCanvas.addEventListener('touchend', function() {
+      isDraggingBH = false;
+    });
+
+    rangeBHMass.addEventListener('input', function() {
+      if (lblBHMass) {
+        var mass = parseFloat(rangeBHMass.value);
+        lblBHMass.textContent = mass.toFixed(1) + ' M☉';
+      }
+    });
+
+    rangeBHDisc.addEventListener('input', function() {
+      if (lblBHDisc) {
+        var val = parseFloat(rangeBHDisc.value);
+        lblBHDisc.textContent = val === 0 ? 'Durgun Disk' : (val > 2 ? 'Işık Hızı' : 'Normal');
+      }
+    });
+
+    rangeBHSpeed.addEventListener('input', function() {
+      if (lblBHSpeed) {
+        var val = parseInt(rangeBHSpeed.value, 10);
+        lblBHSpeed.textContent = val < 6 ? 'Yavaş' : (val > 11 ? 'Rölativistik' : 'Orta');
+      }
+    });
+
+    // Loop tick
+    function blackholeLoop() {
+      drawBlackHole();
+      requestAnimationFrame(blackholeLoop);
+    }
+    blackholeLoop();
+  }
+} catch(e) { console.error('BlackHole error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   63. KUANTUM GÖZLEMCİ: ÇİFT YARIK DENEYİ
+   ══════════════════════════════════════════════════════════ */
+try {
+  var quantumCanvas = document.getElementById('quantumCanvas');
+  if (quantumCanvas) {
+    var qCtx = quantumCanvas.getContext('2d');
+    var btnQuantumObserve = document.getElementById('btnQuantumObserve');
+    var rangeQuantumSlit = document.getElementById('rangeQuantumSlit');
+    var lblQuantumSlit = document.getElementById('lblQuantumSlit');
+    var rangeQuantumWave = document.getElementById('rangeQuantumWave');
+    var lblQuantumWave = document.getElementById('lblQuantumWave');
+    
+    var observerDragBox = document.getElementById('observerDragBox');
+    var observerDragIcon = document.getElementById('observerDragIcon');
+    var observerDragLabel = document.getElementById('observerDragLabel');
+
+    var qwW = quantumCanvas.width;
+    var qwH = quantumCanvas.height;
+
+    var quantumRunning = true;
+    var quantumObserved = false; // Wave state collapse toggle!
+
+    var quantumParticles = [];
+    // Live bar histogram representing landing points
+    var detectorHistogram = Array(50).fill(0);
+    var maxFreqCounts = 1;
+
+    function resetQuantumExperiment() {
+      quantumParticles = [];
+      detectorHistogram.fill(0);
+      maxFreqCounts = 1;
+    }
+
+    function shootQuantumParticle() {
+      var slitDist = parseFloat(rangeQuantumSlit.value);
+      quantumParticles.push({
+        x: 15,
+        y: qwH / 2 + (Math.random() - 0.5) * 8,
+        vx: 3.5,
+        vy: 0,
+        age: 0,
+        pathType: Math.random() < 0.5 ? 1 : 2, // 1: slit A, 2: slit B
+        phase: Math.random() * 360
+      });
+    }
+
+    // Probability amplitude equation of dual slits interference density:
+    // P(y) = cos^2( (pi * d * y) / (lambda * D) )
+    function quantumProbability(yVal) {
+      var d = parseFloat(rangeQuantumSlit.value);
+      var lambda = parseFloat(rangeQuantumWave.value);
+      
+      // Normalized distance y relative to center of screen
+      var y = (yVal - qwH / 2) / (qwH / 2);
+      
+      if (quantumObserved) {
+        // Observed state: Collapsed classic probability (two simple Gaussians)
+        var slitA = Math.exp(-Math.pow((y - 0.35), 2) / 0.05);
+        var slitB = Math.exp(-Math.pow((y + 0.35), 2) / 0.05);
+        return (slitA + slitB) * 0.55;
+      } else {
+        // Wave superposition: Complex interference pattern
+        var pathDiff = (y * d) / lambda;
+        var interference = Math.pow(Math.cos(pathDiff * Math.PI), 2);
+        
+        // Envelope curve bounds (envelope Gaussian)
+        var envelope = Math.exp(-(y * y) / 0.32);
+        return interference * envelope;
+      }
+    }
+
+    function updateQuantumPhysics() {
+      var d = parseFloat(rangeQuantumSlit.value);
+      
+      quantumParticles.forEach(function(p) {
+        p.age++;
+        
+        // Move towards the double slit barrier (located at x = 180)
+        p.x += p.vx;
+        
+        if (p.x >= 185 && p.x < 190) {
+          // If not observed, particles disperse as waves
+          if (!quantumObserved) {
+            p.vy = (Math.random() - 0.5) * 3.5;
+          } else {
+            // Observed: Must pass classical slit 1 OR slit 2
+            var targetY = qwH / 2 + (p.pathType === 1 ? -d/2 : d/2);
+            p.vy = (targetY - p.y) * 0.07;
+          }
+        }
+        
+        p.y += p.vy;
+
+        // Land on detector wall (x = qwW - 20)
+        if (p.x >= qwW - 25) {
+          p.x = qwW - 25;
+          
+          // Fit landing coordinates inside probability densities
+          var landingProb = quantumProbability(p.y);
+          if (Math.random() < landingProb + 0.05) {
+            // Register into histogram bin
+            var binIdx = Math.floor((p.y / qwH) * detectorHistogram.length);
+            if (binIdx >= 0 && binIdx < detectorHistogram.length) {
+              detectorHistogram[binIdx]++;
+              if (detectorHistogram[binIdx] > maxFreqCounts) {
+                maxFreqCounts = detectorHistogram[binIdx];
+              }
+            }
+          }
+          p.age = 9999; // mark to terminate
+        }
+      });
+
+      quantumParticles = quantumParticles.filter(function(p) {
+        return p.age < 200;
+      });
+
+      if (quantumRunning && Math.random() < 0.28) {
+        shootQuantumParticle();
+      }
+    }
+
+    function drawQuantum() {
+      if (!isCanvasActive('quantumCanvas')) return;
+
+      updateQuantumPhysics();
+
+      // Clear Canvas
+      qCtx.fillStyle = '#040508';
+      qCtx.fillRect(0, 0, qwW, qwH);
+
+      var d = parseFloat(rangeQuantumSlit.value);
+
+      // 1. Draw double slit barrier
+      qCtx.fillStyle = '#1e1e2f';
+      qCtx.fillRect(180, 0, 8, qwH / 2 - d / 2 - 8);
+      qCtx.fillRect(180, qwH / 2 - d / 2 + 8, 8, d - 16);
+      qCtx.fillRect(180, qwH / 2 + d / 2 + 8, 8, qwH / 2 - d / 2 - 8);
+
+      // 2. Render glowing particles/waves
+      quantumParticles.forEach(function(p) {
+        qCtx.save();
+        qCtx.shadowBlur = 8;
+        
+        if (!quantumObserved) {
+          // Superposition wave particles (Glowing Cyan)
+          qCtx.fillStyle = 'rgba(0, 229, 255, 0.85)';
+          qCtx.shadowColor = '#00e5ff';
+        } else {
+          // Collapsed classical particles (Glowing Purple)
+          qCtx.fillStyle = 'rgba(124, 77, 255, 0.85)';
+          qCtx.shadowColor = '#7c4dff';
+        }
+        
+        qCtx.beginPath();
+        qCtx.arc(p.x, p.y, p.x < 180 ? 3 : 2, 0, Math.PI * 2);
+        qCtx.fill();
+        qCtx.restore();
+      });
+
+      // 3. Render detector screen back wall
+      qCtx.fillStyle = '#11121d';
+      qCtx.fillRect(qwW - 20, 0, 20, qwH);
+
+      // Render landing histogram bars dynamically
+      var binHeight = qwH / detectorHistogram.length;
+      for (var b = 0; b < detectorHistogram.length; b++) {
+        var count = detectorHistogram[b];
+        if (count > 0) {
+          var pct = count / maxFreqCounts;
+          var barW = pct * 65;
+          
+          qCtx.save();
+          qCtx.shadowBlur = 5;
+          if (!quantumObserved) {
+            qCtx.fillStyle = 'rgba(0, 229, 255, 0.55)';
+            qCtx.shadowColor = '#00e5ff';
+          } else {
+            qCtx.fillStyle = 'rgba(124, 77, 255, 0.55)';
+            qCtx.shadowColor = '#7c4dff';
+          }
+          
+          qCtx.fillRect(qwW - 20 - barW, b * binHeight + 1, barW, binHeight - 1);
+          qCtx.restore();
+        }
+      }
+    }
+
+    function toggleObserver() {
+      quantumObserved = !quantumObserved;
+      resetQuantumExperiment();
+
+      if (quantumObserved) {
+        btnQuantumObserve.textContent = '❌ Gözlemciyi Kaldır';
+        btnQuantumObserve.style.background = 'linear-gradient(135deg, var(--a2), #ff1744)';
+        
+        if (observerDragBox) {
+          observerDragBox.style.borderColor = 'rgba(255,107,157,0.4)';
+          observerDragBox.style.color = '#ff6b9d';
+        }
+        if (observerDragIcon) observerDragIcon.textContent = '👁️‍🗨️';
+        if (observerDragLabel) observerDragLabel.textContent = 'Gözlemci ETKİN (Çöktü)';
+        
+        toast('👁️‍🗨️ Gözlem yapıldı! Dalga fonksiyonu klasik parçacıklara çöktü.', '#ff6b9d');
+      } else {
+        btnQuantumObserve.textContent = '👁️ Gözlemciyi Etkinleştir';
+        btnQuantumObserve.style.background = '';
+        
+        if (observerDragBox) {
+          observerDragBox.style.borderColor = 'rgba(0,229,255,0.3)';
+          observerDragBox.style.color = '#00e5ff';
+        }
+        if (observerDragIcon) observerDragIcon.textContent = '👁️';
+        if (observerDragLabel) observerDragLabel.textContent = 'Gözlemci ÇEVRİMDIŞI';
+        
+        toast('🌊 Gözlemci kaldırıldı. Süperpozisyon dalga girişim deseni oluşuyor.', '#00e5ff');
+      }
+    }
+
+    btnQuantumObserve.addEventListener('click', toggleObserver);
+    if (observerDragBox) observerDragBox.addEventListener('click', toggleObserver);
+
+    rangeQuantumSlit.addEventListener('input', function() {
+      if (lblQuantumSlit) {
+        var val = parseInt(rangeQuantumSlit.value, 10);
+        lblQuantumSlit.textContent = val < 30 ? 'Dar' : (val > 50 ? 'Geniş' : 'Orta');
+      }
+      resetQuantumExperiment();
+    });
+
+    rangeQuantumWave.addEventListener('input', function() {
+      if (lblQuantumWave) {
+        var val = parseInt(rangeQuantumWave.value, 10);
+        lblQuantumWave.textContent = val < 20 ? 'Kısa (Geniş Girişim)' : (val > 35 ? 'Uzun' : 'Orta');
+      }
+      resetQuantumExperiment();
+    });
+
+    // Visual loop tick
+    function quantumLoop() {
+      drawQuantum();
+      requestAnimationFrame(quantumLoop);
+    }
+    quantumLoop();
+  }
+} catch(e) { console.error('Quantum error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   64. FİLOZOFLAR ARENASI (SIMULATED SOCRATIC DEBATE ENGINE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var debateChat = document.getElementById('debateChat');
+  if (debateChat) {
+    var debateUserInput = document.getElementById('debateUserInput');
+    var btnDebateSend = document.getElementById('btnDebateSend');
+
+    // Philosophers metadata
+    var PHILOSOPHERS = {
+      socrates: { name: 'Sokrates', em: '🏛️', color: '#00e5ff', style: 'Sokratik sorgulama ve akıl yürütmeyle yaklaşır.' },
+      aurelius: { name: 'Marcus Aurelius', em: '👑', color: '#ffea00', style: 'Stoacı tevekkül, evrensel doğa yasası ve iç huzuru savunur.' },
+      nietzsche: { name: 'Friedrich Nietzsche', em: '🦁', color: '#ff6b9d', style: 'Güç istenci, üstinsan ve sürü ahlakına başkaldırıyı savunur.' },
+      watts: { name: 'Alan Watts', em: '🌿', color: '#69f0ae', style: 'Zen felsefesi, akışta kalma ve evrensel bütünlüğü temel alır.' }
+    };
+
+    // Predesigned high-fidelity dialogue trees
+    var DIALOGUE_TREES = {
+      q1: [
+        {
+          phil: 'socrates',
+          text: 'Sevgili dostlarım, zamanın gerçekliği üzerine ne söylenebilir? Acaba geçmiş ve gelecek dediğimiz olgular, şu anı kavramakta zihnimizin ürettiği yapay kategoriler midir yoksa kozmosun değişmez birer dokusu mu?'
+        },
+        {
+          phil: 'nietzsche',
+          text: 'Zaman ne bir doku ne de boş bir kavramdır! O, Bengi Dönüş\'ün ta kendisidir! Yaşadığın bu anı, sonsuz kere aynı şekilde yaşayacakmışsın gibi kucaklayamıyorsan, zamanın yükü altında ezilmeye mahkumsun demektir!'
+        },
+        {
+          phil: 'aurelius',
+          text: 'Friedrich, bu öfke neden? Zaman, bizi hızla içine çekip yutan kozmik bir nehirdir. Geçmiş artık bizim değildir, gelecek ise meçhuldür. Sahip olduğumuz tek şey şu anki küçük saniyemizdir. Ruhu dingin olan insan, akan nehirle kavga etmez.'
+        },
+        {
+          phil: 'watts',
+          text: 'Ah Marcus, haklısın. Zaman bir nehir gibidir ama o nehirde yüzmeye çalışmak yerine nehrin kendisi olduğumuzu fark etmeliyiz. Dün yok, yarın da yok. Sadece kozmik bir ritmin sonsuz "şimdi"sindeyiz. Saatler sadece zihnin oyuncağıdır.'
+        }
+      ],
+      q2: [
+        {
+          phil: 'aurelius',
+          text: 'Kaderimizi biz mi belirleriz yoksa her şey kozmik aklın (Logos) kaçınılmaz bir akışı mıdır? Başımıza gelenleri değiştiremeyebiliriz ama onlara vereceğimiz tepki tamamen bizim irademizdedir.'
+        },
+        {
+          phil: 'nietzsche',
+          text: 'Kaderi kabullenmek (Amor Fati) yetmez, onu sevmek ve yaratmak gerekir! Kendi kaderinin efendisi olamayan insan, sürü ahlakının kölesidir. Acıyı ve engelleri kucaklayarak kendi yasasını kendisi yazanlar üstinsandır!'
+        },
+        {
+          phil: 'socrates',
+          text: 'Friedrich, bir insanın kendi yasasını yazabilmesi için önce "kendini bilmesi" gerekmez mi? Hangi arzumuzun gerçekten bize ait olduğunu ve hangisinin bilgisizlikten kaynaklandığını sorgulamadan özgürlükten bahsedebilir miyiz?'
+        },
+        {
+          phil: 'watts',
+          text: 'Sokrates harika bir noktaya değindin. Özgür irade ve kader çelişkisi, kendimizi evrenden ayrı birer varlık sandığımız için ortaya çıkar. Biz evrenin yaptığı bir şeyiz. Rüzgar yaprağı uçururken, yaprak da rüzgarla dans eder. Uyum sağlayanlar için ayrım kalmaz.'
+        }
+      ],
+      q3: [
+        {
+          phil: 'watts',
+          text: 'Evrenin ve hayatın asıl anlamı nedir diye sorup duruyoruz. Acaba bulutların gökyüzünde süzülmesinin veya dalgaların kıyıya vurmasının bir "anlamı" var mıdır? Hayat sadece yaşanmak ve akışta olunmak için vardır.'
+        },
+        {
+          phil: 'nietzsche',
+          text: 'Anlam hazır bulunmaz Watts! Evren özünde anlamsızdır ve bu harika bir fırsattır. Anlamı biz yaratırız! Yaşama değer katan şey, acıya karşı durarak kendi değerlerimizi yaratma ve hayatı bir sanat eserine dönüştürme gücümüzdür.'
+        },
+        {
+          phil: 'socrates',
+          text: 'Peki sevgili Nietzsche, yarattığımız bu anlamlar adil ve erdemli değilse, sadece güç istencine dayanıyorsa bizi yıkıma götürmez mi? En yüce anlam, sorgulanmış bir ömürle gerçeğin peşinde koşmak değil midir?'
+        },
+        {
+          phil: 'aurelius',
+          text: 'Doğru Sokrates. Anlam, bireysel hırslarda değil, bütünün bir parçası olarak üzerimize düşen ödevi yerine getirmekte gizlidir. Ruhu kozmik doğaya uyumlu hale getirmek, yaşamın yegane gayesidir.'
+        }
+      ],
+      q4: [
+        {
+          phil: 'socrates',
+          text: 'Peki adalet ve ahlak üzerine ne söylenebilir? Acaba iyi ve kötü, toplumların çıkarlarına göre değişen görece değerler midir yoksa ruhun derinliklerinde yatan evrensel yasalar mıdır?'
+        },
+        {
+          phil: 'nietzsche',
+          text: 'Ahlak, zayıfların güçlüleri dizginlemek için uydurduğu bir illüzyondur! İyinin ve kötünün ötesine geçemeyenler, sürü ahlakının çitleri arasında sıkışıp kalırlar. Kendi ahlakını kendin yaratmalısın!'
+        },
+        {
+          phil: 'aurelius',
+          text: 'Friedrich, insan sosyal bir canlıdır ve birbirimize yardım etmek için yaratıldık. Evrensel yasa (Logos) adil olmayı emreder. Bir insana yapılabilecek en büyük kötülük, onun ruhunu adaletsizlik çamuruna bulamasıdır.'
+        },
+        {
+          phil: 'watts',
+          text: 'Ahlak kuralları suyun akışına baraj yapmaya benzer. Çok katı kurallar kurursak kırılırız. İyi ve kötü, madalyonun iki yüzüdür. Işık olmadan gölge olamayacağı gibi. Dengeyi yakalayanlar ahlakın da ötesinde bir dinginliğe ulaşırlar.'
+        }
+      ]
+    };
+
+    function appendMessage(sender, text, isUser) {
+      var msg = document.createElement('div');
+      msg.style.cssText = 'display:flex; gap:0.6rem; align-items:start; margin-bottom: 0.5rem;';
+      
+      var avatar = document.createElement('div');
+      avatar.style.cssText = 'font-size:1.3rem; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--gb); flex-shrink:0;';
+      
+      var body = document.createElement('div');
+      body.style.cssText = 'padding:10px 14px; border-radius:15px; max-width:80%; font-size:0.85rem; line-height:1.55;';
+      
+      if (isUser) {
+        avatar.textContent = '👤';
+        avatar.style.background = 'rgba(0, 229, 255, 0.1)';
+        avatar.style.borderColor = 'rgba(0, 229, 255, 0.3)';
+        body.style.background = 'rgba(0, 229, 255, 0.06)';
+        body.style.border = '1px solid rgba(0, 229, 255, 0.15)';
+        body.style.borderRadius = '15px 4px 15px 15px';
+        body.style.marginLeft = 'auto';
+        msg.appendChild(body);
+        msg.appendChild(avatar);
+      } else {
+        var meta = PHILOSOPHERS[sender] || { name: 'Kozmik Akıl', em: '🏛️', color: 'var(--a1)' };
+        avatar.textContent = meta.em;
+        avatar.style.background = 'rgba(255,255,255,0.05)';
+        body.style.background = 'rgba(255,255,255,0.02)';
+        body.style.border = '1px solid var(--gb)';
+        body.style.borderRadius = '4px 15px 15px 15px';
+        
+        body.innerHTML = '<strong style="color:' + meta.color + ';font-size:0.75rem;display:block;margin-bottom:3px;">' + meta.name + '</strong>' + text;
+        msg.appendChild(avatar);
+        msg.appendChild(body);
+      }
+      
+      debateChat.appendChild(msg);
+      debateChat.scrollTop = debateChat.scrollHeight;
+    }
+
+    function runDebateChain(qKey) {
+      var dialogue = DIALOGUE_TREES[qKey];
+      if (!dialogue) return;
+      
+      debateChat.innerHTML = '';
+      
+      dialogue.forEach(function(step, index) {
+        setTimeout(function() {
+          appendMessage(step.phil, step.text, false);
+        }, index * 2200); // Dynamic reading pauses
+      });
+    }
+
+    // Preset click listeners
+    document.getElementById('btnDebateQ1').addEventListener('click', function(){ runDebateChain('q1'); toast('Tartışma: Zamanın İllüzyonu', '#7c4dff'); });
+    document.getElementById('btnDebateQ2').addEventListener('click', function(){ runDebateChain('q2'); toast('Tartışma: Özgür İrade ve Kader', '#7c4dff'); });
+    document.getElementById('btnDebateQ3').addEventListener('click', function(){ runDebateChain('q3'); toast('Tartışma: Yaşamın Anlamı', '#7c4dff'); });
+    document.getElementById('btnDebateQ4').addEventListener('click', function(){ runDebateChain('q4'); toast('Tartışma: Ahlakın Kökeni', '#7c4dff'); });
+
+    // Send user message
+    function sendUserArg() {
+      var text = debateUserInput.value.trim();
+      if (!text) {
+        toast('⚠️ Önce bir argüman yazın!', '#ff7043');
+        return;
+      }
+      
+      appendMessage(null, text, true);
+      debateUserInput.value = '';
+      
+      // Spawn random reacting philosophers based on keywords
+      setTimeout(function() {
+        var lower = text.toLowerCase();
+        if (lower.indexOf('zaman') !== -1 || lower.indexOf('an') !== -1 || lower.indexOf('şimdi') !== -1) {
+          appendMessage('watts', 'Zamanın ötesine geçme arzun çok güzel dostum. Ancak unutma ki, yarın hiçbir zaman gelmez, dün ise çoktan bitti. Elindeki tek gerçeklik bu andır. Bu anla ne yapacaksın? 🌿', false);
+        } else if (lower.indexOf('kader') !== -1 || lower.indexOf('özgür') !== -1 || lower.indexOf('seçim') !== -1) {
+          appendMessage('nietzsche', 'Özgürlükten bahsettiğini duyuyorum! Acaba zincirlerinden kurtulduğun için mi özgürsün, yoksa kendi özgürlüğünü yaratacak gücün olduğu için mi? Kendi kaderini sevmeli ve onu adeta bir şimşek gibi fırlatmalısın! 🦁', false);
+        } else if (lower.indexOf('anlam') !== -1 || lower.indexOf('hayat') !== -1 || lower.indexOf('neden') !== -1) {
+          appendMessage('socrates', 'Güzel bir argüman! Ama merak ediyorum, bahsettiğin bu anlam arayışı, ruhumuzun en rasyonel kısmını aydınlatmaya mı yarıyor, yoksa geçici arzuların peşinde kaybolmaya mı? Kendimizi sorgulamadan bulduğumuz anlamlar gerçek olabilir mi? 🏛️', false);
+        } else {
+          // Stoic fallback
+          appendMessage('aurelius', 'Fikirlerin üzerine Stoacı bir vakarla düşündüm. Unutma ki, dışarıdaki olaylar ruhunu sarsamaz, ruhunu sarsan şey sadece senin o olaylara dair düşüncelerindir. Zihnini sadeleştir ve doğa yasasıyla uyum içinde kal. 👑', false);
+        }
+      }, 1500);
+    }
+
+    btnDebateSend.addEventListener('click', sendUserArg);
+    debateUserInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') sendUserArg(); });
+  }
+} catch(e) { console.error('Debate error', e); }
+
 
 

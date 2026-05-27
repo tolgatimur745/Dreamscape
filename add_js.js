@@ -694,6 +694,7 @@ try {
       ripples.push({x:x, y:y, r:0, maxR:Math.random()*120+80, col:col, a:1, speed:Math.random()*2+2});
     }
     function ripple_draw() {
+      if (typeof PAGE_VISIBLE !== 'undefined' && !PAGE_VISIBLE) { requestAnimationFrame(ripple_draw); return; }
       var W=rippleCanvas.width, H=rippleCanvas.height;
       rctx.fillStyle='rgba(1,2,13,.12)'; rctx.fillRect(0,0,W,H);
       ripples.forEach(function(rp, i) {

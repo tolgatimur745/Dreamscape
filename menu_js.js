@@ -24,19 +24,30 @@ try {
       {em:'🖌️',ttl:'Serbest Çizim',dsc:'Dijital çizim',id:'canvas-sec'},
       {em:'🌈',ttl:'Palet Üretici',dsc:'Renk paletleri',id:'palette-sec'},
       {em:'🎹',ttl:'Virtual Piano',dsc:'Piyano çal',id:'piano'},
-      {em:'📖',ttl:'Emoji Hikaye',dsc:'Emoji ile yaz',id:'emojistory'}
+      {em:'📖',ttl:'Emoji Hikaye',dsc:'Emoji ile yaz',id:'emojistory'},
+      {em:'🌌',ttl:'Yerçekimi Sandboxı',dsc:'Kozmik kütleçekim simülatörü',id:'gravity-sec'},
+      {em:'🎛️',ttl:'Yapay Yaşam',dsc:'Lenia otomatı',id:'lenia-sec'}
     ]},
     { label: '🌍 Keşif & Bilgi', items: [
       {em:'🗺️',ttl:'Dünya Kaşifi',dsc:'23 güzel yer',id:'world'},
       {em:'🌌',ttl:'Yıldız Haritası',dsc:'Takımyıldızları',id:'stars'},
       {em:'🌙',ttl:'Ay Takvimi',dsc:'Güncel ay fazı',id:'moonphase'},
-      {em:'💡',ttl:'Bilgi Kartları',dsc:'İlginç bilgiler',id:'facts'}
+      {em:'💡',ttl:'Bilgi Kartları',dsc:'İlginç bilgiler',id:'facts'},
+      {em:'🌌',ttl:'Nebula Ansiklopedisi',dsc:'Nebulaları keşfet',id:'nebula-info-sec'},
+      {em:'📏',ttl:'Evrenin Ölçeği',dsc:'Ölçek cetveli',id:'universe-scale-sec'},
+      {em:'🕳️',ttl:'Kara Delik',dsc:'Kütleçekim alanı',id:'blackhole-sec'},
+      {em:'🔮',ttl:'Kimatik Desenler',dsc:'Ses rezonansı',id:'cymatics-sec'}
     ]},
     { label: '🔮 Gizemli & Eğlenceli', items: [
       {em:'🎱',ttl:'Sihirli 8 Top',dsc:'Geleceğini öğren',id:'magic8'},
       {em:'🃏',ttl:'Tarot Kartları',dsc:'Geçmiş & gelecek',id:'tarot'},
       {em:'🔮',ttl:'Sayı Büyüsü',dsc:'Aklını okurum!',id:'nummagic'},
-      {em:'💭',ttl:'Ya Şunu Seçsen?',dsc:'Zor ikilemler',id:'wyr'}
+      {em:'💭',ttl:'Ya Şunu Seçsen?',dsc:'Zor ikilemler',id:'wyr'},
+      {em:'🌀',ttl:'Kaos Fraktalı',dsc:'Kaos oyunu çizici',id:'chaos-fractal-sec'},
+      {em:'🧩',ttl:'Paradokslar Bahçesi',dsc:'Zihinsel paradokslar',id:'paradox-sec'},
+      {em:'🌀',ttl:'Kaotik Sarkaç',dsc:'Çift sarkaç sandbox',id:'double-pendulum-sec'},
+      {em:'👁️‍🗨️',ttl:'Kuantum Gözlemci',dsc:'Çift yarık deneyi',id:'quantum-sec'},
+      {em:'🏛️',ttl:'Filozoflar Arenası',dsc:'Sokratik tartışma',id:'debate-sec'}
     ]},
     { label: '🛠️ Araçlar & Kişisel', items: [
       {em:'🔑',ttl:'Şifre Üretici',dsc:'Güvenli şifreler',id:'passgen'},
@@ -44,7 +55,19 @@ try {
       {em:'🎵',ttl:'Ambiyans Sesleri',dsc:'Doğa sesleri',id:'ambiance'},
       {em:'🌿',ttl:'Nefes Egzersizi',dsc:'Rahatlama',id:'breathe'},
       {em:'📓',ttl:'Şükran Günlüğü',dsc:'Günlük notlar',id:'gratitude'},
-      {em:'📅',ttl:'Günlük Görev',dsc:'Hedefler & seri',id:'daily'}
+      {em:'🟢',ttl:'Ruh Hali Çemberi',dsc:'Duygusal mandala',id:'aura-sec'},
+      {em:'⏱️',ttl:'Odaklanma Saati',dsc:'Zaman & doğa sesleri',id:'zenclock-sec'},
+      {em:'📅',ttl:'Günlük Görev',dsc:'Hedefler & seri',id:'daily'},
+      {em:'🎡',ttl:'Kozmik Karar Çarkı',dsc:'Çark çevir',id:'wheel-sec'},
+      {em:'📊',ttl:'Metin Analizörü',dsc:'Kelime & duygu analiz',id:'text-sec'},
+      {em:'📈',ttl:'Bioritim Grafik',dsc:'Zihinsel ritim grafiği',id:'biorhythm-sec'},
+      {em:'⏱️',ttl:'Cam Kronometre',dsc:'Süreölçer & zamanlayıcı',id:'stopwatch-sec'},
+      {em:'📌',ttl:'Zen Yapışkan Notlar',dsc:'Kalıcı yapışkan notlar',id:'notes-sec'},
+      {em:'🪙',ttl:'Kripto Simülatörü',dsc:'Borsa simülasyonu',id:'crypto-sec'},
+      {em:'⚖️',ttl:'Beden Kitle Endeksi',dsc:'BKE hesaplayıcı & sağlık',id:'bmi-sec'},
+      {em:'🎧',ttl:'İkili İşitsel Ritim',dsc:'Zihinsel sentezleyici',id:'binaural-sec'},
+      {em:'💧',ttl:'Zen Su Takipçisi',dsc:'Su tüketim günlüğü',id:'water-sec'},
+      {em:'✔️',ttl:'Zen Yapılacaklar',dsc:'İş yapılacaklar listesi',id:'todo-sec'}
     ]}
   ];
 
