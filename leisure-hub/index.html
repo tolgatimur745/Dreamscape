@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreamscape — Huzur & Eğlence Merkezi</title>
+  <meta name="description" content="Dreamscape: Oyun oyna, müzik dinle, çiz, nefes al ve eğlen." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span></div>
+  <div class="nav-links">
+    <a href="#games" class="nav-link">🎮 Oyunlar</a>
+    <a href="#ambiance" class="nav-link">🎵 Ambiyans</a>
+    <a href="#canvas-sec" class="nav-link">🎨 Çizim</a>
+    <a href="#breathe" class="nav-link">🧘 Nefes</a>
+    <a href="#pomodoro" class="nav-link">⏱️ Pomodoro</a>
+    <a href="#facts" class="nav-link">💡 Bilgi</a>
+    <a href="#quotes" class="nav-link">💬 Alıntı</a>
+  </div>
+  <div class="nav-time" id="navTime"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Huzurun Dijital Adresi</div>
+    <h1 class="hero-title">
+      <span class="title-line">Hoş Geldin</span>
+      <span class="title-accent">Dreamscape'e</span>
+    </h1>
+    <p class="hero-subtitle">Oyna · Dinle · Çiz · Nefes Al · Keşfet</p>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-num">12+</span><span class="stat-label">Mini Oyun</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num">8</span><span class="stat-label">Ses Ortamı</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num">∞</span><span class="stat-label">Eğlence</span></div>
+    </div>
+    <a href="#games" class="cta-btn"><span>Keşfet</span><span class="btn-arrow">→</span></a>
+  </div>
+  <div class="hero-scroll-hint"><div class="scroll-dot"></div><span>Kaydır</span></div>
+</section>
+
+<!-- GAMES -->
+<section class="section" id="games">
+  <div class="section-header">
+    <div class="section-badge">🎮 Oyunlar</div>
+    <h2 class="section-title">Mini Oyunlar</h2>
+    <p class="section-sub">Hızlı, eğlenceli ve bağımlılık yapan 12 oyun</p>
+  </div>
+  <div class="games-grid">
+
+    <!-- 1. SNAKE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🐍</span><div><h3>Snake</h3><p>Klasik yılan</p></div><span class="game-badge">Klasik</span></div>
+      <div class="game-area" id="snakeArea">
+        <canvas id="snakeCanvas"></canvas>
+        <div class="game-overlay" id="snakeOverlay">
+          <div class="overlay-icon">🐍</div><p>Hazır mısın?</p>
+          <button class="play-btn" id="snakeStartBtn">▶ Başlat</button>
+        </div>
+      </div>
+      <div class="game-stats-bar">
+        <span>Skor: <strong id="snakeScore">0</strong></span>
+        <span>En İyi: <strong id="snakeBest">0</strong></span>
+        <span class="game-controls-hint">← ↑ → ↓</span>
+      </div>
+    </div>
+
+    <!-- 2. MEMORY CARDS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🃏</span><div><h3>Hafıza</h3><p>Çiftleri eşleştir</p></div><span class="game-badge new-badge">Eğlenceli</span></div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="game-stats-bar">
+        <span>Hamle: <strong id="memoryMoves">0</strong></span>
+        <span>Eşleşme: <strong id="memoryMatches">0</strong>/8</span>
+        <button class="mini-btn" id="resetMemory">🔄</button>
+      </div>
+    </div>
+
+    <!-- 3. BUBBLE POP -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🫧</span><div><h3>Bubble Pop</h3><p>Baloncuk patlat</p></div><span class="game-badge">Rahatlatıcı</span></div>
+      <div class="bubble-arena" id="bubbleArena"></div>
+      <div class="game-stats-bar">
+        <span>Patlanan: <strong id="bubbleCount">0</strong></span>
+        <span>Puan: <strong id="bubbleScore">0</strong></span>
+        <button class="mini-btn" id="addBubbles">+ Balon</button>
+      </div>
+    </div>
+
+    <!-- 4. REACTION TIME -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">⚡</span><div><h3>Refleks Testi</h3><p>Yeşile basınca tıkla!</p></div><span class="game-badge">Hızlı</span></div>
+      <div class="reaction-area">
+        <div class="reaction-circle" id="reactionCircle"><span id="reactionText">Tıkla!</span></div>
+        <div class="reaction-results">
+          <div class="rt-stat"><span id="rtLast">—</span><small>Son</small></div>
+          <div class="rt-stat"><span id="rtBest">—</span><small>En İyi</small></div>
+          <div class="rt-stat"><span id="rtAvg">—</span><small>Ort.</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. COLOR MATCH -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎨</span><div><h3>Renk Yarışı</h3><p>Rengi doğru adlandır</p></div><span class="game-badge">Görsel</span></div>
+      <div class="color-game-area" id="colorGameArea">
+        <div class="color-question">
+          <div class="color-target" id="colorTarget"></div>
+          <p id="colorQuestion">Bu rengin adı nedir?</p>
+        </div>
+        <div class="color-options" id="colorOptions"></div>
+        <div class="color-stats">
+          <span>Skor: <strong id="colorScore">0</strong></span>
+          <span>Can: <span id="colorLives">❤️❤️❤️</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 15 PUZZLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧩</span><div><h3>15 Puzzle</h3><p>Sayıları sıraya diz</p></div><span class="game-badge">Zeka</span></div>
+      <div class="puzzle-grid" id="puzzleGrid"></div>
+      <div class="game-stats-bar">
+        <span>Hamle: <strong id="puzzleMoves">0</strong></span>
+        <button class="mini-btn" id="resetPuzzle">🔀 Yeni</button>
+      </div>
+    </div>
+
+    <!-- 7. WHACK-A-MOLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🐹</span><div><h3>Köstebek Vur!</h3><p>Çıkan köstebeklere vur</p></div><span class="game-badge new-badge">Aksiyon</span></div>
+      <div class="mole-header-row">
+        <span>Süre: <strong id="moleTime">30</strong>s</span>
+        <span>Skor: <strong id="moleScore">0</strong></span>
+      </div>
+      <div class="mole-grid" id="moleGrid">
+        <div class="mole-hole"><div class="mole-inner" id="mole0"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole1"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole2"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole3"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole4"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole5"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole6"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole7"></div></div>
+        <div class="mole-hole"><div class="mole-inner" id="mole8"></div></div>
+      </div>
+      <button class="play-btn" id="moleStartBtn" style="width:100%;margin-top:0.6rem">▶ Başlat</button>
+    </div>
+
+    <!-- 8. TIC TAC TOE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">❌</span><div><h3>XOX — AI</h3><p>Yapay zekaya karşı oyna</p></div><span class="game-badge">Strateji</span></div>
+      <div class="ttt-status" id="tttStatus">Sen ⭕ · AI ❌</div>
+      <div class="ttt-grid" id="tttGrid">
+        <button class="ttt-cell" data-i="0"></button>
+        <button class="ttt-cell" data-i="1"></button>
+        <button class="ttt-cell" data-i="2"></button>
+        <button class="ttt-cell" data-i="3"></button>
+        <button class="ttt-cell" data-i="4"></button>
+        <button class="ttt-cell" data-i="5"></button>
+        <button class="ttt-cell" data-i="6"></button>
+        <button class="ttt-cell" data-i="7"></button>
+        <button class="ttt-cell" data-i="8"></button>
+      </div>
+      <div class="game-stats-bar">
+        <span>Sen: <strong id="tttWin">0</strong></span>
+        <span>Ber: <strong id="tttDraw">0</strong></span>
+        <span>AI: <strong id="tttLose">0</strong></span>
+        <button class="mini-btn" id="tttReset" style="margin-left:auto">🔄 Yeni</button>
+      </div>
+    </div>
+
+    <!-- 9. WORD SCRAMBLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">📝</span><div><h3>Kelime Bulmaca</h3><p>Harfleri düzenle</p></div><span class="game-badge">Kelime</span></div>
+      <div class="word-game">
+        <div class="word-cat-hint">
+          <span class="word-category" id="wordCategory">Yükleniyor...</span>
+          <span class="word-hint" id="wordHint"></span>
+        </div>
+        <div class="scrambled-word" id="scrambledWord"></div>
+        <input type="text" class="word-input" id="wordInput" placeholder="Tahminini yaz ve Enter'a bas..." autocomplete="off" spellcheck="false" />
+        <div class="word-actions">
+          <button class="mini-btn" id="wordCheck">✓ Kontrol</button>
+          <button class="mini-btn" id="wordSkip">→ Atla</button>
+          <button class="mini-btn" id="wordHintBtn">💡 İpucu</button>
+        </div>
+        <div class="game-stats-bar" style="margin-top:0.5rem;border-top:none;padding-top:0">
+          <span>Skor: <strong id="wordScore">0</strong></span>
+          <span>✅ <strong id="wordCorrect">0</strong></span>
+          <span>❌ <strong id="wordWrong">0</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. SIMON SAYS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧠</span><div><h3>Simon Says</h3><p>Renk dizisini ezberle</p></div><span class="game-badge new-badge">Hafıza</span></div>
+      <div class="simon-container">
+        <div class="simon-board" id="simonBoard">
+          <button class="simon-btn simon-red" id="simonRed"></button>
+          <button class="simon-btn simon-blue" id="simonBlue"></button>
+          <button class="simon-btn simon-yellow" id="simonYellow"></button>
+          <button class="simon-btn simon-green" id="simonGreen"></button>
+        </div>
+        <div class="game-stats-bar" style="border-top:none;padding-top:0.4rem">
+          <span>Seviye: <strong id="simonLevel">0</strong></span>
+          <span>En İyi: <strong id="simonBest">0</strong></span>
+        </div>
+        <button class="play-btn" id="simonStart" style="width:100%;margin-top:0.3rem">▶ Başlat</button>
+      </div>
+    </div>
+
+    <!-- 11. MATH QUIZ -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🔢</span><div><h3>Matematik Sprint</h3><p>60 saniyede hesapla!</p></div><span class="game-badge">Zeka</span></div>
+      <div class="math-container">
+        <div class="math-timer-bar"><div class="math-timer-fill" id="mathTimerFill" style="width:100%"></div></div>
+        <div class="math-problem" id="mathProblem">Başlatmak için tıkla</div>
+        <input type="number" class="math-input" id="mathInput" placeholder="Cevap?" disabled autocomplete="off" />
+        <div class="game-stats-bar" style="border-top:none;padding-top:0.3rem">
+          <span>✅ <strong id="mathCorrect">0</strong></span>
+          <span>❌ <strong id="mathWrong">0</strong></span>
+          <span>Puan: <strong id="mathScore">0</strong></span>
+        </div>
+        <button class="play-btn" id="mathStart" style="width:100%;margin-top:0.4rem">▶ Başlat</button>
+      </div>
+    </div>
+
+    <!-- 12. ROCK PAPER SCISSORS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">✊</span><div><h3>Taş-Kağıt-Makas</h3><p>Yapay zekaya karşı</p></div><span class="game-badge">Şans</span></div>
+      <div class="rps-container">
+        <div class="rps-arena">
+          <div class="rps-side"><div class="rps-emoji" id="rpsPlayer">❓</div><small>Sen</small></div>
+          <div class="rps-vs">VS</div>
+          <div class="rps-side"><div class="rps-emoji" id="rpsAI">❓</div><small>AI</small></div>
+        </div>
+        <div class="rps-result" id="rpsResult">Seçimini yap!</div>
+        <div class="rps-btns">
+          <button class="rps-btn" data-choice="rock">✊<br><small>Taş</small></button>
+          <button class="rps-btn" data-choice="paper">✋<br><small>Kağıt</small></button>
+          <button class="rps-btn" data-choice="scissors">✌️<br><small>Makas</small></button>
+        </div>
+        <div class="game-stats-bar" style="border-top:none;padding-top:0.3rem">
+          <span>Sen: <strong id="rpsWin">0</strong></span>
+          <span>Ber: <strong id="rpsDraw">0</strong></span>
+          <span>AI: <strong id="rpsLose">0</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. HIGHER/LOWER -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎯</span><div><h3>Sayı Tahmin</h3><p>1-100 arasını bul</p></div><span class="game-badge">Mantık</span></div>
+      <div class="guess-container">
+        <div class="guess-number-display" id="guessDisplay">?</div>
+        <div class="guess-hint-text" id="guessHint">1 ile 100 arasında bir sayı düşündüm...</div>
+        <div class="guess-range-info" id="guessRange">📍 1 — 100</div>
+        <div class="guess-input-row">
+          <input type="number" class="math-input" id="guessInput" min="1" max="100" placeholder="Tahmin..." />
+          <button class="mini-btn" id="guessSubmit">Dene →</button>
+        </div>
+        <div class="game-stats-bar" style="border-top:none;padding-top:0.3rem">
+          <span>Deneme: <strong id="guessTries">0</strong></span>
+          <span>En Az: <strong id="guessBest">—</strong></span>
+          <button class="mini-btn" id="guessReset">🔄 Yeni</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14. MINESWEEPER -->
+    <div class="game-card" style="grid-column:span 2">
+      <div class="game-card-header"><span class="game-icon">💣</span><div><h3>Mayın Tarlası</h3><p>Mayınlardan kaçın — Sol tık: Aç | Sağ tık: 🚩</p></div><span class="game-badge new-badge">Strateji</span></div>
+      <div class="mine-header-row">
+        <span>💣 Kalan: <strong id="mineCount">10</strong></span>
+        <span id="mineStatus">🙂</span>
+        <span>⏱ <strong id="mineTimer">0</strong>s</span>
+        <button class="mini-btn" id="mineReset">🔄 Yeni</button>
+      </div>
+      <div class="mine-grid" id="mineGrid"></div>
+    </div>
+
+    <!-- 15. TYPING SPEED -->
+    <div class="game-card" style="grid-column:span 2">
+      <div class="game-card-header"><span class="game-icon">⌨️</span><div><h3>Yazma Hızı Testi</h3><p>Kelime başına dakika (WPM) ölçümü</p></div><span class="game-badge new-badge">WPM</span></div>
+      <div class="typing-container">
+        <div class="typing-stats">
+          <div class="typing-stat-box"><strong id="typingWPM">0</strong><span>WPM</span></div>
+          <div class="typing-stat-box"><strong id="typingAcc">100</strong><span>% Doğruluk</span></div>
+          <div class="typing-stat-box"><strong id="typingTimer">60</strong><span>Saniye</span></div>
+          <div class="typing-stat-box"><strong id="typingChars">0</strong><span>Karakter</span></div>
+        </div>
+        <div class="typing-text-display" id="typingText"></div>
+        <textarea class="typing-textarea" id="typingInput" placeholder="Başlamak için buraya tıkla ve metni yazmaya başla..." disabled rows="2"></textarea>
+        <button class="play-btn" id="typingStart" style="width:100%;margin-top:0.5rem">▶ Testi Başlat</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AMBIANCE -->
+<section class="section ambiance-section" id="ambiance">
+  <div class="section-header">
+    <div class="section-badge">🎵 Ambiyans</div>
+    <h2 class="section-title">Ses Ortamları</h2>
+    <p class="section-sub">Kendi atmosferini oluştur</p>
+  </div>
+  <div class="ambiance-container">
+    <div class="ambiance-visualizer" id="ambianceVisualizer">
+      <div class="visualizer-rings">
+        <div class="ring ring-1"></div><div class="ring ring-2"></div>
+        <div class="ring ring-3"></div><div class="ring ring-4"></div>
+      </div>
+      <div class="visualizer-icon" id="vizIcon">🎵</div>
+      <p id="vizLabel">Ses seç → Çal</p>
+    </div>
+    <div class="ambiance-sounds">
+      <div class="sound-card" data-sound="rain" data-icon="🌧️" data-label="Yağmur"><div class="sound-icon">🌧️</div><span>Yağmur</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="ocean" data-icon="🌊" data-label="Okyanus"><div class="sound-icon">🌊</div><span>Okyanus</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="forest" data-icon="🌲" data-label="Orman"><div class="sound-icon">🌲</div><span>Orman</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="fire" data-icon="🔥" data-label="Şömine"><div class="sound-icon">🔥</div><span>Şömine</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="cafe" data-icon="☕" data-label="Kafe"><div class="sound-icon">☕</div><span>Kafe</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="space" data-icon="🚀" data-label="Uzay"><div class="sound-icon">🚀</div><span>Uzay</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="wind" data-icon="💨" data-label="Rüzgar"><div class="sound-icon">💨</div><span>Rüzgar</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+      <div class="sound-card" data-sound="night" data-icon="🦗" data-label="Gece"><div class="sound-icon">🦗</div><span>Gece</span><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div></div>
+    </div>
+    <div class="ambiance-controls">
+      <div class="volume-control">
+        <span>🔉</span>
+        <input type="range" id="masterVolume" min="0" max="100" value="60" class="volume-slider" />
+        <span>🔊</span>
+        <span id="volumeDisplay">60%</span>
+      </div>
+      <button class="play-stop-btn" id="playStopBtn"><span id="playStopIcon">▶</span><span id="playStopLabel">Çal</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- DRAWING CANVAS -->
+<section class="section canvas-section" id="canvas-sec">
+  <div class="section-header">
+    <div class="section-badge">🎨 Çizim</div>
+    <h2 class="section-title">Doodle Alanı</h2>
+    <p class="section-sub">Aklına ne gelirse çiz</p>
+  </div>
+  <div class="canvas-container">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-label">Renk</label>
+        <div class="color-palette" id="colorPalette">
+          <div class="palette-color selected" style="background:#7c4dff" data-color="#7c4dff"></div>
+          <div class="palette-color" style="background:#ff6b9d" data-color="#ff6b9d"></div>
+          <div class="palette-color" style="background:#00e5ff" data-color="#00e5ff"></div>
+          <div class="palette-color" style="background:#69f0ae" data-color="#69f0ae"></div>
+          <div class="palette-color" style="background:#ffea00" data-color="#ffea00"></div>
+          <div class="palette-color" style="background:#ff7043" data-color="#ff7043"></div>
+          <div class="palette-color" style="background:#ffffff" data-color="#ffffff"></div>
+          <div class="palette-color" style="background:#ff1744" data-color="#ff1744"></div>
+          <input type="color" id="customColor" class="custom-color-picker" value="#7c4dff" />
+        </div>
+      </div>
+      <div class="tool-group">
+        <label class="tool-label">Fırça: <span id="brushSizeDisplay">8</span>px</label>
+        <input type="range" id="brushSize" min="2" max="50" value="8" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-label">Araç</label>
+        <div class="tool-buttons">
+          <button class="tool-btn active" id="brushTool">✏️ Fırça</button>
+          <button class="tool-btn" id="eraserTool">⬜ Silgi</button>
+          <button class="tool-btn" id="sparkTool">✨ Işıltı</button>
+        </div>
+      </div>
+      <button class="tool-btn" id="glowToggle">💫 Glow</button>
+      <button class="clear-btn" id="clearCanvas">🗑️ Temizle</button>
+      <button class="save-btn" id="saveCanvas">💾 Kaydet</button>
+    </div>
+    <div class="drawing-canvas-wrapper" id="drawingWrapper">
+      <canvas id="drawingCanvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- BREATHING -->
+<section class="section breathe-section" id="breathe">
+  <div class="section-header">
+    <div class="section-badge">🧘 Nefes</div>
+    <h2 class="section-title">Nefes Egzersizi</h2>
+    <p class="section-sub">Zihnini dinlendir, stresi at</p>
+  </div>
+  <div class="breathe-container">
+    <div class="breathe-selector">
+      <button class="breathe-type-btn active" data-type="478">4-7-8 Tekniği</button>
+      <button class="breathe-type-btn" data-type="box">Box Breathing</button>
+      <button class="breathe-type-btn" data-type="calm">Sakinleş 5-5</button>
+    </div>
+    <div class="breathe-main">
+      <div class="breathe-circle-container">
+        <svg class="breathe-progress-ring" viewBox="0 0 220 220">
+          <circle class="progress-track" cx="110" cy="110" r="100"/>
+          <circle class="progress-fill" id="breatheProgressFill" cx="110" cy="110" r="100"/>
+        </svg>
+        <div class="breathe-circle" id="breatheCircle">
+          <div class="breathe-inner">
+            <span class="breathe-phase-icon" id="breatheIcon">🌬️</span>
+            <span class="breathe-phase-text" id="breathePhaseText">Hazır</span>
+            <span class="breathe-countdown" id="breatheCountdown"></span>
+          </div>
+        </div>
+      </div>
+      <div class="breathe-controls">
+        <button class="breathe-start-btn" id="breatheStart"><span id="breatheStartIcon">▶</span><span id="breatheStartLabel"> Başlat</span></button>
+        <div class="breathe-session">
+          <span>Döngü: <strong id="breatheCycle">0</strong></span>
+          <span>Süre: <strong id="breatheTime">0:00</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="breathe-tips">
+      <div class="tip-card"><span class="tip-icon">💤</span><p>4-7-8 uyku öncesi idealdir</p></div>
+      <div class="tip-card"><span class="tip-icon">💼</span><p>Box breathing stres azaltır</p></div>
+      <div class="tip-card"><span class="tip-icon">🧠</span><p>Düzenli nefes odaklanmayı artırır</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- POMODORO -->
+<section class="section pomodoro-section" id="pomodoro">
+  <div class="section-header">
+    <div class="section-badge">⏱️ Pomodoro</div>
+    <h2 class="section-title">Pomodoro Zamanlayıcı</h2>
+    <p class="section-sub">25dk çalış, 5dk mola — Odaklanmanın formülü</p>
+  </div>
+  <div class="pomodoro-container">
+    <div class="pomodoro-mode-btns">
+      <button class="pomo-mode-btn active" data-mode="work">🎯 Çalışma (25dk)</button>
+      <button class="pomo-mode-btn" data-mode="short">☕ Kısa (5dk)</button>
+      <button class="pomo-mode-btn" data-mode="long">🌿 Uzun (15dk)</button>
+    </div>
+    <div class="pomodoro-clock">
+      <svg class="pomo-ring" viewBox="0 0 240 240">
+        <circle class="pomo-track" cx="120" cy="120" r="108"/>
+        <circle class="pomo-fill" id="pomoFill" cx="120" cy="120" r="108"/>
+      </svg>
+      <div class="pomo-time-display">
+        <div class="pomo-time" id="pomoTime">25:00</div>
+        <div class="pomo-mode-label" id="pomoModeLabel">Çalışma Zamanı 🎯</div>
+        <div class="pomo-session-count">🍅 <span id="pomoCount">0</span> Pomodoro</div>
+      </div>
+    </div>
+    <div class="pomo-controls">
+      <button class="pomo-btn" id="pomoStart">▶ Başlat</button>
+      <button class="pomo-btn pomo-reset" id="pomoReset">↺ Sıfırla</button>
+    </div>
+    <div class="pomo-tasks">
+      <h3>📋 Görevler</h3>
+      <div class="pomo-task-input">
+        <input type="text" id="pomoTaskInput" placeholder="Görev ekle..." autocomplete="off"/>
+        <button id="pomoAddTask">+</button>
+      </div>
+      <ul class="pomo-task-list" id="pomoTaskList"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- FACTS -->
+<section class="section facts-section" id="facts">
+  <div class="section-header">
+    <div class="section-badge">💡 Bilgi</div>
+    <h2 class="section-title">İlginç Bilgiler</h2>
+    <p class="section-sub">Her tıklamada yeni bir şey öğren</p>
+  </div>
+  <div class="facts-container">
+    <div class="fact-display">
+      <div class="fact-category" id="factCategory">🔬 Bilim</div>
+      <div class="fact-icon-big" id="factIconBig">🔬</div>
+      <p class="fact-text" id="factText">Yükleniyor...</p>
+      <div class="fact-number" id="factNumber">1 / 30</div>
+    </div>
+    <div class="fact-actions">
+      <button class="fact-btn" id="prevFact">← Önceki</button>
+      <button class="fact-btn random-btn" id="randomFact">🎲 Rastgele</button>
+      <button class="fact-btn" id="nextFact">Sonraki →</button>
+    </div>
+    <div class="fact-categories-filter">
+      <button class="cat-btn active" data-cat="all">Tümü</button>
+      <button class="cat-btn" data-cat="science">🔬 Bilim</button>
+      <button class="cat-btn" data-cat="nature">🌿 Doğa</button>
+      <button class="cat-btn" data-cat="space">🚀 Uzay</button>
+      <button class="cat-btn" data-cat="history">📜 Tarih</button>
+      <button class="cat-btn" data-cat="animals">🐾 Hayvanlar</button>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="section quotes-section" id="quotes">
+  <div class="section-header">
+    <div class="section-badge">💬 Alıntı</div>
+    <h2 class="section-title">İlham Sözleri</h2>
+    <p class="section-sub">Büyük düşünürlerden seçilmiş sözler</p>
+  </div>
+  <div class="quotes-container">
+    <div class="quote-card">
+      <div class="quote-mark">"</div>
+      <p class="quote-text" id="quoteText">Yükleniyor...</p>
+      <div class="quote-author" id="quoteAuthor">— Yükleniyor</div>
+      <div class="quote-tag" id="quoteTag">💭</div>
+    </div>
+    <div class="fact-actions">
+      <button class="fact-btn" id="prevQuote">← Önceki</button>
+      <button class="fact-btn random-btn" id="randomQuote">🎲 Rastgele</button>
+      <button class="fact-btn" id="nextQuote">Sonraki →</button>
+      <button class="fact-btn" id="copyQuote" style="border-color:rgba(0,229,255,0.4);color:var(--accent-3)">📋 Kopyala</button>
+    </div>
+  </div>
+</section>
+
+<!-- WORLD CLOCKS -->
+<section class="section clock-section" id="clock">
+  <div class="section-header">
+    <div class="section-badge">🌍 Dünya</div>
+    <h2 class="section-title">Dünya Saatleri</h2>
+  </div>
+  <div class="clocks-grid" id="clocksGrid"></div>
+  <div class="mood-widget">
+    <h3>🌤️ Bugünkü Ruh Halin</h3>
+    <div class="mood-options">
+      <button class="mood-btn" data-mood="amazing">🤩 Harika</button>
+      <button class="mood-btn" data-mood="happy">😊 Mutlu</button>
+      <button class="mood-btn" data-mood="okay">😌 İyi</button>
+      <button class="mood-btn" data-mood="tired">😴 Yorgun</button>
+      <button class="mood-btn" data-mood="stressed">😤 Stresli</button>
+    </div>
+    <div class="mood-response" id="moodResponse"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo"><span>✦</span><span>Dreamscape</span></div>
+    <p>Huzurlu anlar, keyifli vakitler 💙</p>
+    <span id="sessionTime">⏱️ Bu oturumda: 0 dk</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
