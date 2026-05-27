@@ -1,4 +1,4 @@
-﻿
+
 /* ══ GLOBAL MENU TOGGLE (failsafe) ══ */
 function menuToggle() {
   var o = document.getElementById('menuOverlay');
@@ -2933,7 +2933,8 @@ try {
 try {
   var MENU_CATS = [
     { label: '🎮 Oyunlar', items: [
-      {em:'🐍',ttl:'Snake',dsc:'Klasik yılan oyunu',id:'games'},
+      {em:'🎮',ttl:'Oyun Portalı',dsc:'Tüm mini oyunlar lobisi',id:'games'},
+      {em:'🐍',ttl:'Snake (Yılan)',dsc:'Klasik yılan oyunu',id:'snake-sec'},
       {em:'🏓',ttl:'Pong',dsc:'AI rakibine karşı',id:'pong'},
       {em:'🃏',ttl:'Blackjack',dsc:'21\'i geç',id:'blackjack'},
       {em:'🎰',ttl:'Slot Makinesi',dsc:'Şansını dene',id:'slots'},
@@ -2943,9 +2944,32 @@ try {
       {em:'🎲',ttl:'Zar Toplayıcı',dsc:'D4\'ten D100\'e',id:'dice'},
       {em:'🃏',ttl:'Hafıza Kartları',dsc:'Eşleştirme oyunu',id:'memory-sec'},
       {em:'🫧',ttl:'Bubble Pop',dsc:'Balon patlatma',id:'bubble-sec'},
-      {em:'🌍',ttl:'Coğrafya Quiz',dsc:'Başkent bil',id:'geography'}
+      {em:'⚡',ttl:'Refleks Testi',dsc:'Yeşile dönünce tıkla',id:'reaction-sec'},
+      {em:'🎨',ttl:'Renk Yarışı',dsc:'Rengi doğru adlandır',id:'color-sec'},
+      {em:'🧩',ttl:'15 Puzzle',dsc:'Sayıları sıraya diz',id:'puzzle-sec'},
+      {em:'🐹',ttl:'Köstebek Vur',dsc:'Köstebekleri yakala',id:'mole-sec'},
+      {em:'❌',ttl:'XOX — AI',dsc:'AI\'a karşı XOX oyna',id:'ttt-sec'},
+      {em:'📝',ttl:'Kelime Bulmaca',dsc:'Harfleri kelimelere diz',id:'word-sec'},
+      {em:'🧠',ttl:'Simon Says',dsc:'Renk sırasını ezberle',id:'simon-sec'},
+      {em:'🔢',ttl:'Matematik Sprint',dsc:'Hızlı matematik işlemleri',id:'math-sec'},
+      {em:'✊',ttl:'Taş-Kağıt-Makas',dsc:'AI\'a karşı düello',id:'rps-sec'},
+      {em:'🎯',ttl:'Sayı Tahmin',dsc:'Gizli sayıyı bul',id:'guess-sec'},
+      {em:'💣',ttl:'Mayın Tarlası',dsc:'Mayınları temizle',id:'mine-sec'},
+      {em:'⌨️',ttl:'Yazma Hızı',dsc:'WPM yazma hızı testi',id:'typing-sec'},
+      {em:'🌍',ttl:'Coğrafya Quiz',dsc:'Başkent bil',id:'geography'},
+      {em:'🧪',ttl:'Piksel Fizik',dsc:'Zen fizik simülatörü',id:'sand-sec'},
+      {em:'🛸',ttl:'Kozmik Flappy',dsc:'Uçan daire kaçış oyunu',id:'flappy-sec'},
+      {em:'☄️',ttl:'Kozmik Savunucu',dsc:'Retro galaksi savaşı',id:'shooter-sec'},
+      {em:'🧩',ttl:'Neon 2048',dsc:'Sayı birleştirme bulmacası',id:'m2048-sec'},
+      {em:'🌀',ttl:'Kozmik Labirent',dsc:'Sonsuz labirent çözücü',id:'maze-sec'},
+      {em:'🚀',ttl:'Kozmik Orbit',dsc:'Zen yerçekimi sapanı oyunu',id:'orbit-sec'}
     ]},
-    { label: '🎨 Yaratıcılık', items: [
+    { label: '🎨 Yaratıcılık & Huzur', items: [
+      {em:'🌌',ttl:'Kozmik Nebula',dsc:'Karadelik & parçacık fiziği',id:'nebula-sec'},
+      {em:'🎹',ttl:'Zen Melodi Havuzu',dsc:'İnteraktif ambiyans sentezleyici',id:'dreampad-sec'},
+      {em:'🌸',ttl:'Zen Bonsai Bahçesi',dsc:'Fraktal Bonsai & kum tırmıklama',id:'bonsai-sec'},
+      {em:'💨',ttl:'Rüzgar Akışı Tuvali',dsc:'Akışkan rüzgar parçacıkları',id:'flowfield-sec'},
+      {em:'🌀',ttl:'Zen Kaleidoskop',dsc:'Simetrik çizim tuvali',id:'kaleido-sec'},
       {em:'🎨',ttl:'Pixel Art',dsc:'Dijital sanat',id:'pixelart'},
       {em:'🌊',ttl:'Dalgalar',dsc:'İnteraktif tuval',id:'ripple'},
       {em:'🖌️',ttl:'Serbest Çizim',dsc:'Dijital çizim',id:'canvas-sec'},
@@ -2957,7 +2981,8 @@ try {
       {em:'🗺️',ttl:'Dünya Kaşifi',dsc:'23 güzel yer',id:'world'},
       {em:'🌌',ttl:'Yıldız Haritası',dsc:'Takımyıldızları',id:'stars'},
       {em:'🌙',ttl:'Ay Takvimi',dsc:'Güncel ay fazı',id:'moonphase'},
-      {em:'💡',ttl:'Bilgi Kartları',dsc:'İlginç bilgiler',id:'facts'}
+      {em:'💡',ttl:'Bilgi Kartları',dsc:'İlginç bilgiler',id:'facts'},
+      {em:'🔭',ttl:'Kozmik Teleskop',dsc:'Derin uzay vizörü',id:'telescope-sec'}
     ]},
     { label: '🔮 Gizemli & Eğlenceli', items: [
       {em:'🎱',ttl:'Sihirli 8 Top',dsc:'Geleceğini öğren',id:'magic8'},
@@ -2971,6 +2996,8 @@ try {
       {em:'🎵',ttl:'Ambiyans Sesleri',dsc:'Doğa sesleri',id:'ambiance'},
       {em:'🌿',ttl:'Nefes Egzersizi',dsc:'Rahatlama',id:'breathe'},
       {em:'📓',ttl:'Şükran Günlüğü',dsc:'Günlük notlar',id:'gratitude'},
+      {em:'🟢',ttl:'Ruh Hali Çemberi',dsc:'Duygusal aura mandala visualizer',id:'aura-sec'},
+      {em:'⏱️',ttl:'Odaklanma Saati',dsc:'Analog saat & ses mikseri',id:'zenclock-sec'},
       {em:'📅',ttl:'Günlük Görev',dsc:'Hedefler & seri',id:'daily'}
     ]}
   ];
@@ -3250,7 +3277,8 @@ try {
 (function() {
   var HUB_CATS = [
     { label: '🎮 Oyunlar', items: [
-      {em:'🐍', ttl:'Snake',          dsc:'Klasik yılan oyunu',      id:'games'},
+      {em:'🎮', ttl:'Oyun Portalı',   dsc:'Tüm mini oyunlar lobisi', id:'games'},
+      {em:'🐍', ttl:'Snake (Yılan)',   dsc:'Klasik yılan oyunu',      id:'snake-sec'},
       {em:'🏓', ttl:'Pong',           dsc:'AI rakibine karşı',       id:'pong'},
       {em:'🃏', ttl:'Blackjack',      dsc:"21'i geç",               id:'blackjack'},
       {em:'🎰', ttl:'Slot Makinesi',  dsc:'Şansını dene',            id:'slots'},
@@ -3260,9 +3288,32 @@ try {
       {em:'🎲', ttl:'Zar Toplayıcı',  dsc:"D4'ten D100'e",          id:'dice'},
       {em:'🃏', ttl:'Hafıza Kartları',dsc:'Eşleştirme oyunu',       id:'memory-sec'},
       {em:'🫧', ttl:'Bubble Pop',     dsc:'Balon patlatma',          id:'bubble-sec'},
-      {em:'🌍', ttl:'Coğrafya Quiz',  dsc:'Başkentleri bil',         id:'geography'}
+      {em:'⚡', ttl:'Refleks Testi',   dsc:'Yeşile dönünce tıkla',    id:'reaction-sec'},
+      {em:'🎨', ttl:'Renk Yarışı',     dsc:'Rengi doğru adlandır',    id:'color-sec'},
+      {em:'🧩', ttl:'15 Puzzle',       dsc:'Sayıları sıraya diz',     id:'puzzle-sec'},
+      {em:'🐹', ttl:'Köstebek Vur',    dsc:'Köstebekleri yakala',     id:'mole-sec'},
+      {em:'❌', ttl:'XOX — AI',        dsc:'AI\'a karşı XOX oyna',    id:'ttt-sec'},
+      {em:'📝', ttl:'Kelime Bulmaca',  dsc:'Harfleri kelimelere diz', id:'word-sec'},
+      {em:'🧠', ttl:'Simon Says',      dsc:'Renk sırasını ezberle',   id:'simon-sec'},
+      {em:'🔢', ttl:'Matematik Sprint',dsc:'Hızlı matematik işlemleri',id:'math-sec'},
+      {em:'✊', ttl:'Taş-Kağıt-Makas',dsc:'AI\'a karşı düello',     id:'rps-sec'},
+      {em:'🎯', ttl:'Sayı Tahmin',     dsc:'Gizli sayıyı bul',        id:'guess-sec'},
+      {em:'💣', ttl:'Mayın Tarlası',   dsc:'Mayınları temizle',       id:'mine-sec'},
+      {em:'⌨️', ttl:'Yazma Hızı',      dsc:'WPM yazma hızı testi',    id:'typing-sec'},
+      {em:'🌍', ttl:'Coğrafya Quiz',  dsc:'Başkentleri bil',         id:'geography'},
+      {em:'🧪', ttl:'Piksel Fizik',   dsc:'Zen fizik simülatörü',    id:'sand-sec'},
+      {em:'🛸', ttl:'Kozmik Flappy',  dsc:'Uçan daire kaçış oyunu',  id:'flappy-sec'},
+      {em:'☄️', ttl:'Kozmik Savunucu', dsc:'Retro galaksi savaşı',    id:'shooter-sec'},
+      {em:'🧩', ttl:'Neon 2048',      dsc:'Sayı birleştirme bulmacası',id:'m2048-sec'},
+      {em:'🌀', ttl:'Kozmik Labirent', dsc:'Sonsuz labirent çözücü',   id:'maze-sec'},
+      {em:'🚀', ttl:'Kozmik Orbit',   dsc:'Zen yerçekimi sapanı oyunu',id:'orbit-sec'}
     ]},
-    { label: '🎨 Yaratıcılık', items: [
+    { label: '🎨 Yaratıcılık & Huzur', items: [
+      {em:'🌌', ttl:'Kozmik Nebula',  dsc:'Karadelik & parçacık simülatörü',id:'nebula-sec'},
+      {em:'🎹', ttl:'Zen Melodi Havuzu',dsc:'İnteraktif ambiyans sentezleyici',id:'dreampad-sec'},
+      {em:'🌸', ttl:'Zen Bonsai Bahçesi',dsc:'Fraktal ağaç & kum tırmık bahçesi',id:'bonsai-sec'},
+      {em:'💨', ttl:'Rüzgar Akışı Tuvali',dsc:'Soyut akışkan parçacık boyama',id:'flowfield-sec'},
+      {em:'🌀', ttl:'Zen Kaleidoskop',dsc:'Simetrik çizim tuvali',   id:'kaleido-sec'},
       {em:'🎨', ttl:'Pixel Art',      dsc:'Dijital piksel sanatı',   id:'pixelart'},
       {em:'🌊', ttl:'Dalga Tuvali',   dsc:'İnteraktif dalgalar',     id:'ripple'},
       {em:'🖌️', ttl:'Serbest Çizim',  dsc:'Dijital çizim tahtası',   id:'canvas-sec'},
@@ -3274,7 +3325,8 @@ try {
       {em:'🗺️', ttl:'Dünya Kaşifi',   dsc:"Dünyanın güzel yerleri",  id:'world'},
       {em:'🌌', ttl:'Yıldız Haritası',dsc:'Takımyıldızları keşfet',  id:'stars'},
       {em:'🌙', ttl:'Ay Fazı',        dsc:'Bugünkü ay takvimi',      id:'moonphase'},
-      {em:'💡', ttl:'Bilgi Kartları', dsc:'İlginç gerçekler',        id:'facts'}
+      {em:'💡', ttl:'Bilgi Kartları', dsc:'İlginç gerçekler',        id:'facts'},
+      {em:'🔭', ttl:'Kozmik Teleskop',dsc:'Derin uzay vizörü',       id:'telescope-sec'}
     ]},
     { label: '🔮 Gizemli & Eğlenceli', items: [
       {em:'🎱', ttl:'Sihirli 8 Top',  dsc:'Geleceğini öğren',        id:'magic8'},
@@ -3284,6 +3336,12 @@ try {
     ]},
     { label: '🛠️ Araçlar & Kişisel', items: [
       {em:'🔑', ttl:'Şifre Üretici',  dsc:'Güvenli şifreler oluştur',id:'passgen'},
+      {em:'📝', ttl:'Sezar Şifresi',  dsc:'Gizli mesajlar şifrele',  id:'cipher'},
+      {em:'🎵', ttl:'Ambiyans Sesleri',dsc:'Doğa sesleri',            id:'ambiance'},
+      {em:'🌿', ttl:'Nefes Egzersizi',dsc:'Rahatlama',                id:'breathe'},
+      {em:'📓', ttl:'Şükran Günlüğü', dsc:'Günlük notlar',            id:'gratitude'},
+      {em:'🟢', ttl:'Ruh Hali Çemberi',dsc:'Duygusal aura mandala visualizer',id:'aura-sec'},
+      {em:'⏱️', ttl:'Odaklanma Saati',dsc:'Analog saat & ses mikseri',id:'zenclock-sec'},
       {em:'📝', ttl:'Sezar Şifresi',  dsc:'Gizli mesajlar şifrele',  id:'cipher'},
       {em:'🎵', ttl:'Ambiyans',       dsc:'Doğa & ortam sesleri',    id:'ambiance'},
       {em:'🌿', ttl:'Nefes Egzersizi',dsc:'Rahatlama ve meditasyon', id:'breathe'},
@@ -3386,4 +3444,2810 @@ try {
   buildHub();
   document.body.classList.add('ds-in-hub');
 })();
+
+/* ══════════════════════════════════════════════════════════
+   AAA 1: KOZMİK NEBULA SIMULATOR
+   ══════════════════════════════════════════════════════════ */
+try {
+  var nebulaCanvas = document.getElementById('nebulaCanvas');
+  if (nebulaCanvas) {
+    var nctx = nebulaCanvas.getContext('2d');
+    var nebulaParticles = [], nebulaAttractors = [];
+    var nebulaGravityVal = 5;
+    var nebulaParticleTheme = 'cosmic';
+    
+    function initNebulaParticles(count) {
+      nebulaParticles = [];
+      var W = nebulaCanvas.width, H = nebulaCanvas.height;
+      for (var i = 0; i < count; i++) {
+        var angle = Math.random() * Math.PI * 2;
+        var dist = Math.random() * Math.min(W, H) * 0.4 + 50;
+        nebulaParticles.push({
+          x: W / 2 + Math.cos(angle) * dist,
+          y: H / 2 + Math.sin(angle) * dist,
+          vx: -Math.sin(angle) * (Math.random() * 2 + 1),
+          vy: Math.cos(angle) * (Math.random() * 2 + 1),
+          size: Math.random() * 1.5 + 0.5,
+          color: getNebulaColor(Math.random()),
+          alpha: Math.random() * 0.5 + 0.5
+        });
+      }
+    }
+    
+    function getNebulaColor(rand) {
+      if (nebulaParticleTheme === 'supernova') {
+        return 'hsl(' + (rand * 45 + 5) + ', 100%, ' + (50 + rand * 30) + '%)'; // Red/Orange/Yellow
+      } else if (nebulaParticleTheme === 'aurora') {
+        return 'hsl(' + (rand * 60 + 90) + ', 95%, 60%)'; // Green/Cyan
+      }
+      return 'hsl(' + (rand * 80 + 260) + ', 90%, 65%)'; // Cosmic Purple/Magenta/Blue
+    }
+    
+    function resizeNebula() {
+      var rect = nebulaCanvas.parentElement.getBoundingClientRect();
+      nebulaCanvas.width = rect.width || 800;
+      nebulaCanvas.height = 450;
+      initNebulaParticles(parseInt(document.getElementById('nebulaCount').value, 10));
+    }
+    
+    function updateNebula() {
+      var W = nebulaCanvas.width, H = nebulaCanvas.height;
+      // Semi-transparent background for beautiful smooth trailing effect
+      nctx.fillStyle = 'rgba(4, 5, 13, 0.08)';
+      nctx.fillRect(0, 0, W, H);
+      
+      // Draw Attractors (Black holes)
+      nebulaAttractors.forEach(function(att) {
+        nctx.beginPath();
+        var glow = nctx.createRadialGradient(att.x, att.y, 2, att.x, att.y, att.size * 2.5);
+        glow.addColorStop(0, '#fff');
+        glow.addColorStop(0.3, 'rgba(124, 77, 255, 0.8)');
+        glow.addColorStop(0.8, 'rgba(255, 107, 157, 0.2)');
+        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        nctx.fillStyle = glow;
+        nctx.arc(att.x, att.y, att.size * 2.5, 0, Math.PI * 2);
+        nctx.fill();
+        
+        // Inner core
+        nctx.beginPath();
+        nctx.fillStyle = '#000';
+        nctx.arc(att.x, att.y, att.size * 0.8, 0, Math.PI * 2);
+        nctx.fill();
+      });
+      
+      // Update & Draw Particles with additive screen blending
+      nctx.globalCompositeOperation = 'screen';
+      nebulaParticles.forEach(function(p) {
+        // Gravitational pull from all active black holes
+        if (nebulaAttractors.length > 0) {
+          nebulaAttractors.forEach(function(att) {
+            var dx = att.x - p.x;
+            var dy = att.y - p.y;
+            var distSq = dx * dx + dy * dy + 1000; // soft factor
+            var dist = Math.sqrt(distSq);
+            var force = (nebulaGravityVal * 0.08 * att.mass) / distSq;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          });
+        } else {
+          // Central default pull if no black hole placed
+          var dx = W / 2 - p.x;
+          var dy = H / 2 - p.y;
+          var distSq = dx * dx + dy * dy + 2000;
+          var dist = Math.sqrt(distSq);
+          p.vx += (dx / dist) * 0.05;
+          p.vy += (dy / dist) * 0.05;
+        }
+        
+        // Friction / drag
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        nctx.beginPath();
+        nctx.fillStyle = p.color;
+        nctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        nctx.fill();
+      });
+      nctx.globalCompositeOperation = 'source-over';
+      
+      requestAnimationFrame(updateNebula);
+    }
+    
+    // Listeners
+    nebulaCanvas.addEventListener('mousedown', function(e) {
+      var rect = nebulaCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (nebulaCanvas.width / rect.width);
+      var y = (e.clientY - rect.top) * (nebulaCanvas.height / rect.height);
+      nebulaAttractors.push({ x: x, y: y, size: Math.random() * 8 + 6, mass: Math.random() * 8 + 6 });
+      if (nebulaAttractors.length > 5) nebulaAttractors.shift(); // Max 5 attractors
+    });
+    
+    document.getElementById('nebulaCount').addEventListener('input', function() {
+      var count = parseInt(this.value, 10);
+      document.getElementById('nebulaCountDisplay').textContent = count;
+      initNebulaParticles(count);
+    });
+    
+    document.getElementById('nebulaGravity').addEventListener('input', function() {
+      nebulaGravityVal = parseInt(this.value, 10);
+    });
+    
+    document.getElementById('nebulaThemeCosmic').addEventListener('click', function() {
+      document.querySelectorAll('#nebulaThemeCosmic,#nebulaThemeSupernova,#nebulaThemeAurora').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      nebulaParticleTheme = 'cosmic';
+      nebulaParticles.forEach(function(p){ p.color = getNebulaColor(Math.random()); });
+    });
+    
+    document.getElementById('nebulaThemeSupernova').addEventListener('click', function() {
+      document.querySelectorAll('#nebulaThemeCosmic,#nebulaThemeSupernova,#nebulaThemeAurora').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      nebulaParticleTheme = 'supernova';
+      nebulaParticles.forEach(function(p){ p.color = getNebulaColor(Math.random()); });
+    });
+    
+    document.getElementById('nebulaThemeAurora').addEventListener('click', function() {
+      document.querySelectorAll('#nebulaThemeCosmic,#nebulaThemeSupernova,#nebulaThemeAurora').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      nebulaParticleTheme = 'aurora';
+      nebulaParticles.forEach(function(p){ p.color = getNebulaColor(Math.random()); });
+    });
+    
+    document.getElementById('clearNebula').addEventListener('click', function() {
+      nebulaAttractors = [];
+      toast('Karadelikler temizlendi! 🌌', '#7c4dff');
+    });
+    
+    document.getElementById('resetNebula').addEventListener('click', function() {
+      nebulaAttractors = [];
+      initNebulaParticles(parseInt(document.getElementById('nebulaCount').value, 10));
+      toast('Simülasyon sıfırlandı!', '#00e5ff');
+    });
+    
+    window.addEventListener('resize', resizeNebula);
+    resizeNebula();
+    updateNebula();
+  }
+} catch(e) { console.error('CosmicNebula error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 2: ZEN AMBIENT PAD (DREAM PAD SYNTH)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var dreampadGrid = document.getElementById('dreampadGrid');
+  if (dreampadGrid) {
+    // 6x6 Pentatonic Scale mapping (Notes always sound beautiful together)
+    // C Major/A Minor Pentatonic: A, C, D, E, G
+    var PENTATONIC_FREQS = [
+      110.00, 130.81, 146.83, 164.81, 196.00, 220.00,
+      261.63, 293.66, 329.63, 392.00, 440.00, 523.25,
+      587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66,
+      1318.51, 1567.98, 1760.00, 2093.00, 2349.32, 2637.02,
+      3135.96, 3520.00, 4186.01, 4698.64, 5274.04, 6271.93,
+      7040.00, 8372.02, 9397.27, 10548.08, 12543.86, 14080.00
+    ];
+    
+    var audioCtx = null;
+    var masterVolNode = null;
+    var activeSynthVoice = 'warm'; // warm, echo, deep
+    var dreampadAutoPlayInterval = null;
+    var dreampadIsAutoPlaying = false;
+    
+    function initAudioContext() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterVolNode = audioCtx.createGain();
+      masterVolNode.gain.value = parseFloat(document.getElementById('dreampadVolume').value) / 100 * 0.15;
+      
+      // Deep Delay node for majestic ambient soundscape
+      var delay = audioCtx.createDelay(2.0);
+      var feedback = audioCtx.createGain();
+      feedback.gain.value = 0.55; // 55% feedback echo
+      delay.delayTime.value = 0.45; // 450ms echo
+      
+      // Connect sound path
+      masterVolNode.connect(audioCtx.destination);
+      
+      // Connect Delay loop
+      masterVolNode.connect(delay);
+      delay.connect(feedback);
+      feedback.connect(delay);
+      delay.connect(audioCtx.destination);
+    }
+    
+    function playSynthNote(freq) {
+      if (!audioCtx) initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      var filter = audioCtx.createBiquadFilter();
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterVolNode);
+      
+      var now = audioCtx.currentTime;
+      
+      // Warm Sine voice
+      if (activeSynthVoice === 'warm') {
+        osc.type = 'sine';
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.Q.setValueAtTime(1, now);
+      } else if (activeSynthVoice === 'echo') {
+        osc.type = 'triangle';
+        filter.type = 'peaking';
+        filter.frequency.setValueAtTime(1200, now);
+        filter.Q.setValueAtTime(4, now);
+      } else {
+        // Deep Zen Organ (sawtooth filtered down heavily)
+        osc.type = 'sawtooth';
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(280, now);
+        filter.Q.setValueAtTime(6, now);
+      }
+      
+      osc.frequency.setValueAtTime(freq, now);
+      
+      // Ambient sound: Slow attack, long dreamy decay
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.8, now + 0.15); // 150ms attack
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.0); // 2 second release decay
+      
+      osc.start(now);
+      osc.stop(now + 2.1);
+    }
+    
+    // Generate the 6x6 grid
+    dreampadGrid.innerHTML = '';
+    for (var r = 0; r < 6; r++) {
+      for (var c = 0; c < 6; c++) {
+        (function(row, col) {
+          var idx = row * 6 + col;
+          var cell = document.createElement('div');
+          cell.className = 'dreampad-cell';
+          cell.dataset.note = idx;
+          
+          function triggerCell() {
+            cell.classList.add('active');
+            playSynthNote(PENTATONIC_FREQS[idx % PENTATONIC_FREQS.length]);
+            setTimeout(function() { cell.classList.remove('active'); }, 200);
+          }
+          
+          cell.addEventListener('mousedown', function() { triggerCell(); });
+          cell.addEventListener('mouseenter', function(e) {
+            if (e.buttons === 1) triggerCell();
+          });
+          
+          dreampadGrid.appendChild(cell);
+        })(r, c);
+      }
+    }
+    
+    // Voice selection listeners
+    document.getElementById('dreampadSoundWarm').addEventListener('click', function() {
+      document.querySelectorAll('#dreampadSoundWarm,#dreampadSoundEcho,#dreampadSoundDeep').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activeSynthVoice = 'warm';
+    });
+    document.getElementById('dreampadSoundEcho').addEventListener('click', function() {
+      document.querySelectorAll('#dreampadSoundWarm,#dreampadSoundEcho,#dreampadSoundDeep').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activeSynthVoice = 'echo';
+    });
+    document.getElementById('dreampadSoundDeep').addEventListener('click', function() {
+      document.querySelectorAll('#dreampadSoundWarm,#dreampadSoundEcho,#dreampadSoundDeep').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activeSynthVoice = 'deep';
+    });
+    
+    document.getElementById('dreampadVolume').addEventListener('input', function() {
+      if (masterVolNode) {
+        masterVolNode.gain.setValueAtTime(parseFloat(this.value) / 100 * 0.15, audioCtx.currentTime);
+      }
+    });
+    
+    // Generative Ambient Auto-Dream loop scheduler
+    function playAutoDreamChord() {
+      // Pick 3 random matching pentatonic notes (harmonious chords)
+      var root = Math.floor(Math.random() * 12) + 3;
+      var notes = [root, root + 4, root + 7];
+      notes.forEach(function(n) {
+        var freq = PENTATONIC_FREQS[n % PENTATONIC_FREQS.length];
+        playSynthNote(freq);
+        // Highlight active cells randomly for gorgeous feedback
+        var cell = dreampadGrid.children[n % 36];
+        if (cell) {
+          cell.classList.add('active');
+          setTimeout(function() { cell.classList.remove('active'); }, 600);
+        }
+      });
+    }
+    
+    document.getElementById('dreampadAutoPlay').addEventListener('click', function() {
+      initAudioContext();
+      if (dreampadIsAutoPlaying) {
+        clearInterval(dreampadAutoPlayInterval);
+        dreampadIsAutoPlaying = false;
+        this.classList.remove('active');
+        this.textContent = '✨ Auto-Dream (Otomatik)';
+        toast('Otomatik dinlenme sonlandırıldı.', '#546e7a');
+      } else {
+        dreampadIsAutoPlaying = true;
+        this.classList.add('active');
+        this.textContent = '⏸ Duraklat';
+        playAutoDreamChord();
+        dreampadAutoPlayInterval = setInterval(playAutoDreamChord, 3500); // New chord every 3.5s
+        toast('Generatif Zen Müziği Başlatıldı! 🎵', '#69f0ae');
+      }
+    });
+  }
+} catch(e) { console.error('Dreampad error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 3: ZEN BONSAI GARDEN (PROCEDURAL GROWER & FRACTALS)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var bonsaiCanvas = document.getElementById('bonsaiCanvas');
+  if (bonsaiCanvas) {
+    var bctx = bonsaiCanvas.getContext('2d');
+    var bonsaiType = 'sakura'; // sakura, oak, fern
+    var bonsaiDepthVal = 7;
+    var bonsaiWindVal = 2;
+    var bonsaiTool = 'plant'; // plant, rake
+    var bonsaiPlants = [];
+    var bonsaiRakeWaves = [];
+    var bonsaiIsRaking = false;
+    
+    function resizeBonsai() {
+      var rect = bonsaiCanvas.parentElement.getBoundingClientRect();
+      bonsaiCanvas.width = rect.width || 800;
+      bonsaiCanvas.height = 450;
+      redrawBonsaiGarden();
+    }
+    
+    // Draw recursive fractal tree branch
+    function drawBonsaiBranch(x1, y1, angle, depth, length, thickness) {
+      if (depth === 0) {
+        // Draw leaves/blossoms
+        bctx.beginPath();
+        if (bonsaiType === 'sakura') {
+          bctx.fillStyle = 'rgba(255, 107, 157, 0.7)'; // Sakura blossom pink
+          bctx.arc(x1, y1, Math.random() * 5 + 3, 0, Math.PI * 2);
+        } else if (bonsaiType === 'oak') {
+          bctx.fillStyle = 'rgba(0, 229, 255, 0.7)'; // Cyber Neon Oak
+          bctx.arc(x1, y1, Math.random() * 6 + 4, 0, Math.PI * 2);
+        } else {
+          bctx.fillStyle = 'rgba(105, 240, 174, 0.8)'; // Fern green frond
+          bctx.arc(x1, y1, 2, 0, Math.PI * 2);
+        }
+        bctx.fill();
+        return;
+      }
+      
+      // Calculate dynamic wind offset
+      var windOffset = Math.sin(Date.now() * 0.0015 + depth) * (bonsaiWindVal * 0.015);
+      var x2 = x1 + Math.cos(angle + windOffset) * length;
+      var y2 = y1 + Math.sin(angle + windOffset) * length;
+      
+      bctx.beginPath();
+      bctx.moveTo(x1, y1);
+      bctx.lineTo(x2, y2);
+      bctx.strokeStyle = bonsaiType === 'fern' ? 'rgba(105, 240, 174, 0.45)' : 'rgba(240, 240, 255, 0.45)';
+      bctx.lineWidth = thickness;
+      bctx.lineCap = 'round';
+      bctx.stroke();
+      
+      var nextLen = length * (bonsaiType === 'fern' ? 0.82 : 0.78);
+      var nextThickness = thickness * 0.7;
+      
+      if (bonsaiType === 'fern') {
+        // Spiral recursive split
+        drawBonsaiBranch(x2, y2, angle - 0.25, depth - 1, nextLen, nextThickness);
+        drawBonsaiBranch(x2, y2, angle + 0.25, depth - 1, nextLen, nextThickness);
+      } else {
+        // Asymmetric branch splits (more organic look)
+        drawBonsaiBranch(x2, y2, angle - 0.4 + (Math.random() * 0.1), depth - 1, nextLen, nextThickness);
+        drawBonsaiBranch(x2, y2, angle + 0.35 - (Math.random() * 0.1), depth - 1, nextLen, nextThickness);
+      }
+    }
+    
+    function redrawBonsaiGarden() {
+      var W = bonsaiCanvas.width, H = bonsaiCanvas.height;
+      bctx.clearRect(0, 0, W, H);
+      
+      // 1. Draw sand rake lines (Zen ripples)
+      bctx.lineWidth = 4;
+      bonsaiRakeWaves.forEach(function(wave) {
+        bctx.beginPath();
+        bctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        wave.points.forEach(function(pt, idx) {
+          if (idx === 0) bctx.moveTo(pt.x, pt.y);
+          else bctx.lineTo(pt.x, pt.y);
+        });
+        bctx.stroke();
+      });
+      
+      // 2. Draw procedural ground base
+      bctx.beginPath();
+      var grad = bctx.createLinearGradient(0, H - 40, 0, H);
+      grad.addColorStop(0, '#101221');
+      grad.addColorStop(1, '#05060b');
+      bctx.fillStyle = grad;
+      bctx.fillRect(0, H - 40, W, 40);
+      
+      bctx.beginPath();
+      bctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      bctx.lineWidth = 1;
+      bctx.moveTo(0, H - 40);
+      bctx.lineTo(W, H - 40);
+      bctx.stroke();
+      
+      // 3. Draw planted trees
+      bonsaiPlants.forEach(function(tree) {
+        drawBonsaiBranch(tree.x, H - 40, -Math.PI / 2, tree.depth, tree.len, tree.thick);
+      });
+    }
+    
+    // Growth loop animation for gentle wind breathing
+    function bonsaiBreathingLoop() {
+      redrawBonsaiGarden();
+      requestAnimationFrame(bonsaiBreathingLoop);
+    }
+    
+    // Listeners
+    bonsaiCanvas.addEventListener('mousedown', function(e) {
+      var rect = bonsaiCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (bonsaiCanvas.width / rect.width);
+      var y = (e.clientY - rect.top) * (bonsaiCanvas.height / rect.height);
+      
+      var H = bonsaiCanvas.height;
+      
+      if (bonsaiTool === 'plant') {
+        var baseLen = Math.random() * 15 + 45;
+        bonsaiPlants.push({
+          x: x,
+          depth: bonsaiDepthVal,
+          len: baseLen,
+          thick: baseLen / 8
+        });
+        if (bonsaiPlants.length > 6) bonsaiPlants.shift(); // Max 6 trees
+      } else {
+        // Start raking sand waves
+        bonsaiIsRaking = true;
+        bonsaiRakeWaves.push({ points: [{ x: x, y: y }] });
+        if (bonsaiRakeWaves.length > 20) bonsaiRakeWaves.shift(); // Max 20 waves
+      }
+    });
+    
+    bonsaiCanvas.addEventListener('mousemove', function(e) {
+      if (!bonsaiIsRaking || bonsaiTool !== 'rake') return;
+      var rect = bonsaiCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (bonsaiCanvas.width / rect.width);
+      var y = (e.clientY - rect.top) * (bonsaiCanvas.height / rect.height);
+      
+      var activeWave = bonsaiRakeWaves[bonsaiRakeWaves.length - 1];
+      if (activeWave) {
+        activeWave.points.push({ x: x, y: y });
+      }
+    });
+    
+    window.addEventListener('mouseup', function() {
+      bonsaiIsRaking = false;
+    });
+    
+    document.getElementById('bonsaiDepth').addEventListener('input', function() {
+      bonsaiDepthVal = parseInt(this.value, 10);
+      document.getElementById('bonsaiDepthDisplay').textContent = bonsaiDepthVal;
+    });
+    
+    document.getElementById('bonsaiWind').addEventListener('input', function() {
+      bonsaiWindVal = parseInt(this.value, 10);
+    });
+    
+    document.getElementById('bonsaiTypeSakura').addEventListener('click', function() {
+      document.querySelectorAll('#bonsaiTypeSakura,#bonsaiTypeOak,#bonsaiTypeFern').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); bonsaiType = 'sakura';
+    });
+    document.getElementById('bonsaiTypeOak').addEventListener('click', function() {
+      document.querySelectorAll('#bonsaiTypeSakura,#bonsaiTypeOak,#bonsaiTypeFern').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); bonsaiType = 'oak';
+    });
+    document.getElementById('bonsaiTypeFern').addEventListener('click', function() {
+      document.querySelectorAll('#bonsaiTypeSakura,#bonsaiTypeOak,#bonsaiTypeFern').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); bonsaiType = 'fern';
+    });
+    
+    document.getElementById('bonsaiToolPlant').addEventListener('click', function() {
+      document.getElementById('bonsaiToolRake').classList.remove('active');
+      this.classList.add('active'); bonsaiTool = 'plant';
+      bonsaiCanvas.style.cursor = 'default';
+    });
+    document.getElementById('bonsaiToolRake').addEventListener('click', function() {
+      document.getElementById('bonsaiToolPlant').classList.remove('active');
+      this.classList.add('active'); bonsaiTool = 'rake';
+      bonsaiCanvas.style.cursor = 'w-resize';
+      toast('Tırmık moduna geçildi. Zemin üzerine desen çizin!', '#ff6b9d');
+    });
+    
+    document.getElementById('clearBonsai').addEventListener('click', function() {
+      bonsaiPlants = [];
+      bonsaiRakeWaves = [];
+      redrawBonsaiGarden();
+      toast('Bahçe sıfırlandı! 🌱', '#69f0ae');
+    });
+    
+    document.getElementById('saveBonsai').addEventListener('click', function() {
+      var a = document.createElement('a');
+      a.download = 'zen-bonsai-garden.png';
+      a.href = bonsaiCanvas.toDataURL();
+      a.click();
+      toast('Zen Bahçesi galerinize kaydedildi!', '#00e5ff');
+    });
+    
+    window.addEventListener('resize', resizeBonsai);
+    resizeBonsai();
+    bonsaiBreathingLoop();
+  }
+} catch(e) { console.error('Bonsai error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 4: RÜZGAR AKIŞI TUVALİ (VECTOR FLOW FIELD PAINTER)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var flowCanvas = document.getElementById('flowfieldCanvas');
+  if (flowCanvas) {
+    var fctx = flowCanvas.getContext('2d');
+    var flowParticles = [];
+    var flowWindForce = 4;
+    var flowLifeMax = 80;
+    var flowColorTheme = 'rainbow'; // rainbow, ocean, fire
+    var flowMouse = { x: -999, y: -999, px: -999, py: -999, active: false };
+    
+    function initFlowParticles() {
+      flowParticles = [];
+      var W = flowCanvas.width, H = flowCanvas.height;
+      for (var i = 0; i < 800; i++) {
+        flowParticles.push(spawnFlowParticle(W, H));
+      }
+    }
+    
+    function spawnFlowParticle(W, H) {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: 0,
+        vy: 0,
+        age: 0,
+        maxAge: Math.random() * flowLifeMax + 20,
+        color: getFlowColor(Math.random()),
+        size: Math.random() * 1.5 + 0.4
+      };
+    }
+    
+    function getFlowColor(rand) {
+      if (flowColorTheme === 'ocean') {
+        return 'hsl(' + (rand * 40 + 180) + ', 95%, ' + (40 + rand * 30) + '%)'; // Cyan/Blue
+      } else if (flowColorTheme === 'fire') {
+        return 'hsl(' + (rand * 45) + ', 100%, 55%)'; // Red/Orange
+      }
+      // Rainbow spectrum
+      return 'hsl(' + (Date.now() / 30 + rand * 360) % 360 + ', 90%, 65%)';
+    }
+    
+    function resizeFlowCanvas() {
+      var rect = flowCanvas.parentElement.getBoundingClientRect();
+      flowCanvas.width = rect.width || 800;
+      flowCanvas.height = 450;
+      // Initialize full dark canvas
+      fctx.fillStyle = '#030308';
+      fctx.fillRect(0, 0, flowCanvas.width, flowCanvas.height);
+      initFlowParticles();
+    }
+    
+    function drawFlowField() {
+      var W = flowCanvas.width, H = flowCanvas.height;
+      
+      // Extremely low alpha fill to create smooth cosmic vector trails
+      fctx.fillStyle = 'rgba(3, 3, 8, 0.04)';
+      fctx.fillRect(0, 0, W, H);
+      
+      fctx.globalCompositeOperation = 'screen';
+      flowParticles.forEach(function(p, idx) {
+        p.age++;
+        if (p.age >= p.maxAge) {
+          flowParticles[idx] = spawnFlowParticle(W, H);
+          return;
+        }
+        
+        // Compute mathematical flow field vectors (trigonometric wind paths)
+        // Noise-like dynamic direction
+        var angle = (Math.sin(p.x * 0.005) + Math.cos(p.y * 0.005)) * Math.PI * 2;
+        var windX = Math.cos(angle) * (flowWindForce * 0.25);
+        var windY = Math.sin(angle) * (flowWindForce * 0.25);
+        
+        p.vx += windX;
+        p.vy += windY;
+        
+        // Mouse attractor winds if active
+        if (flowMouse.active) {
+          var dx = flowMouse.x - p.x;
+          var dy = flowMouse.y - p.y;
+          var dist = Math.sqrt(dx * dx + dy * dy) + 1;
+          if (dist < 150) {
+            var pull = (150 - dist) / 150;
+            // Generate circular swirl velocity based on mouse delta movement
+            p.vx += (dy / dist) * pull * 4;
+            p.vy -= (dx / dist) * pull * 4;
+          }
+        }
+        
+        // Drag limiters
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Wraparound edge limits
+        if (p.x < 0) p.x = W;
+        if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H;
+        if (p.y > H) p.y = 0;
+        
+        fctx.beginPath();
+        fctx.fillStyle = p.color;
+        // Shift colors slightly over lifetime for gorgeous spectra
+        if (flowColorTheme === 'rainbow') p.color = getFlowColor(idx / 800);
+        fctx.arc(p.x, p.y, p.size * (1 - p.age / p.maxAge), 0, Math.PI * 2);
+        fctx.fill();
+      });
+      fctx.globalCompositeOperation = 'source-over';
+      
+      requestAnimationFrame(drawFlowField);
+    }
+    
+    // Mouse dragging handlers
+    flowCanvas.addEventListener('mousedown', function(e) {
+      flowMouse.active = true;
+      updateMousePos(e);
+    });
+    
+    flowCanvas.addEventListener('mousemove', function(e) {
+      if (flowMouse.active) updateMousePos(e);
+    });
+    
+    window.addEventListener('mouseup', function() {
+      flowMouse.active = false;
+    });
+    
+    function updateMousePos(e) {
+      var rect = flowCanvas.getBoundingClientRect();
+      flowMouse.x = (e.clientX - rect.left) * (flowCanvas.width / rect.width);
+      flowMouse.y = (e.clientY - rect.top) * (flowCanvas.height / rect.height);
+    }
+    
+    document.getElementById('flowSpeed').addEventListener('input', function() {
+      flowWindForce = parseInt(this.value, 10);
+    });
+    
+    document.getElementById('flowLife').addEventListener('input', function() {
+      flowLifeMax = parseInt(this.value, 10);
+    });
+    
+    document.getElementById('flowPalRainbow').addEventListener('click', function() {
+      document.querySelectorAll('#flowPalRainbow,#flowPalOcean,#flowPalFire').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); flowColorTheme = 'rainbow';
+    });
+    document.getElementById('flowPalOcean').addEventListener('click', function() {
+      document.querySelectorAll('#flowPalRainbow,#flowPalOcean,#flowPalFire').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); flowColorTheme = 'ocean';
+      flowParticles.forEach(function(p){ p.color = getFlowColor(Math.random()); });
+    });
+    document.getElementById('flowPalFire').addEventListener('click', function() {
+      document.querySelectorAll('#flowPalRainbow,#flowPalOcean,#flowPalFire').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); flowColorTheme = 'fire';
+      flowParticles.forEach(function(p){ p.color = getFlowColor(Math.random()); });
+    });
+    
+    document.getElementById('clearFlow').addEventListener('click', function() {
+      fctx.fillStyle = '#030308';
+      fctx.fillRect(0, 0, flowCanvas.width, flowCanvas.height);
+      initFlowParticles();
+      toast('Kanvas temizlendi! 💨', '#7c4dff');
+    });
+    
+    document.getElementById('saveFlow').addEventListener('click', function() {
+      var a = document.createElement('a');
+      a.download = 'flow-field-art.png';
+      a.href = flowCanvas.toDataURL();
+      a.click();
+      toast('Akışkan sanat eseri galerinize kaydedildi!', '#00e5ff');
+    });
+    
+    window.addEventListener('resize', resizeFlowCanvas);
+    resizeFlowCanvas();
+    drawFlowField();
+  }
+} catch(e) { console.error('FlowField error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 5: PIKSEL FIZIK SIMULATOR (ZEN FALLING SAND GAME)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var sandCanvas = document.getElementById('sandCanvas');
+  if (sandCanvas) {
+    var sctx = sandCanvas.getContext('2d');
+    var sandW = 150, sandH = 100;
+    var sandGrid = [];
+    var activeElement = 'sand'; // sand, water, gunpowder, fire, acid, wall
+    var sandBrushSize = 4;
+    var sandIsDrawing = false;
+    
+    // Grid values: 0=empty, 1=wall, 2=sand, 3=water, 4=gunpowder, 5=fire, 6=acid
+    function initSandGrid() {
+      sandGrid = [];
+      for (var y = 0; y < sandH; y++) {
+        var row = [];
+        for (var x = 0; x < sandW; x++) {
+          row.push(0);
+        }
+        sandGrid.push(row);
+      }
+    }
+    
+    function resizeSand() {
+      var rect = sandCanvas.parentElement.getBoundingClientRect();
+      sandCanvas.width = rect.width || 800;
+      sandCanvas.height = 430;
+    }
+    
+    function drawSandGrid() {
+      var W = sandCanvas.width, H = sandCanvas.height;
+      var cellW = W / sandW;
+      var cellH = H / sandH;
+      
+      sctx.fillStyle = '#07070c';
+      sctx.fillRect(0, 0, W, H);
+      
+      for (var y = 0; y < sandH; y++) {
+        for (var x = 0; x < sandW; x++) {
+          var cell = sandGrid[y][x];
+          if (cell !== 0) {
+            if (cell === 1) sctx.fillStyle = 'rgba(255,255,255,0.18)'; // Wall
+            else if (cell === 2) sctx.fillStyle = '#ffea00'; // Sand
+            else if (cell === 3) sctx.fillStyle = '#00e5ff'; // Water
+            else if (cell === 4) sctx.fillStyle = '#b388ff'; // Gunpowder
+            else if (cell === 5) sctx.fillStyle = 'hsl(' + (Math.random() * 40 + 10) + ', 100%, 60%)'; // Fire
+            else if (cell === 6) sctx.fillStyle = '#69f0ae'; // Acid
+            
+            sctx.fillRect(x * cellW, y * cellH, cellW + 0.5, cellH + 0.5);
+          }
+        }
+      }
+    }
+    
+    function updateSandPhysics() {
+      // Create clone to prevent rapid double step updates in the same frame
+      var nextGrid = [];
+      for (var y = 0; y < sandH; y++) {
+        nextGrid.push(sandGrid[y].slice());
+      }
+      
+      // Update from bottom to top so falling sand drops naturally
+      for (var y = sandH - 1; y >= 0; y--) {
+        for (var x = 0; x < sandW; x++) {
+          var cell = sandGrid[y][x];
+          if (cell === 0 || cell === 1) continue; // Static or empty
+          
+          if (cell === 2) { // Sand physics
+            if (y + 1 < sandH && nextGrid[y+1][x] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x] = 2;
+            } else if (y + 1 < sandH && x - 1 >= 0 && nextGrid[y+1][x-1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x-1] = 2;
+            } else if (y + 1 < sandH && x + 1 < sandW && nextGrid[y+1][x+1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x+1] = 2;
+            }
+          }
+          
+          else if (cell === 3) { // Water physics
+            if (y + 1 < sandH && nextGrid[y+1][x] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x] = 3;
+            } else if (y + 1 < sandH && x - 1 >= 0 && nextGrid[y+1][x-1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x-1] = 3;
+            } else if (y + 1 < sandH && x + 1 < sandW && nextGrid[y+1][x+1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x+1] = 3;
+            } else if (x - 1 >= 0 && nextGrid[y][x-1] === 0) { // Spread left
+              nextGrid[y][x] = 0; nextGrid[y][x-1] = 3;
+            } else if (x + 1 < sandW && nextGrid[y][x+1] === 0) { // Spread right
+              nextGrid[y][x] = 0; nextGrid[y][x+1] = 3;
+            }
+          }
+          
+          else if (cell === 4) { // Gunpowder behaves like sand
+            if (y + 1 < sandH && nextGrid[y+1][x] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x] = 4;
+            } else if (y + 1 < sandH && x - 1 >= 0 && nextGrid[y+1][x-1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x-1] = 4;
+            } else if (y + 1 < sandH && x + 1 < sandW && nextGrid[y+1][x+1] === 0) {
+              nextGrid[y][x] = 0; nextGrid[y+1][x+1] = 4;
+            }
+          }
+          
+          else if (cell === 5) { // Fire rises & ignites
+            // Dissipate randomly
+            if (Math.random() < 0.15) {
+              nextGrid[y][x] = 0;
+              continue;
+            }
+            // Rise up
+            var targetY = y - 1;
+            var targetX = x + Math.floor(Math.random() * 3) - 1;
+            if (targetY >= 0 && targetX >= 0 && targetX < sandW) {
+              var tc = nextGrid[targetY][targetX];
+              if (tc === 0) {
+                nextGrid[y][x] = 0; nextGrid[targetY][targetX] = 5;
+              } else if (tc === 4) { // IGNITE!
+                nextGrid[targetY][targetX] = 5;
+                // Explode surrounding gunpowder cells!
+                for (var dy = -2; dy <= 2; dy++) {
+                  for (var dx = -2; dx <= 2; dx++) {
+                    var ex = targetX + dx, ey = targetY + dy;
+                    if (ex >= 0 && ex < sandW && ey >= 0 && ey < sandH) {
+                      if (sandGrid[ey][ex] === 4) nextGrid[ey][ex] = 5;
+                    }
+                  }
+                }
+              } else if (tc === 3) { // Water puts out fire
+                nextGrid[y][x] = 0; nextGrid[targetY][targetX] = 0;
+              }
+            }
+          }
+          
+          else if (cell === 6) { // Acid physics
+            if (y + 1 < sandH) {
+              var bc = nextGrid[y+1][x];
+              if (bc === 0) {
+                nextGrid[y][x] = 0; nextGrid[y+1][x] = 6;
+              } else if (bc === 1 || bc === 2 || bc === 4) { // Dissolve walls, sand, gunpowder
+                nextGrid[y][x] = 0; nextGrid[y+1][x] = 0;
+              } else {
+                // Diagonal melt
+                var sideX = x + (Math.random() < 0.5 ? -1 : 1);
+                if (sideX >= 0 && sideX < sandW && nextGrid[y+1][sideX] === 0) {
+                  nextGrid[y][x] = 0; nextGrid[y+1][sideX] = 6;
+                }
+              }
+            } else {
+              // Dissipate at bottom
+              if (Math.random() < 0.2) nextGrid[y][x] = 0;
+            }
+          }
+        }
+      }
+      
+      sandGrid = nextGrid;
+    }
+    
+    function sandSimulationLoop() {
+      updateSandPhysics();
+      drawSandGrid();
+      requestAnimationFrame(sandSimulationLoop);
+    }
+    
+    // Ink injection click listener
+    function injectElement(e) {
+      var rect = sandCanvas.getBoundingClientRect();
+      var W = sandCanvas.width, H = sandCanvas.height;
+      var mouseX = (e.clientX - rect.left) * (sandW / rect.width);
+      var mouseY = (e.clientY - rect.top) * (sandH / rect.height);
+      
+      var elVal = 2; // default sand
+      if (activeElement === 'wall') elVal = 1;
+      else if (activeElement === 'water') elVal = 3;
+      else if (activeElement === 'gunpowder') elVal = 4;
+      else if (activeElement === 'fire') elVal = 5;
+      else if (activeElement === 'acid') elVal = 6;
+      
+      var bs = sandBrushSize;
+      for (var dy = -bs; dy <= bs; dy++) {
+        for (var dx = -bs; dx <= bs; dx++) {
+          if (dx * dx + dy * dy <= bs * bs) {
+            var ix = Math.floor(mouseX + dx);
+            var iy = Math.floor(mouseY + dy);
+            if (ix >= 0 && ix < sandW && iy >= 0 && iy < sandH) {
+              if (activeElement === 'wall' || sandGrid[iy][ix] === 0) {
+                sandGrid[iy][ix] = elVal;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    sandCanvas.addEventListener('mousedown', function(e) {
+      sandIsDrawing = true;
+      injectElement(e);
+    });
+    sandCanvas.addEventListener('mousemove', function(e) {
+      if (sandIsDrawing) injectElement(e);
+    });
+    window.addEventListener('mouseup', function() {
+      sandIsDrawing = false;
+    });
+    
+    // Sliders & Material presets
+    document.getElementById('sandBrushSize').addEventListener('input', function() {
+      sandBrushSize = parseInt(this.value, 10);
+      document.getElementById('sandBrushDisplay').textContent = sandBrushSize;
+    });
+    
+    var elButtons = {
+      'sand': 'sandElSand', 'water': 'sandElWater', 'gunpowder': 'sandElGunpowder',
+      'fire': 'sandElFire', 'acid': 'sandElAcid', 'wall': 'sandElWall'
+    };
+    Object.keys(elButtons).forEach(function(el) {
+      var btn = document.getElementById(elButtons[el]);
+      if (btn) {
+        btn.addEventListener('click', function() {
+          Object.values(elButtons).forEach(function(id){ document.getElementById(id).classList.remove('active'); });
+          this.classList.add('active'); activeElement = el;
+        });
+      }
+    });
+    
+    document.getElementById('clearSand').addEventListener('click', function() {
+      initSandGrid();
+      toast('Kum havuzu temizlendi! 🧪', '#69f0ae');
+    });
+    
+    // Preset: Place two gunpowder blocks and spray fire to auto-explode!
+    document.getElementById('presetSand').addEventListener('click', function() {
+      initSandGrid();
+      // Draw static walls
+      for (var x = 30; x < 120; x++) {
+        sandGrid[80][x] = 1; // shelf
+      }
+      // Fill shelf with gunpowder
+      for (var y = 70; y < 80; y++) {
+        for (var x = 50; x < 100; x++) {
+          sandGrid[y][x] = 4;
+        }
+      }
+      // Drop water above it
+      for (var y = 20; y < 35; y++) {
+        for (var x = 40; x < 70; x++) {
+          sandGrid[y][x] = 3;
+        }
+      }
+      // Drop spark fire at bottom of gunpowder stack
+      sandGrid[79][75] = 5;
+      toast('💥 ZİNCİRLEME REAKSİYON BAŞLADI!', '#ff1744');
+    });
+    
+    window.addEventListener('resize', resizeSand);
+    resizeSand();
+    initSandGrid();
+    sandSimulationLoop();
+  }
+} catch(e) { console.error('FallingSand error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 6: KOZMİK FLAPPY ARCADE
+   ══════════════════════════════════════════════════════════ */
+try {
+  var flappyCanvas = document.getElementById('flappyCanvas');
+  if (flappyCanvas) {
+    var fctx = flappyCanvas.getContext('2d');
+    flappyCanvas.width = 400;
+    flappyCanvas.height = 300;
+    var flGame = { running: false, score: 0, best: 0, gravity: 0.35, jump: -5.5, velocity: 0, ufoY: 120, pipes: [], stars: [] };
+    
+    function initFlappyGame() {
+      flappyCanvas.width = 400;
+      flappyCanvas.height = 300;
+      flGame.score = 0; flGame.velocity = 0; flGame.ufoY = 120; flGame.pipes = [];
+      document.getElementById('flappyScore').textContent = '0';
+      
+      // Init background stars
+      flGame.stars = [];
+      for (var i = 0; i < 40; i++) {
+        flGame.stars.push({ x: Math.random() * flappyCanvas.width, y: Math.random() * flappyCanvas.height, speed: Math.random() * 0.8 + 0.2 });
+      }
+    }
+    
+    function spawnFlappyPipe() {
+      var gap = 75;
+      var minH = 30;
+      var maxH = flappyCanvas.height - gap - minH;
+      var topH = Math.random() * (maxH - minH) + minH;
+      flGame.pipes.push({
+        x: flappyCanvas.width,
+        top: topH,
+        bottom: flappyCanvas.height - topH - gap,
+        passed: false
+      });
+    }
+    
+    function updateFlappy() {
+      if (!flGame.running) return;
+      
+      var W = flappyCanvas.width, H = flappyCanvas.height;
+      fctx.fillStyle = '#060814';
+      fctx.fillRect(0, 0, W, H);
+      
+      // Update & Draw Parallax Stars
+      fctx.fillStyle = 'rgba(255,255,255,0.3)';
+      flGame.stars.forEach(function(st) {
+        st.x -= st.speed;
+        if (st.x < 0) st.x = W;
+        fctx.fillRect(st.x, st.y, 1.5, 1.5);
+      });
+      
+      // UFO Physics
+      flGame.velocity += flGame.gravity;
+      flGame.ufoY += flGame.velocity;
+      
+      // Draw flying UFO with a neon cyan trail
+      var ufoX = 70;
+      fctx.beginPath();
+      var grad = fctx.createRadialGradient(ufoX, flGame.ufoY, 2, ufoX, flGame.ufoY, 15);
+      grad.addColorStop(0, '#fff');
+      grad.addColorStop(0.4, '#00e5ff');
+      grad.addColorStop(1, 'rgba(0,229,255,0)');
+      fctx.fillStyle = grad;
+      fctx.arc(ufoX, flGame.ufoY, 15, 0, Math.PI * 2);
+      fctx.fill();
+      
+      fctx.fillStyle = '#00e5ff';
+      fctx.fillRect(ufoX - 10, flGame.ufoY - 3, 20, 6); // Dome saucer base
+      fctx.beginPath();
+      fctx.fillStyle = '#fff';
+      fctx.arc(ufoX, flGame.ufoY - 3, 4, 0, Math.PI * 2); // Cockpit
+      fctx.fill();
+      
+      // Bounding check for walls
+      if (flGame.ufoY - 12 < 0 || flGame.ufoY + 12 > H) {
+        endFlappyGame();
+      }
+      
+      // Pipe generation timer
+      if (flGame.pipes.length === 0 || flGame.pipes[flGame.pipes.length - 1].x < W - 140) {
+        spawnFlappyPipe();
+      }
+      
+      // Render Obstacle Pipes
+      flGame.pipes.forEach(function(p, idx) {
+        p.x -= 2; // move left
+        
+        // Render glowing obstacle towers
+        fctx.fillStyle = 'rgba(124, 77, 255, 0.2)';
+        fctx.strokeStyle = '#7c4dff';
+        fctx.lineWidth = 2;
+        
+        // Top pipe
+        fctx.fillRect(p.x, 0, 40, p.top);
+        fctx.strokeRect(p.x, 0, 40, p.top);
+        
+        // Bottom pipe
+        fctx.fillRect(p.x, H - p.bottom, 40, p.bottom);
+        fctx.strokeRect(p.x, H - p.bottom, 40, p.bottom);
+        
+        // Collision checker
+        if (ufoX + 10 > p.x && ufoX - 10 < p.x + 40) {
+          if (flGame.ufoY - 8 < p.top || flGame.ufoY + 8 > H - p.bottom) {
+            endFlappyGame();
+          }
+        }
+        
+        // Score point pass
+        if (!p.passed && p.x + 20 < ufoX) {
+          p.passed = true;
+          flGame.score++;
+          document.getElementById('flappyScore').textContent = flGame.score;
+          toast('⚡ +1 Puan!', '#69f0ae');
+        }
+      });
+      
+      // Remove offscreen pipes
+      flGame.pipes = flGame.pipes.filter(function(p) { return p.x > -50; });
+      
+      requestAnimationFrame(updateFlappy);
+    }
+    
+    function endFlappyGame() {
+      flGame.running = false;
+      document.getElementById('flappyOverlay').classList.remove('hidden');
+      if (flGame.score > flGame.best) {
+        flGame.best = flGame.score;
+        document.getElementById('flappyBest').textContent = flGame.best;
+        toast('🏆 YENİ EN İYİ SKOR: ' + flGame.best, '#ffea00');
+      } else {
+        toast('😢 Oyun Bitti!', '#ff6b9d');
+      }
+    }
+    
+    // Jump listeners
+    function triggerJump() {
+      if (flGame.running) {
+        flGame.velocity = flGame.jump;
+      }
+    }
+    window.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.key === 'ArrowUp') {
+        if (document.getElementById('flappy-sec').classList.contains('ds-active')) {
+          e.preventDefault(); triggerJump();
+        }
+      }
+    });
+    flappyCanvas.addEventListener('mousedown', function(e) {
+      e.preventDefault(); triggerJump();
+    });
+    
+    document.getElementById('flappyStartBtn').addEventListener('click', function() {
+      document.getElementById('flappyOverlay').classList.add('hidden');
+      flGame.running = true;
+      initFlappyGame();
+      updateFlappy();
+    });
+    
+    // Default initial frame rendering
+    initFlappyGame();
+    fctx.fillStyle = '#060814'; fctx.fillRect(0,0,flappyCanvas.width,flappyCanvas.height);
+  }
+} catch(e) { console.error('Flappy error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 7: GALAXY SHOOTER (KOZMİK SAVUNUCU)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var shooterCanvas = document.getElementById('shooterCanvas');
+  if (shooterCanvas) {
+    var shctx = shooterCanvas.getContext('2d');
+    shooterCanvas.width = 400;
+    shooterCanvas.height = 300;
+    var shGame = { running: false, score: 0, best: 0, px: 200, py: 260, bullets: [], meteors: [], stars: [], sparks: [] };
+    var shKey = { left: false, right: false, fire: false };
+    
+    function initShooterGame() {
+      shooterCanvas.width = 400;
+      shooterCanvas.height = 300;
+      shGame.score = 0; shGame.px = 200; shGame.bullets = []; shGame.meteors = []; shGame.sparks = [];
+      document.getElementById('shooterScore').textContent = '0';
+      
+      shGame.stars = [];
+      for (var i = 0; i < 30; i++) {
+        shGame.stars.push({ x: Math.random() * shooterCanvas.width, y: Math.random() * shooterCanvas.height, speed: Math.random() * 2 + 1 });
+      }
+    }
+    
+    function triggerSpark(x, y, color) {
+      for (var i = 0; i < 15; i++) {
+        var angle = Math.random() * Math.PI * 2;
+        var sp = Math.random() * 3 + 1;
+        shGame.sparks.push({
+          x: x, y: y,
+          vx: Math.cos(angle) * sp,
+          vy: Math.sin(angle) * sp,
+          color: color || '#ffea00',
+          age: 0,
+          maxAge: Math.random() * 20 + 10
+        });
+      }
+    }
+    
+    function updateShooter() {
+      if (!shGame.running) return;
+      var W = shooterCanvas.width, H = shooterCanvas.height;
+      
+      shctx.fillStyle = '#04040a';
+      shctx.fillRect(0, 0, W, H);
+      
+      // Starfield space scroll
+      shctx.fillStyle = 'rgba(255,255,255,0.4)';
+      shGame.stars.forEach(function(st) {
+        st.y += st.speed;
+        if (st.y > H) st.y = 0;
+        shctx.fillRect(st.x, st.y, 1.5, 1.5);
+      });
+      
+      // Spaceship controller
+      if (shKey.left && shGame.px > 20) shGame.px -= 4;
+      if (shKey.right && shGame.px < W - 20) shGame.px += 4;
+      
+      // Draw sleek neon spaceship
+      shctx.beginPath();
+      shctx.moveTo(shGame.px, shGame.py);
+      shctx.lineTo(shGame.px - 14, shGame.py + 18);
+      shctx.lineTo(shGame.px + 14, shGame.py + 18);
+      shctx.closePath();
+      shctx.fillStyle = '#ff6b9d';
+      shctx.strokeStyle = '#fff';
+      shctx.lineWidth = 1.5;
+      shctx.fill();
+      shctx.stroke();
+      
+      // Draw glowing jet flame thruster
+      shctx.beginPath();
+      shctx.fillStyle = 'hsl(' + (Math.random() * 40 + 10) + ', 100%, 60%)';
+      shctx.arc(shGame.px, shGame.py + 21, Math.random() * 6 + 2, 0, Math.PI * 2);
+      shctx.fill();
+      
+      // Bullet manager
+      if (shKey.fire && (shGame.bullets.length === 0 || shGame.bullets[shGame.bullets.length - 1].y < H - 55)) {
+        shGame.bullets.push({ x: shGame.px, y: shGame.py - 5 });
+      }
+      
+      // Draw glowing lasers
+      shGame.bullets.forEach(function(b, idx) {
+        b.y -= 7; // speed
+        shctx.beginPath();
+        shctx.strokeStyle = '#00e5ff';
+        shctx.lineWidth = 3;
+        shctx.moveTo(b.x, b.y);
+        shctx.lineTo(b.x, b.y - 10);
+        shctx.stroke();
+      });
+      shGame.bullets = shGame.bullets.filter(function(b) { return b.y > 0; });
+      
+      // Meteor spawner
+      if (Math.random() < 0.035 && shGame.meteors.length < 8) {
+        shGame.meteors.push({
+          x: Math.random() * (W - 30) + 15,
+          y: -20,
+          speed: Math.random() * 1.5 + 0.8,
+          size: Math.random() * 12 + 8
+        });
+      }
+      
+      // Update Meteors
+      shGame.meteors.forEach(function(m, mIdx) {
+        m.y += m.speed;
+        
+        // Draw asteroid core
+        shctx.beginPath();
+        shctx.fillStyle = '#1e1f29';
+        shctx.strokeStyle = '#ffea00';
+        shctx.lineWidth = 2;
+        shctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+        shctx.fill();
+        shctx.stroke();
+        
+        // Player Collision check
+        var dx = m.x - shGame.px;
+        var dy = m.y - shGame.py - 10;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < m.size + 10) {
+          triggerSpark(shGame.px, shGame.py, '#ff1744');
+          endShooterGame();
+        }
+        
+        // Bullet collision check
+        shGame.bullets.forEach(function(b, bIdx) {
+          var bdx = m.x - b.x;
+          var bdy = m.y - b.y;
+          var bDist = Math.sqrt(bdx * bdx + bdy * bdy);
+          if (bDist < m.size + 4) {
+            triggerSpark(m.x, m.y, '#ffea00');
+            shGame.meteors.splice(mIdx, 1);
+            shGame.bullets.splice(bIdx, 1);
+            shGame.score += 10;
+            document.getElementById('shooterScore').textContent = shGame.score;
+            toast('💥 Göktaşı Patlatıldı!', '#69f0ae');
+          }
+        });
+      });
+      // Remove offscreen meteors
+      shGame.meteors = shGame.meteors.filter(function(m) {
+        if (m.y > H + 20) {
+          endShooterGame(); // Planet reached!
+          return false;
+        }
+        return true;
+      });
+      
+      // Update Detonation Sparks
+      shGame.sparks.forEach(function(sp, idx) {
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.age++;
+        
+        shctx.beginPath();
+        shctx.fillStyle = sp.color;
+        shctx.arc(sp.x, sp.y, 2 * (1 - sp.age / sp.maxAge), 0, Math.PI * 2);
+        shctx.fill();
+      });
+      shGame.sparks = shGame.sparks.filter(function(sp){ return sp.age < sp.maxAge; });
+      
+      requestAnimationFrame(updateShooter);
+    }
+    
+    function endShooterGame() {
+      shGame.running = false;
+      document.getElementById('shooterOverlay').classList.remove('hidden');
+      if (shGame.score > shGame.best) {
+        shGame.best = shGame.score;
+        document.getElementById('shooterBest').textContent = shGame.best;
+        toast('🏆 SAVUNMA REKORU: ' + shGame.best, '#ffea00');
+      } else {
+        toast('😢 Gezegen Düştü!', '#ff6b9d');
+      }
+    }
+    
+    // Listeners
+    window.addEventListener('keydown', function(e) {
+      if (!document.getElementById('shooter-sec').classList.contains('ds-active')) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); shKey.left = true; }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); shKey.right = true; }
+      else if (e.key === ' ') { e.preventDefault(); shKey.fire = true; }
+    });
+    window.addEventListener('keyup', function(e) {
+      if (e.key === 'ArrowLeft') shKey.left = false;
+      else if (e.key === 'ArrowRight') shKey.right = false;
+      else if (e.key === ' ') shKey.fire = false;
+    });
+    
+    // Mouse tracking fallback
+    shooterCanvas.addEventListener('mousemove', function(e) {
+      if (!shGame.running) return;
+      var rect = shooterCanvas.getBoundingClientRect();
+      shGame.px = (e.clientX - rect.left) * (shooterCanvas.width / rect.width);
+    });
+    shooterCanvas.addEventListener('mousedown', function(e) {
+      if (shGame.running) { e.preventDefault(); shKey.fire = true; }
+    });
+    shooterCanvas.addEventListener('mouseup', function() {
+      shKey.fire = false;
+    });
+    
+    document.getElementById('shooterStartBtn').addEventListener('click', function() {
+      document.getElementById('shooterOverlay').classList.add('hidden');
+      shGame.running = true;
+      initShooterGame();
+      updateShooter();
+    });
+    
+    initShooterGame();
+    shctx.fillStyle = '#04040a'; shctx.fillRect(0,0,shooterCanvas.width,shooterCanvas.height);
+  }
+} catch(e) { console.error('Shooter error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 8: NEON 2048 (CALMING SLIDING 2048 PUZZLE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var m2048Grid = document.getElementById('m2048GridContainer');
+  if (m2048Grid) {
+    var m2048Board = [
+      [0,0,0,0],
+      [0,0,0,0],
+      [0,0,0,0],
+      [0,0,0,0]
+    ];
+    var m2048Score = 0, m2048Best = 0;
+    
+    function resetM2048Game() {
+      m2048Board = [
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,0,0,0]
+      ];
+      m2048Score = 0;
+      document.getElementById('m2048Score').textContent = '0';
+      spawnM2048Tile();
+      spawnM2048Tile();
+      renderM2048Board();
+    }
+    
+    function spawnM2048Tile() {
+      var empties = [];
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 4; c++) {
+          if (m2048Board[r][c] === 0) empties.push({ r: r, c: c });
+        }
+      }
+      if (empties.length > 0) {
+        var pick = empties[Math.floor(Math.random() * empties.length)];
+        m2048Board[pick.r][pick.c] = Math.random() < 0.9 ? 2 : 4;
+      }
+    }
+    
+    function renderM2048Board() {
+      m2048Grid.innerHTML = '';
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 4; c++) {
+          var val = m2048Board[r][c];
+          var cell = document.createElement('div');
+          if (val === 0) {
+            cell.className = 'm2048-tile-empty';
+          } else {
+            cell.className = 'm2048-tile';
+            cell.textContent = val;
+            // Shifting neon color based on numerical size
+            var hue = (Math.log2(val) * 28 + 160) % 360;
+            cell.style.background = 'linear-gradient(135deg, hsl('+hue+', 90%, 55%), hsl('+(hue+35)%360+', 85%, 45%))';
+            cell.style.boxShadow = '0 0 15px rgba(255,255,255,0.05), 0 0 12px hsl('+hue+', 90%, 50%)';
+          }
+          m2048Grid.appendChild(cell);
+        }
+      }
+    }
+    
+    function slideRowLeft(row) {
+      // 1. Remove zeroes
+      var arr = row.filter(function(v){ return v !== 0; });
+      // 2. Merge neighbours
+      for (var i = 0; i < arr.length - 1; i++) {
+        if (arr[i] === arr[i+1]) {
+          arr[i] *= 2;
+          m2048Score += arr[i];
+          arr.splice(i+1, 1);
+          // High Score pop!
+          document.getElementById('m2048Score').textContent = m2048Score;
+          if (m2048Score > m2048Best) {
+            m2048Best = m2048Score;
+            document.getElementById('m2048Best').textContent = m2048Best;
+          }
+        }
+      }
+      // 3. Pad back with zeroes
+      while (arr.length < 4) {
+        arr.push(0);
+      }
+      return arr;
+    }
+    
+    function rotateBoardRight() {
+      var next = [
+        [0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]
+      ];
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 4; c++) {
+          next[c][3 - r] = m2048Board[r][c];
+        }
+      }
+      m2048Board = next;
+    }
+    
+    function slideM2048(dir) {
+      // Rotate grid to represent LEFT slide physically, slide it, then rotate back
+      var prevStr = JSON.stringify(m2048Board);
+      
+      var rotations = 0;
+      if (dir === 'up') rotations = 3;
+      else if (dir === 'right') rotations = 2;
+      else if (dir === 'down') rotations = 1;
+      
+      for (var i = 0; i < rotations; i++) rotateBoardRight();
+      
+      for (var r = 0; r < 4; r++) {
+        m2048Board[r] = slideRowLeft(m2048Board[r]);
+      }
+      
+      var unRotations = (4 - rotations) % 4;
+      for (var i = 0; i < unRotations; i++) rotateBoardRight();
+      
+      if (JSON.stringify(m2048Board) !== prevStr) {
+        spawnM2048Tile();
+        renderM2048Board();
+        toast('Karolar kaydırıldı!', '#7c4dff');
+      } else {
+        // Check if game over (no matching tiles and grid is full)
+        var empties = 0;
+        for (var r = 0; r < 4; r++) {
+          for (var c = 0; c < 4; c++) {
+            if (m2048Board[r][c] === 0) empties++;
+          }
+        }
+        if (empties === 0) {
+          toast('Oyun bitti, hamle kalmadı!', '#ff6b9d');
+        }
+      }
+    }
+    
+    // Keyboard key listeners
+    window.addEventListener('keydown', function(e) {
+      if (!document.getElementById('m2048-sec').classList.contains('ds-active')) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); slideM2048('left'); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); slideM2048('up'); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); slideM2048('right'); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); slideM2048('down'); }
+    });
+
+    // Mouse and touch swipe gesture listeners for 2048
+    var m2048StartX = 0, m2048StartY = 0;
+    m2048Grid.addEventListener('mousedown', function(e) {
+      m2048StartX = e.clientX;
+      m2048StartY = e.clientY;
+    });
+    m2048Grid.addEventListener('mouseup', function(e) {
+      var dx = e.clientX - m2048StartX;
+      var dy = e.clientY - m2048StartY;
+      var absX = Math.abs(dx), absY = Math.abs(dy);
+      if (Math.max(absX, absY) > 30) { // minimum threshold of 30px
+        if (absX > absY) {
+          slideM2048(dx > 0 ? 'right' : 'left');
+        } else {
+          slideM2048(dy > 0 ? 'down' : 'up');
+        }
+      }
+    });
+    m2048Grid.addEventListener('touchstart', function(e) {
+      if (e.touches.length > 0) {
+        m2048StartX = e.touches[0].clientX;
+        m2048StartY = e.touches[0].clientY;
+      }
+    }, {passive: true});
+    m2048Grid.addEventListener('touchend', function(e) {
+      if (e.changedTouches.length > 0) {
+        var dx = e.changedTouches[0].clientX - m2048StartX;
+        var dy = e.changedTouches[0].clientY - m2048StartY;
+        var absX = Math.abs(dx), absY = Math.abs(dy);
+        if (Math.max(absX, absY) > 30) {
+          e.preventDefault();
+          if (absX > absY) {
+            slideM2048(dx > 0 ? 'right' : 'left');
+          } else {
+            slideM2048(dy > 0 ? 'down' : 'up');
+          }
+        }
+      }
+    }, {passive: false});
+    
+    document.getElementById('resetM2048').addEventListener('click', resetM2048Game);
+    resetM2048Game();
+  }
+} catch(e) { console.error('2048 error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 9: KOZMİK LABİRENT (ENDLESS NEON MAZE GENERATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var mazeCanvas = document.getElementById('mazeCanvas');
+  if (mazeCanvas) {
+    var mzctx = mazeCanvas.getContext('2d');
+    var mazeGrid = [];
+    var mazeSize = 15; // easily scalable
+    var mazeW = 15, mazeH = 15;
+    var playerPos = { x: 0, y: 0 };
+    var exitPos = { x: 14, y: 14 };
+    var mazeTrails = [];
+    var mazeIsRunning = false;
+    
+    // Generation loop DFS recursive backtracking
+    function generateProceduralMaze(w, h) {
+      mazeW = w; mazeH = h;
+      mazeGrid = [];
+      for (var y = 0; y < h; y++) {
+        var row = [];
+        for (var x = 0; x < w; x++) {
+          row.push({ x: x, y: y, visited: false, walls: [true, true, true, true] }); // top, right, bottom, left
+        }
+        mazeGrid.push(row);
+      }
+      
+      var stack = [];
+      var current = mazeGrid[0][0];
+      current.visited = true;
+      
+      while (true) {
+        var neighbors = [];
+        var x = current.x, y = current.y;
+        
+        // Check top
+        if (y - 1 >= 0 && !mazeGrid[y-1][x].visited) neighbors.push(mazeGrid[y-1][x]);
+        // Check right
+        if (x + 1 < w && !mazeGrid[y][x+1].visited) neighbors.push(mazeGrid[y][x+1]);
+        // Check bottom
+        if (y + 1 < h && !mazeGrid[y+1][x].visited) neighbors.push(mazeGrid[y+1][x]);
+        // Check left
+        if (x - 1 >= 0 && !mazeGrid[y][x-1].visited) neighbors.push(mazeGrid[y][x-1]);
+        
+        if (neighbors.length > 0) {
+          var nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+          nextCell.visited = true;
+          stack.push(current);
+          
+          // Remove walls between current & nextCell
+          var dx = nextCell.x - current.x;
+          var dy = nextCell.y - current.y;
+          
+          if (dx === 1) { current.walls[1] = false; nextCell.walls[3] = false; }
+          else if (dx === -1) { current.walls[3] = false; nextCell.walls[1] = false; }
+          else if (dy === 1) { current.walls[2] = false; nextCell.walls[0] = false; }
+          else if (dy === -1) { current.walls[0] = false; nextCell.walls[2] = false; }
+          
+          current = nextCell;
+        } else if (stack.length > 0) {
+          current = stack.pop();
+        } else {
+          break; // Done building maze!
+        }
+      }
+      
+      playerPos = { x: 0, y: 0 };
+      exitPos = { x: w - 1, y: h - 1 };
+      mazeTrails = [{ x: 0, y: 0 }];
+    }
+    
+    function drawMaze() {
+      var W = mazeCanvas.width, H = mazeCanvas.height;
+      mzctx.fillStyle = '#07080f';
+      mzctx.fillRect(0, 0, W, H);
+      
+      var cellW = W / mazeW;
+      var cellH = H / mazeH;
+      
+      // Draw trails
+      mzctx.lineWidth = cellW * 0.35;
+      mzctx.lineCap = 'round';
+      mzctx.lineJoin = 'round';
+      mzctx.beginPath();
+      mzctx.strokeStyle = 'rgba(0, 229, 255, 0.25)';
+      mazeTrails.forEach(function(pt, idx) {
+        var tx = pt.x * cellW + cellW/2;
+        var ty = pt.y * cellH + cellH/2;
+        if (idx === 0) mzctx.moveTo(tx, ty);
+        else mzctx.lineTo(tx, ty);
+      });
+      mzctx.stroke();
+      
+      // Draw grid walls
+      mzctx.lineWidth = 3;
+      mzctx.strokeStyle = 'rgba(124, 77, 255, 0.45)'; // Neon purple
+      for (var y = 0; y < mazeH; y++) {
+        for (var x = 0; x < mazeW; x++) {
+          var cell = mazeGrid[y][x];
+          var cx = x * cellW;
+          var cy = y * cellH;
+          
+          if (cell.walls[0]) { mzctx.beginPath(); mzctx.moveTo(cx, cy); mzctx.lineTo(cx + cellW, cy); mzctx.stroke(); }
+          if (cell.walls[1]) { mzctx.beginPath(); mzctx.moveTo(cx + cellW, cy); mzctx.lineTo(cx + cellW, cy + cellH); mzctx.stroke(); }
+          if (cell.walls[2]) { mzctx.beginPath(); mzctx.moveTo(cx, cy + cellH); mzctx.lineTo(cx + cellW, cy + cellH); mzctx.stroke(); }
+          if (cell.walls[3]) { mzctx.beginPath(); mzctx.moveTo(cx, cy); mzctx.lineTo(cx, cy + cellH); mzctx.stroke(); }
+        }
+      }
+      
+      // Draw Exit glowing checkpoint
+      mzctx.beginPath();
+      var ex = exitPos.x * cellW + cellW/2;
+      var ey = exitPos.y * cellH + cellH/2;
+      var rad = cellW * 0.3;
+      var glow = mzctx.createRadialGradient(ex, ey, 2, ex, ey, rad * 1.5);
+      glow.addColorStop(0, '#fff');
+      glow.addColorStop(0.3, '#ffea00');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      mzctx.fillStyle = glow;
+      mzctx.arc(ex, ey, rad * 1.5, 0, Math.PI * 2);
+      mzctx.fill();
+      
+      // Draw Player glowing sphere
+      mzctx.beginPath();
+      var px = playerPos.x * cellW + cellW/2;
+      var py = playerPos.y * cellH + cellH/2;
+      var pGlow = mzctx.createRadialGradient(px, py, 2, px, py, rad);
+      pGlow.addColorStop(0, '#fff');
+      pGlow.addColorStop(0.4, '#00e5ff');
+      pGlow.addColorStop(1, 'rgba(0,0,0,0)');
+      mzctx.fillStyle = pGlow;
+      mzctx.arc(px, py, rad, 0, Math.PI * 2);
+      mzctx.fill();
+    }
+    
+    function slidePlayer(dx, dy) {
+      if (!mazeIsRunning) return;
+      var cx = playerPos.x, cy = playerPos.y;
+      
+      // Wall boundary collision checks
+      if (dx === 1 && mazeGrid[cy][cx].walls[1]) return;
+      if (dx === -1 && mazeGrid[cy][cx].walls[3]) return;
+      if (dy === 1 && mazeGrid[cy][cx].walls[2]) return;
+      if (dy === -1 && mazeGrid[cy][cx].walls[0]) return;
+      
+      playerPos.x += dx;
+      playerPos.y += dy;
+      mazeTrails.push({ x: playerPos.x, y: playerPos.y });
+      drawMaze();
+      
+      // Goal check!
+      if (playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
+        mazeIsRunning = false;
+        document.getElementById('mazeOverlay').classList.remove('hidden');
+        toast('🏆 LABİRENT ÇÖZÜLDÜ! ENERJİ SERBEST BIRAKILDI!', '#69f0ae');
+      }
+    }
+    
+    window.addEventListener('keydown', function(e) {
+      if (!document.getElementById('maze-sec').classList.contains('ds-active')) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); slidePlayer(-1, 0); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); slidePlayer(0, -1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); slidePlayer(1, 0); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); slidePlayer(0, 1); }
+    });
+    
+    function startMazeGame(size) {
+      generateProceduralMaze(size, size);
+      drawMaze();
+      mazeIsRunning = true;
+    }
+    
+    // Difficulty selectors
+    document.getElementById('mazeDiffEasy').addEventListener('click', function() {
+      document.querySelectorAll('#mazeDiffEasy,#mazeDiffMedium,#mazeDiffHard').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); mazeSize = 10;
+      startMazeGame(mazeSize);
+    });
+    document.getElementById('mazeDiffMedium').addEventListener('click', function() {
+      document.querySelectorAll('#mazeDiffEasy,#mazeDiffMedium,#mazeDiffHard').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); mazeSize = 15;
+      startMazeGame(mazeSize);
+    });
+    document.getElementById('mazeDiffHard').addEventListener('click', function() {
+      document.querySelectorAll('#mazeDiffEasy,#mazeDiffMedium,#mazeDiffHard').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); mazeSize = 22;
+      startMazeGame(mazeSize);
+    });
+    
+    document.getElementById('resetMazeBtn').addEventListener('click', function() {
+      startMazeGame(mazeSize);
+      toast('Labirent yeniden oluşturuldu!', '#00e5ff');
+    });
+    document.getElementById('mazeStartBtn').addEventListener('click', function() {
+      document.getElementById('mazeOverlay').classList.add('hidden');
+      startMazeGame(mazeSize);
+    });
+    
+    // Initial scaling grid render
+    function resizeMaze() {
+      var rect = mazeCanvas.parentElement.getBoundingClientRect();
+      mazeCanvas.width = rect.width || 400;
+      mazeCanvas.height = rect.width || 400;
+      if (mazeIsRunning) {
+        drawMaze();
+      }
+    }
+    window.addEventListener('resize', resizeMaze);
+    resizeMaze();
+    startMazeGame(mazeSize);
+  }
+} catch(e) { console.error('Maze error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 10: KOZMİK TELESKOP (DEEP-SPACE VIEWVIEWER)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var telescopeCanvas = document.getElementById('telescopeCanvas');
+  if (telescopeCanvas) {
+    var telCtx = telescopeCanvas.getContext('2d');
+    var telZoom = 1.0;
+    var telPanX = 0, telPanY = 0;
+    var telTarX = 0, telTarY = 0;
+    var telIsPanning = false;
+    
+    var telObjects = [
+      {
+        id: 'telPreset1', x: 80, y: 120, icon: '🌌', title: 'Orion Nebulası',
+        desc: 'Avcı kuşağının hemen güneyinde yer alan devasa bir yıldız oluşum bölgesidir. Dünyaya yaklaşık 1344 ışık yılı uzaklıktadır ve çıplak gözle dahi hafif bir pus şeklinde görülebilir.',
+        coords: 'RA: 05h 35m / DEC: -05° 23\'', cat: 'Yıldız Oluşum Bulutsusu', size: '24 Işık Yılı', rate: '100% Kararlı'
+      },
+      {
+        id: 'telPreset2', x: 280, y: 80, icon: '🌀', title: 'Andromeda Galaksisi',
+        desc: 'Bize en yakın sarmal galaksidir. Yaklaşık 2.5 milyon ışık yılı uzaklıkta olup, trilyonlarca yıldıza ev sahipliği yapmaktadır ve milyarlarca yıl sonra Samanyolu ile birleşeceği öngörülmektedir.',
+        coords: 'RA: 00h 42m / DEC: +41° 16\'', cat: 'Sarmal Gökada (M31)', size: '220,000 Işık Yılı', rate: '98% Kararlı'
+      },
+      {
+        id: 'telPreset3', x: 140, y: 220, icon: '🪐', title: 'Satürn Halkaları',
+        desc: 'Buz, kaya ve toz parçacıklarından oluşan Satürn\'ün görkemli halka sistemi, teleskopla gözlemlenebilen en etkileyici güneş sistemi harikasıdır. Halkaların kalınlığı sadece birkaç on metredir.',
+        coords: 'RA: 18h 22m / DEC: -22° 46\'', cat: 'Gezegen Halkaları', size: '282,000 Kilometre', rate: '100% Kararlı'
+      },
+      {
+        id: 'telPreset4', x: 220, y: 160, icon: '🕳️', title: 'Sagittarius A*',
+        desc: 'Samanyolu Galaksisi\'nin tam merkezinde yer alan süper kütleli bir kara deliktir. Güneşimizden yaklaşık 4.3 milyon kat daha ağırdır ve etrafındaki her şeyi yutacak kadar güçlü kütleçekimi vardır.',
+        coords: 'RA: 17h 45m / DEC: -29° 00\'', cat: 'Süper Kütleli Kara Delik', size: '44 Milyon Kilometre', rate: '95% Kararlı'
+      }
+    ];
+    
+    var telActiveObj = telObjects[0];
+    
+    function drawTelescope() {
+      var W = telescopeCanvas.width;
+      var H = telescopeCanvas.height;
+      telCtx.fillStyle = '#020207';
+      telCtx.fillRect(0, 0, W, H);
+      
+      // Interpolate panning positions smoothly
+      if (Math.hypot(telTarX - telPanX, telTarY - telPanY) > 0.5) {
+        telPanX += (telTarX - telPanX) * 0.1;
+        telPanY += (telTarY - telPanY) * 0.1;
+      }
+      
+      telCtx.save();
+      // Draw grid lines
+      telCtx.strokeStyle = 'rgba(0, 229, 255, 0.05)';
+      telCtx.lineWidth = 1;
+      var step = 40 * telZoom;
+      var offsetX = (telPanX * telZoom) % step;
+      var offsetY = (telPanY * telZoom) % step;
+      
+      for (var x = offsetX; x < W; x += step) {
+        telCtx.beginPath(); telCtx.moveTo(x, 0); telCtx.lineTo(x, H); telCtx.stroke();
+      }
+      for (var y = offsetY; y < H; y += step) {
+        telCtx.beginPath(); telCtx.moveTo(0, y); telCtx.lineTo(W, y); telCtx.stroke();
+      }
+      
+      // Draw glowing background dust
+      telCtx.fillStyle = 'rgba(124, 77, 255, 0.03)';
+      telCtx.beginPath();
+      telCtx.arc(W/2 + telPanX, H/2 + telPanY, 120 * telZoom, 0, Math.PI*2);
+      telCtx.fill();
+      
+      // Draw stars and targets
+      telObjects.forEach(function(obj) {
+        var screenX = W/2 + (obj.x - W/2 + telPanX) * telZoom;
+        var screenY = H/2 + (obj.y - H/2 + telPanY) * telZoom;
+        
+        // Draw orbital target coordinates circles
+        telCtx.beginPath();
+        telCtx.strokeStyle = obj.id === telActiveObj.id ? 'rgba(0, 229, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)';
+        telCtx.lineWidth = obj.id === telActiveObj.id ? 2 : 1;
+        telCtx.arc(screenX, screenY, 20 * telZoom, 0, Math.PI * 2);
+        telCtx.stroke();
+        
+        // Draw crosshairs
+        telCtx.beginPath();
+        telCtx.strokeStyle = 'rgba(0, 229, 255, 0.2)';
+        telCtx.moveTo(screenX - 25, screenY); telCtx.lineTo(screenX + 25, screenY);
+        telCtx.moveTo(screenX, screenY - 25); telCtx.lineTo(screenX, screenY + 25);
+        telCtx.stroke();
+        
+        // Icon
+        telCtx.font = Math.round(18 * telZoom) + 'px Outfit';
+        telCtx.textAlign = 'center';
+        telCtx.textBaseline = 'middle';
+        telCtx.fillText(obj.icon, screenX, screenY);
+      });
+      
+      // Viewfinder Overlay Circle
+      telCtx.restore();
+      telCtx.strokeStyle = 'rgba(0, 229, 255, 0.25)';
+      telCtx.lineWidth = 4;
+      telCtx.beginPath();
+      telCtx.arc(W/2, H/2, H/2 - 10, 0, Math.PI*2);
+      telCtx.stroke();
+      
+      // Center indicator crosshair
+      telCtx.strokeStyle = '#00e5ff';
+      telCtx.lineWidth = 1;
+      telCtx.beginPath();
+      telCtx.moveTo(W/2 - 15, H/2); telCtx.lineTo(W/2 + 15, H/2);
+      telCtx.moveTo(W/2, H/2 - 15); telCtx.lineTo(W/2, H/2 + 15);
+      telCtx.stroke();
+      
+      requestAnimationFrame(drawTelescope);
+    }
+    
+    function focusOnObject(obj) {
+      telActiveObj = obj;
+      telTarX = W_half() - obj.x;
+      telTarY = H_half() - obj.y;
+      
+      // Update UI panels
+      document.getElementById('telInfoIcon').textContent = obj.icon;
+      document.getElementById('telInfoTitle').textContent = obj.title;
+      document.getElementById('telInfoDesc').textContent = obj.desc;
+      document.getElementById('telescopeCoords').textContent = obj.coords;
+      
+      // Set active preset button
+      document.querySelectorAll('#telPreset1,#telPreset2,#telPreset3,#telPreset4').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      document.getElementById(obj.id).classList.add('active');
+      
+      toast('🛰️ Teleskop Kilitlendi: ' + obj.title, '#00e5ff');
+    }
+    
+    function W_half() { return telescopeCanvas.width / 2; }
+    function H_half() { return telescopeCanvas.height / 2; }
+    
+    // Zoom control
+    document.getElementById('telZoomSlider').addEventListener('input', function() {
+      telZoom = parseFloat(this.value);
+      document.getElementById('telZoomDisplay').textContent = telZoom.toFixed(1);
+    });
+    
+    // Preset buttons
+    telObjects.forEach(function(obj) {
+      document.getElementById(obj.id).addEventListener('click', function() {
+        focusOnObject(obj);
+      });
+    });
+    
+    // Canvas drag/pan listener
+    var dragStartX = 0, dragStartY = 0;
+    telescopeCanvas.addEventListener('mousedown', function(e) {
+      telIsPanning = true;
+      dragStartX = e.clientX - telTarX;
+      dragStartY = e.clientY - telTarY;
+    });
+    window.addEventListener('mousemove', function(e) {
+      if (telIsPanning) {
+        telTarX = e.clientX - dragStartX;
+        telTarY = e.clientY - dragStartY;
+      }
+    });
+    window.addEventListener('mouseup', function() {
+      if (telIsPanning) {
+        telIsPanning = false;
+        // Snap to nearest coordinate hotspot
+        var W = telescopeCanvas.width, H = telescopeCanvas.height;
+        var centerX = W/2 - telTarX;
+        var centerY = H/2 - telTarY;
+        
+        var nearest = null, minDist = 120;
+        telObjects.forEach(function(obj) {
+          var dist = Math.hypot(obj.x - centerX, obj.y - centerY);
+          if (dist < minDist) {
+            minDist = dist; nearest = obj;
+          }
+        });
+        if (nearest) {
+          focusOnObject(nearest);
+        }
+      }
+    });
+    
+    function resizeTelescope() {
+      var rect = telescopeCanvas.parentElement.getBoundingClientRect();
+      telescopeCanvas.width = rect.width || 600;
+      telescopeCanvas.height = 420;
+    }
+    
+    window.addEventListener('resize', resizeTelescope);
+    resizeTelescope();
+    focusOnObject(telObjects[0]);
+    drawTelescope();
+  }
+} catch(e) { console.error('Telescope error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 11: RUH HALİ ÇEMBERİ (MOOD MANDALA AURA VISUALIZER)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var auraCanvas = document.getElementById('auraCanvas');
+  if (auraCanvas) {
+    var auCtx = auraCanvas.getContext('2d');
+    var currentMood = 'calm'; // calm, focus, creative, energetic, tired
+    var auraAngle = 0;
+    var auraPulse = 0;
+    
+    var moodData = {
+      calm: {
+        badge: 'Aura Durumu: Sakin & Huzurlu',
+        title: 'Zihniniz Bir Liman',
+        desc: 'Harika bir dengedesiniz. Bu anı taçlandırmak için burnunuzdan 4 saniye nefes alın, 4 saniye tutun ve 4 saniyede yavaşça verin. Doğanın yeşil frekansları auranızı korumaya devam ediyor.',
+        freq: '528 Hz', chakra: 'Kalp (Anahata)',
+        k: 5, speed: 0.015, color1: '#00c853', color2: '#00b894'
+      },
+      focus: {
+        badge: 'Aura Durumu: Zihinsel Odaklanma',
+        title: 'Dikkatin Gücü',
+        desc: 'Şu an konsantrasyon seviyeniz en üst düzeyde. Gürültülü ortamlardan uzaklaşın, auranızın yaydığı keskin mavi frekanslar sayesinde tüm dikkatinizi işinize yönlendirebilirsiniz.',
+        freq: '741 Hz', chakra: 'Alın / Üçüncü Göz (Ajna)',
+        k: 7, speed: 0.02, color1: '#00e5ff', color2: '#2979ff'
+      },
+      creative: {
+        badge: 'Aura Durumu: Sanatsal / Yaratıcı Akış',
+        title: 'Hayal Gücü Köprüsü',
+        desc: 'İçinizden gelen yaratıcı dürtüleri serbest bırakın! Mor renkli taç çakranız harika sinyaller üretiyor. Aklınıza gelen ani fikirleri hemen bir kâğıda veya çizim tuvaline not edin.',
+        freq: '852 Hz', chakra: 'Taç (Sahasrara)',
+        k: 9, speed: 0.022, color1: '#7c4dff', color2: '#e040fb'
+      },
+      energetic: {
+        badge: 'Aura Durumu: Yüksek Canlılık',
+        title: 'Güneşin Gücü',
+        desc: 'İçiniz enerjiyle taşıyor! Fiziksel hareketler, egzersiz veya hızlı mini oyunlar oynamak için mükemmel bir zamandasınız. Altın sarısı auranız etrafınızdakilere de canlılık yayıyor.',
+        freq: '417 Hz', chakra: 'Solar Pleksus (Manipura)',
+        k: 6, speed: 0.035, color1: '#ffea00', color2: '#ff9100'
+      },
+      tired: {
+        badge: 'Aura Durumu: Dinginlik ve Dinlenme',
+        title: 'Pilinizi Doldurun',
+        desc: 'Zihniniz ve bedeniniz yavaşlama sinyalleri veriyor. Arka plandan ipeksi bir yağmur sesi açın, gözlerinizi kapatın ve auranızın yavaşça kırmızı sıcak dalgalarla şarj olmasına izin verin.',
+        freq: '396 Hz', chakra: 'Kök (Muladhara)',
+        k: 4, speed: 0.008, color1: '#ff7043', color2: '#ff1744'
+      }
+    };
+    
+    function drawAura() {
+      var W = auraCanvas.width;
+      var H = auraCanvas.height;
+      auCtx.fillStyle = 'rgba(3, 3, 9, 0.15)'; // trails
+      auCtx.fillRect(0, 0, W, H);
+      
+      var m = moodData[currentMood];
+      auraAngle += m.speed;
+      auraPulse += 0.04;
+      
+      var cx = W / 2;
+      var cy = H / 2;
+      var maxR = W * 0.4;
+      
+      auCtx.save();
+      auCtx.translate(cx, cy);
+      auCtx.rotate(auraAngle);
+      
+      // Draw harmonic polar rose curve particles
+      auCtx.shadowBlur = 15;
+      auCtx.shadowColor = m.color1;
+      auCtx.strokeStyle = m.color1;
+      auCtx.lineWidth = 2.5;
+      
+      auCtx.beginPath();
+      for (var theta = 0; theta < Math.PI * 2; theta += 0.01) {
+        // Rose curve equation: r = a * cos(k * theta)
+        var amp = maxR * (0.7 + Math.sin(auraPulse) * 0.1);
+        var r = amp * Math.cos(m.k * theta);
+        var x = r * Math.cos(theta);
+        var y = r * Math.sin(theta);
+        
+        if (theta === 0) auCtx.moveTo(x, y);
+        else auCtx.lineTo(x, y);
+      }
+      auCtx.closePath();
+      
+      // Gradient stroke
+      var grad = auCtx.createLinearGradient(-maxR, -maxR, maxR, maxR);
+      grad.addColorStop(0, m.color1);
+      grad.addColorStop(1, m.color2);
+      auCtx.strokeStyle = grad;
+      auCtx.stroke();
+      
+      // Inner glowing core
+      auCtx.beginPath();
+      var radGrad = auCtx.createRadialGradient(0, 0, 2, 0, 0, 30);
+      radGrad.addColorStop(0, '#fff');
+      radGrad.addColorStop(0.5, m.color1);
+      radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      auCtx.fillStyle = radGrad;
+      auCtx.arc(0, 0, 30, 0, Math.PI*2);
+      auCtx.fill();
+      
+      auCtx.restore();
+      requestAnimationFrame(drawAura);
+    }
+    
+    function setAuraMood(moodKey) {
+      currentMood = moodKey;
+      var m = moodData[moodKey];
+      
+      // Update DOM text
+      document.getElementById('auraStatusBadge').textContent = m.badge;
+      document.getElementById('auraStatusBadge').style.color = m.color1;
+      document.getElementById('auraTipTitle').textContent = m.title;
+      document.getElementById('auraTipDesc').textContent = m.desc;
+      document.getElementById('aura_sec').querySelector('span:nth-child(1) strong').textContent = m.freq;
+      document.getElementById('aura_sec').querySelector('span:nth-child(2) strong').textContent = m.chakra;
+      
+      // Set active button
+      document.querySelectorAll('#moodCalm,#moodFocus,#moodCreative,#moodEnergetic,#moodTired').forEach(function(b) {
+        b.classList.remove('active');
+        b.style.background = 'transparent';
+        b.style.borderColor = 'var(--gb)';
+      });
+      
+      var activeBtnMap = {
+        calm: 'moodCalm', focus: 'moodFocus', creative: 'moodCreative', energetic: 'moodEnergetic', tired: 'moodTired'
+      };
+      var btn = document.getElementById(activeBtnMap[moodKey]);
+      if (btn) {
+        btn.classList.add('active');
+        btn.style.background = 'linear-gradient(135deg,' + m.color1 + ',' + m.color2 + ')';
+        btn.style.borderColor = 'transparent';
+      }
+      
+      toast('🌀 Aura Frekansı Değişti: ' + m.freq, m.color1);
+    }
+    
+    // Bind button triggers
+    document.getElementById('moodCalm').addEventListener('click', function() { setAuraMood('calm'); });
+    document.getElementById('moodFocus').addEventListener('click', function() { setAuraMood('focus'); });
+    document.getElementById('moodCreative').addEventListener('click', function() { setAuraMood('creative'); });
+    document.getElementById('moodEnergetic').addEventListener('click', function() { setAuraMood('energetic'); });
+    document.getElementById('moodTired').addEventListener('click', function() { setAuraMood('tired'); });
+    
+    function resizeAura() {
+      var rect = auraCanvas.parentElement.getBoundingClientRect();
+      var size = Math.min(360, rect.width || 360);
+      auraCanvas.width = size;
+      auraCanvas.height = size;
+    }
+    
+    window.addEventListener('resize', resizeAura);
+    resizeAura();
+    setAuraMood('calm');
+    drawAura();
+  }
+} catch(e) { console.error('Aura error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 12: ZEN KALEİDOSKOP (8-AXIS RADIAL MIRROR DRAWING)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var kaleidoCanvas = document.getElementById('kaleidoCanvas');
+  if (kaleidoCanvas) {
+    var kctx = kaleidoCanvas.getContext('2d');
+    var kalBrush = 3;
+    var kalDecayVal = 15;
+    var kalMode = 'neon'; // neon, gold, ocean
+    var kalIsPainting = false;
+    
+    function kSize() {
+      var rect = kaleidoCanvas.parentElement.getBoundingClientRect();
+      kaleidoCanvas.width = rect.width || 800;
+      kaleidoCanvas.height = 450;
+      
+      kctx.fillStyle = '#010105';
+      kctx.fillRect(0,0,kaleidoCanvas.width,kaleidoCanvas.height);
+    }
+    
+    function drawSymmetricalLine(x1, y1, x2, y2) {
+      var W = kaleidoCanvas.width;
+      var H = kaleidoCanvas.height;
+      var cx = W / 2;
+      var cy = H / 2;
+      
+      // Calculate coordinates relative to canvas center
+      var px1 = x1 - cx, py1 = y1 - cy;
+      var px2 = x2 - cx, py2 = y2 - cy;
+      
+      var symmetry = 8;
+      
+      kctx.save();
+      kctx.translate(cx, cy);
+      kctx.lineWidth = kalBrush;
+      kctx.lineCap = 'round';
+      
+      // Shadow neon glow setup
+      kctx.shadowBlur = 10;
+      
+      var strokeCol = '#00e5ff';
+      if (kalMode === 'neon') {
+        strokeCol = 'hsl(' + (Date.now() / 15 % 360) + ', 100%, 65%)';
+      } else if (kalMode === 'gold') {
+        strokeCol = 'hsl(' + (Math.random() * 15 + 40) + ', 95%, ' + (Math.random() * 20 + 55) + '%)';
+      } else {
+        strokeCol = 'hsl(' + (Math.random() * 20 + 190) + ', 85%, 60%)';
+      }
+      
+      kctx.strokeStyle = strokeCol;
+      kctx.shadowColor = strokeCol;
+      
+      for (var i = 0; i < symmetry; i++) {
+        kctx.rotate(Math.PI * 2 / symmetry);
+        
+        // 1. Draw normal rotated line
+        kctx.beginPath();
+        kctx.moveTo(px1, py1);
+        kctx.lineTo(px2, py2);
+        kctx.stroke();
+        
+        // 2. Draw mirrored line across X axis
+        kctx.beginPath();
+        kctx.moveTo(px1, -py1);
+        kctx.lineTo(px2, -py2);
+        kctx.stroke();
+      }
+      kctx.restore();
+    }
+    
+    var lastX = 0, lastY = 0;
+    
+    kaleidoCanvas.addEventListener('mousedown', function(e) {
+      kalIsPainting = true;
+      var rect = kaleidoCanvas.getBoundingClientRect();
+      lastX = (e.clientX - rect.left) * (kaleidoCanvas.width / rect.width);
+      lastY = (e.clientY - rect.top) * (kaleidoCanvas.height / rect.height);
+    });
+    
+    kaleidoCanvas.addEventListener('mousemove', function(e) {
+      if (!kalIsPainting) return;
+      var rect = kaleidoCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (kaleidoCanvas.width / rect.width);
+      var y = (e.clientY - rect.top) * (kaleidoCanvas.height / rect.height);
+      
+      drawSymmetricalLine(lastX, lastY, x, y);
+      lastX = x; lastY = y;
+    });
+    
+    window.addEventListener('mouseup', function() {
+      kalIsPainting = false;
+    });
+    
+    // Decay fading loop
+    function decayKaleidoLoop() {
+      var W = kaleidoCanvas.width, H = kaleidoCanvas.height;
+      if (kalDecayVal > 0) {
+        kctx.fillStyle = 'rgba(1, 1, 5, ' + (kalDecayVal / 1200) + ')';
+        kctx.fillRect(0, 0, W, H);
+      }
+      requestAnimationFrame(decayKaleidoLoop);
+    }
+    
+    // Toolbar configuration
+    document.getElementById('kalBrushSize').addEventListener('input', function() {
+      kalBrush = parseInt(this.value, 10);
+      document.getElementById('kalBrushDisplay').textContent = kalBrush;
+    });
+    document.getElementById('kalDecay').addEventListener('input', function() {
+      kalDecayVal = parseInt(this.value, 10);
+    });
+    document.getElementById('clearKal').addEventListener('click', function() {
+      kctx.fillStyle = '#010105'; kctx.fillRect(0, 0, kaleidoCanvas.width, kaleidoCanvas.height);
+      toast('🎨 Çizim tahtası temizlendi!', '#7c4dff');
+    });
+    
+    // Color schemes triggers
+    document.getElementById('kalColNeon').addEventListener('click', function() {
+      document.querySelectorAll('#kalColNeon,#kalColGold,#kalColOcean').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); kalMode = 'neon';
+    });
+    document.getElementById('kalColGold').addEventListener('click', function() {
+      document.querySelectorAll('#kalColNeon,#kalColGold,#kalColOcean').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); kalMode = 'gold';
+    });
+    document.getElementById('kalColOcean').addEventListener('click', function() {
+      document.querySelectorAll('#kalColNeon,#kalColGold,#kalColOcean').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); kalMode = 'ocean';
+    });
+    
+    window.addEventListener('resize', kSize);
+    kSize();
+    decayKaleidoLoop();
+  }
+} catch(e) { console.error('Kaleido error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 13: KOZMİK ORBİT (ZEN NEWTON GRAVITY SLINGSHOT)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var orbitCanvas = document.getElementById('orbitCanvas');
+  if (orbitCanvas) {
+    var obCtx = orbitCanvas.getContext('2d');
+    var planets = [];
+    var sun = { x: 0, y: 0, mass: 25000, radius: 24 };
+    var activePlanetType = 'normal'; // normal, massive, light
+    var isAiming = false;
+    var aimStartX = 0, aimStartY = 0;
+    var aimCurX = 0, aimCurY = 0;
+    
+    function sizeOrbit() {
+      var rect = orbitCanvas.parentElement.getBoundingClientRect();
+      orbitCanvas.width = rect.width || 800;
+      orbitCanvas.height = 460;
+      
+      sun.x = orbitCanvas.width / 2;
+      sun.y = orbitCanvas.height / 2;
+    }
+    
+    function updatePhysics() {
+      var W = orbitCanvas.width, H = orbitCanvas.height;
+      var G = 0.15; // Gravity coefficient
+      
+      // Update each planet positioning
+      planets.forEach(function(p, idx) {
+        // Gravitational force vector to the central star
+        var dx = sun.x - p.x;
+        var dy = sun.y - p.y;
+        var dist = Math.hypot(dx, dy);
+        
+        if (dist < sun.radius + p.radius) {
+          // Melted by the sun!
+          triggerSpark(p.x, p.y, p.color);
+          planets.splice(idx, 1);
+          toast('🪐 Gezegen güneş tarafından yutuldu!', '#ff1744');
+          return;
+        }
+        
+        // Acceleration = G * M / dist^2
+        var forceMag = (G * sun.mass) / (dist * dist);
+        p.vx += (dx / dist) * forceMag;
+        p.vy += (dy / dist) * forceMag;
+        
+        // Apply position velocities
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Trail stardust coordinates persistence
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 90) p.trail.shift();
+      });
+      
+      // Remove off-canvas bounds planets (lost in infinite space)
+      var beforeLen = planets.length;
+      planets = planets.filter(function(p) {
+        return p.x > -200 && p.x < W + 200 && p.y > -200 && p.y < H + 200;
+      });
+      if (planets.length < beforeLen) {
+        toast('🛸 Gezegen derin uzaya fırladı!', '#ff7043');
+      }
+      
+      document.getElementById('orbitCount').textContent = planets.length + 1; // Planets + Central Sun
+    }
+    
+    function drawOrbit() {
+      var W = orbitCanvas.width, H = orbitCanvas.height;
+      obCtx.fillStyle = '#020207';
+      obCtx.fillRect(0, 0, W, H);
+      
+      // Draw grid orbits
+      obCtx.strokeStyle = 'rgba(255,255,255,0.02)';
+      obCtx.lineWidth = 1;
+      for (var r = 50; r < Math.max(W, H); r += 60) {
+        obCtx.beginPath();
+        obCtx.arc(sun.x, sun.y, r, 0, Math.PI*2);
+        obCtx.stroke();
+      }
+      
+      // Update dynamic physics loops
+      updatePhysics();
+      
+      // Render Star dust trails
+      planets.forEach(function(p) {
+        if (p.trail.length < 2) return;
+        obCtx.beginPath();
+        obCtx.lineWidth = 1.5;
+        obCtx.strokeStyle = p.color;
+        obCtx.globalAlpha = 0.35;
+        obCtx.moveTo(p.trail[0].x, p.trail[0].y);
+        for (var i = 1; i < p.trail.length; i++) {
+          obCtx.lineTo(p.trail[i].x, p.trail[i].y);
+        }
+        obCtx.stroke();
+        obCtx.globalAlpha = 1.0;
+      });
+      
+      // Render Central Gravitational Star (Sun)
+      obCtx.save();
+      obCtx.shadowBlur = 30;
+      obCtx.shadowColor = '#ffea00';
+      var sunGrad = obCtx.createRadialGradient(sun.x, sun.y, 2, sun.x, sun.y, sun.radius);
+      sunGrad.addColorStop(0, '#fff');
+      sunGrad.addColorStop(0.3, '#ffea00');
+      sunGrad.addColorStop(1, 'rgba(255,234,0,0)');
+      obCtx.fillStyle = sunGrad;
+      obCtx.beginPath();
+      obCtx.arc(sun.x, sun.y, sun.radius, 0, Math.PI * 2);
+      obCtx.fill();
+      obCtx.restore();
+      
+      // Render colorful planets
+      planets.forEach(function(p) {
+        obCtx.save();
+        obCtx.shadowBlur = 15;
+        obCtx.shadowColor = p.color;
+        
+        var pGrad = obCtx.createRadialGradient(p.x, p.y, p.radius * 0.1, p.x, p.y, p.radius);
+        pGrad.addColorStop(0, '#fff');
+        pGrad.addColorStop(0.4, p.color);
+        pGrad.addColorStop(1, p.color + '44');
+        
+        obCtx.fillStyle = pGrad;
+        obCtx.beginPath();
+        obCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+        obCtx.fill();
+        obCtx.restore();
+      });
+      
+      // Aiming vector slingshot lines rendering
+      if (isAiming) {
+        obCtx.beginPath();
+        obCtx.strokeStyle = 'rgba(0, 229, 255, 0.4)';
+        obCtx.setLineDash([4, 4]);
+        obCtx.lineWidth = 2;
+        obCtx.moveTo(aimStartX, aimStartY);
+        obCtx.lineTo(aimCurX, aimCurY);
+        obCtx.stroke();
+        obCtx.setLineDash([]);
+        
+        // Draw forecast vector path arrow
+        obCtx.beginPath();
+        obCtx.arc(aimStartX, aimStartY, 6, 0, Math.PI * 2);
+        obCtx.fillStyle = '#00e5ff';
+        obCtx.fill();
+      }
+      
+      requestAnimationFrame(drawOrbit);
+    }
+    
+    // Slingshot click handlers
+    orbitCanvas.addEventListener('mousedown', function(e) {
+      isAiming = true;
+      var rect = orbitCanvas.getBoundingClientRect();
+      aimStartX = (e.clientX - rect.left) * (orbitCanvas.width / rect.width);
+      aimStartY = (e.clientY - rect.top) * (orbitCanvas.height / rect.height);
+      aimCurX = aimStartX;
+      aimCurY = aimStartY;
+    });
+    orbitCanvas.addEventListener('mousemove', function(e) {
+      if (isAiming) {
+        var rect = orbitCanvas.getBoundingClientRect();
+        aimCurX = (e.clientX - rect.left) * (orbitCanvas.width / rect.width);
+        aimCurY = (e.clientY - rect.top) * (orbitCanvas.height / rect.height);
+      }
+    });
+    window.addEventListener('mouseup', function() {
+      if (isAiming) {
+        isAiming = false;
+        
+        // Speed scale is proportional to slingshot length
+        var dx = aimStartX - aimCurX;
+        var dy = aimStartY - aimCurY;
+        var velX = dx * 0.055;
+        var velY = dy * 0.055;
+        
+        var rad = 8, col = '#00e5ff', m = 1.0;
+        if (activePlanetType === 'massive') {
+          rad = 14; col = '#ff7043'; m = 3.0;
+        } else if (activePlanetType === 'light') {
+          rad = 5; col = '#69f0ae'; m = 0.4;
+        }
+        
+        planets.push({
+          x: aimStartX, y: aimStartY, vx: velX, vy: velY, radius: rad, color: col, mass: m, trail: []
+        });
+        toast('🚀 Gezegen Yörüngeye Fırlatıldı!', '#00e5ff');
+      }
+    });
+    
+    // Controls panel setup
+    document.getElementById('orbTypeNormal').addEventListener('click', function() {
+      document.querySelectorAll('#orbTypeNormal,#orbTypeMassive,#orbTypeLight').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activePlanetType = 'normal';
+    });
+    document.getElementById('orbTypeMassive').addEventListener('click', function() {
+      document.querySelectorAll('#orbTypeNormal,#orbTypeMassive,#orbTypeLight').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activePlanetType = 'massive';
+    });
+    document.getElementById('orbTypeLight').addEventListener('click', function() {
+      document.querySelectorAll('#orbTypeNormal,#orbTypeMassive,#orbTypeLight').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active'); activePlanetType = 'light';
+    });
+    
+    document.getElementById('clearOrbit').addEventListener('click', function() {
+      planets = [];
+      toast('🌌 Tüm gezegenler buharlaştırıldı!', '#ff7043');
+    });
+    document.getElementById('resetOrbitSun').addEventListener('click', function() {
+      sun.mass = sun.mass === 25000 ? 55000 : 25000;
+      sun.radius = sun.mass === 55000 ? 32 : 24;
+      toast('☀️ Güneş Çekim Kuvveti Güncellendi!', '#ffea00');
+    });
+    
+    window.addEventListener('resize', sizeOrbit);
+    sizeOrbit();
+    drawOrbit();
+  }
+} catch(e) { console.error('Orbit error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   AAA 14: ZEN ODAKLANMA SAATİ (FOCUS AMBIENT SOUND GENERATOR)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var zenClockCanvas = document.getElementById('zenClockCanvas');
+  if (zenClockCanvas) {
+    var clCtx = zenClockCanvas.getContext('2d');
+    var audioCtx = null;
+    var activeSoundNodes = {};
+    
+    // Synthesize organic sounds using Web Audio API! (RAIN, WIND, FIRE, WATER)
+    function initFocusAudio() {
+      if (audioCtx) return;
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch(e2) {
+        console.error('AudioContext fail', e2);
+      }
+    }
+    
+    function startSynthesizerAmbient(type) {
+      initFocusAudio();
+      if (!audioCtx) return;
+      
+      // Stop existing if any
+      if (activeSoundNodes[type]) {
+        stopSynthesizerAmbient(type);
+        return;
+      }
+      
+      var bufferSize = 2 * audioCtx.sampleRate;
+      var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var output = noiseBuffer.getChannelData(0);
+      
+      // Synthesize noise sweeps
+      for (var i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      
+      var whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+      
+      var gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      
+      var filterNode = audioCtx.createBiquadFilter();
+      
+      if (type === 'rain') {
+        // Highpass & Lowpass combo for ipeksi rain drops
+        filterNode.type = 'bandpass';
+        filterNode.frequency.value = 850;
+        filterNode.Q.value = 1.0;
+        whiteNoise.connect(filterNode); filterNode.connect(gainNode);
+      } 
+      else if (type === 'wind') {
+        // Modulated Lowpass wind swooshes
+        filterNode.type = 'lowpass';
+        filterNode.frequency.value = 350;
+        
+        // Modulator LFO for wind gust shifts
+        var lfo = audioCtx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 0.18; // Slow shifts
+        
+        var lfoGain = audioCtx.createGain();
+        lfoGain.gain.value = 160;
+        
+        lfo.connect(lfoGain);
+        lfoGain.connect(filterNode.frequency);
+        
+        lfo.start();
+        whiteNoise.connect(filterNode); filterNode.connect(gainNode);
+        
+        activeSoundNodes[type + '_lfo'] = lfo;
+      } 
+      else if (type === 'fire') {
+        // Lowpass hum coupled with crackling impulses
+        filterNode.type = 'lowpass';
+        filterNode.frequency.value = 180;
+        
+        // Crackle generator impulse oscillator
+        var crackle = audioCtx.createOscillator();
+        crackle.type = 'sawtooth';
+        crackle.frequency.value = 8.5; // crackle rate
+        
+        var cGain = audioCtx.createGain();
+        cGain.gain.value = 0.03;
+        
+        crackle.connect(cGain);
+        cGain.connect(gainNode);
+        
+        crackle.start();
+        whiteNoise.connect(filterNode); filterNode.connect(gainNode);
+        
+        activeSoundNodes[type + '_crackle'] = crackle;
+      } 
+      else if (type === 'water') {
+        // Low frequency deep resonance
+        filterNode.type = 'lowpass';
+        filterNode.frequency.value = 80;
+        
+        var resOsc = audioCtx.createOscillator();
+        resOsc.type = 'sine';
+        resOsc.frequency.value = 54; // deep base hum
+        
+        var resGain = audioCtx.createGain();
+        resGain.gain.value = 0.08;
+        
+        resOsc.connect(resGain);
+        resGain.connect(gainNode);
+        
+        resOsc.start();
+        whiteNoise.connect(filterNode); filterNode.connect(gainNode);
+        
+        activeSoundNodes[type + '_osc'] = resOsc;
+      }
+      
+      gainNode.connect(audioCtx.destination);
+      whiteNoise.start();
+      
+      activeSoundNodes[type] = { source: whiteNoise, gain: gainNode };
+      
+      // Update UI button state
+      var idMap = { rain: 'btnSoundRain', wind: 'btnSoundWind', fire: 'btnSoundFire', water: 'btnSoundWater' };
+      document.getElementById(idMap[type]).textContent = '⏹ Durdur';
+      document.getElementById(idMap[type]).style.background = 'rgba(105,240,174,0.15)';
+      document.getElementById(idMap[type]).style.borderColor = '#69f0ae';
+      
+      toast('🎵 Doğa Sesleri Çalıyor...', '#69f0ae');
+    }
+    
+    function stopSynthesizerAmbient(type) {
+      if (activeSoundNodes[type]) {
+        try {
+          activeSoundNodes[type].source.stop();
+        } catch(e3){}
+        
+        // Stop sub components if any
+        if (activeSoundNodes[type + '_lfo']) activeSoundNodes[type + '_lfo'].stop();
+        if (activeSoundNodes[type + '_crackle']) activeSoundNodes[type + '_crackle'].stop();
+        if (activeSoundNodes[type + '_osc']) activeSoundNodes[type + '_osc'].stop();
+        
+        delete activeSoundNodes[type];
+        
+        // Reset UI button state
+        var idMap = { rain: 'btnSoundRain', wind: 'btnSoundWind', fire: 'btnSoundFire', water: 'btnSoundWater' };
+        document.getElementById(idMap[type]).textContent = '▶ Çal';
+        document.getElementById(idMap[type]).style.background = '';
+        document.getElementById(idMap[type]).style.borderColor = '';
+        
+        toast('⏹ Ses Kapatıldı', '#ff7043');
+      }
+    }
+    
+    // Bind sound buttons
+    document.getElementById('btnSoundRain').addEventListener('click', function() { startSynthesizerAmbient('rain'); });
+    document.getElementById('btnSoundWind').addEventListener('click', function() { startSynthesizerAmbient('wind'); });
+    document.getElementById('btnSoundFire').addEventListener('click', function() { startSynthesizerAmbient('fire'); });
+    document.getElementById('btnSoundWater').addEventListener('click', function() { startSynthesizerAmbient('water'); });
+    
+    // Draw Glass Clock Loop
+    function updateZenClock() {
+      var W = zenClockCanvas.width, H = zenClockCanvas.height;
+      var cx = W / 2, cy = H / 2;
+      var r = W * 0.45;
+      
+      clCtx.clearRect(0, 0, W, H);
+      
+      // Clock glass back circle
+      clCtx.fillStyle = 'rgba(255, 255, 255, 0.015)';
+      clCtx.beginPath();
+      clCtx.arc(cx, cy, r, 0, Math.PI*2);
+      clCtx.fill();
+      
+      clCtx.strokeStyle = 'rgba(0, 229, 255, 0.15)';
+      clCtx.lineWidth = 2.5;
+      clCtx.beginPath();
+      clCtx.arc(cx, cy, r, 0, Math.PI*2);
+      clCtx.stroke();
+      
+      // Clock dial ticks
+      clCtx.save();
+      clCtx.translate(cx, cy);
+      clCtx.fillStyle = 'rgba(255,255,255,0.2)';
+      for (var i = 0; i < 12; i++) {
+        clCtx.fillRect(-1.5, -r + 5, 3, 10);
+        clCtx.rotate(Math.PI / 6);
+      }
+      clCtx.restore();
+      
+      // Fetch time
+      var d = new Date();
+      var hrs = d.getHours();
+      var mins = d.getMinutes();
+      var secs = d.getSeconds();
+      
+      // Digital string
+      var digStr = String(hrs).padStart(2,'0') + ':' + String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+      document.getElementById('zenClockDigital').textContent = digStr;
+      
+      // Angles
+      var aSec = (secs / 60) * Math.PI * 2;
+      var aMin = ((mins + secs/60) / 60) * Math.PI * 2;
+      var aHr = (((hrs % 12) + mins/60) / 12) * Math.PI * 2;
+      
+      // Hands Drawing
+      // Hour hand
+      clCtx.save();
+      clCtx.translate(cx, cy);
+      clCtx.rotate(aHr);
+      clCtx.strokeStyle = '#fff';
+      clCtx.lineWidth = 5;
+      clCtx.lineCap = 'round';
+      clCtx.beginPath(); clCtx.moveTo(0, 10); clCtx.lineTo(0, -r * 0.5); clCtx.stroke();
+      clCtx.restore();
+      
+      // Minute hand
+      clCtx.save();
+      clCtx.translate(cx, cy);
+      clCtx.rotate(aMin);
+      clCtx.strokeStyle = 'var(--a1)';
+      clCtx.lineWidth = 3.5;
+      clCtx.lineCap = 'round';
+      clCtx.beginPath(); clCtx.moveTo(0, 15); clCtx.lineTo(0, -r * 0.72); clCtx.stroke();
+      clCtx.restore();
+      
+      // Second hand
+      clCtx.save();
+      clCtx.translate(cx, cy);
+      clCtx.rotate(aSec);
+      clCtx.strokeStyle = '#ff7043';
+      clCtx.lineWidth = 1.5;
+      clCtx.lineCap = 'round';
+      clCtx.beginPath(); clCtx.moveTo(0, 20); clCtx.lineTo(0, -r * 0.85); clCtx.stroke();
+      clCtx.restore();
+      
+      // Center pin
+      clCtx.fillStyle = '#ff7043';
+      clCtx.beginPath();
+      clCtx.arc(cx, cy, 5, 0, Math.PI*2);
+      clCtx.fill();
+    }
+    
+    setInterval(updateZenClock, 1000);
+    
+    // Pomodoro Timer logic
+    var timerVal = 25 * 60;
+    var timerRunning = false;
+    var timerInterval = null;
+    
+    function updateTimerDisplay() {
+      var m = Math.floor(timerVal / 60);
+      var s = timerVal % 60;
+      document.getElementById('zenTimerDisplay').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }
+    
+    document.getElementById('zenTimerStartBtn').addEventListener('click', function() {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        this.textContent = '▶ Başlat';
+        toast('⏱️ Odaklanma sayacı durduruldu', '#ff7043');
+      } else {
+        initFocusAudio();
+        timerRunning = true;
+        this.textContent = '⏹ Durdur';
+        toast('⏱️ Odaklanma sayacı başladı! Zihninizi arındırın.', '#00e5ff');
+        
+        timerInterval = setInterval(function() {
+          timerVal--;
+          updateTimerDisplay();
+          if (timerVal <= 0) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerVal = 25 * 60;
+            document.getElementById('zenTimerStartBtn').textContent = '▶ Başlat';
+            updateTimerDisplay();
+            toast('🔔 TEBRİKLER! Odaklanma seansınız bitti. Dinlenmeyi unutmayın.', '#69f0ae');
+            
+            // Play success bell oscillator
+            if (audioCtx) {
+              var osc = audioCtx.createOscillator();
+              var gain = audioCtx.createGain();
+              osc.connect(gain); gain.connect(audioCtx.destination);
+              osc.type = 'sine'; osc.frequency.value = 660;
+              gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+              osc.start(); osc.stop(audioCtx.currentTime + 1.2);
+            }
+          }
+        }, 1000);
+      }
+    });
+    
+    document.getElementById('zenTimerResetBtn').addEventListener('click', function() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerVal = 25 * 60;
+      document.getElementById('zenTimerStartBtn').textContent = '▶ Başlat';
+      updateTimerDisplay();
+      toast('⏱️ Sayaç sıfırlandı', '#7c4dff');
+    });
+    
+    function resizeZenClock() {
+      var rect = zenClockCanvas.parentElement.getBoundingClientRect();
+      var size = Math.min(260, rect.width || 260);
+      zenClockCanvas.width = size;
+      zenClockCanvas.height = size;
+      updateZenClock();
+    }
+    
+    window.addEventListener('resize', resizeZenClock);
+    resizeZenClock();
+    updateTimerDisplay();
+  }
+} catch(e) { console.error('ZenClock error', e); }
+
 

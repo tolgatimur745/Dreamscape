@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
@@ -294,6 +294,7 @@
     .canvas-wrap{width:100%;max-width:900px;border-radius:var(--r3);overflow:hidden;border:1px solid var(--gb)}
     #drawingCanvas{display:block;width:100%;height:430px;background:#0a0b14;cursor:crosshair;touch-action:none}
     .canvas-section{display:flex;flex-direction:column;align-items:center}
+    .canvas-section.ds-active{display:flex!important}
 
     /* BREATHE */
     .breathe-types{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
@@ -927,6 +928,76 @@
     }
     .hub-card:hover::after { opacity: 1; }
 
+    /* ══ AAA FEATURES ADDITIONAL CSS ══ */
+    .dreampad-cell {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      transition: background 0.1s, transform 0.2s, box-shadow 0.2s;
+    }
+    .dreampad-cell:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .dreampad-cell.active {
+      background: var(--a3);
+      border-color: #fff;
+      box-shadow: 0 0 20px var(--a3), inset 0 0 10px rgba(255,255,255,0.5);
+      transform: scale(0.95);
+    }
+
+    /* ══ 2048 TILE STYLING ══ */
+    .m2048-tile {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      transition: all 0.12s ease;
+      animation: m2048-pop 0.18s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+    }
+    .m2048-tile-empty {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+    @keyframes m2048-pop {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* ══ NEW AAA MODULES STYLING ══ */
+    .brush-slider {
+      -webkit-appearance: none;
+      width: 120px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      outline: none;
+      transition: background 0.15s;
+    }
+    .brush-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--a1);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--a1);
+      transition: transform 0.1s;
+    }
+    .brush-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
   </style>
 </head>
 <body>
@@ -993,7 +1064,163 @@
 
     <!-- 1. SNAKE -->
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🐍</span><div><h3>Snake</h3><p>Klasik yılan oyunu</p></div><span class="game-badge">Klasik</span></div>
+      <div class="game-card-header"><span class="game-icon">🐍</span><div><h3>Snake</h3><p>Klasik Yılan Oyunu</p></div><span class="game-badge">Klasik</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Yemi ye, uzamaya başla ve kendi kuyruğuna ya da duvarlara çarpmadan en yüksek skoru hedefle!</p>
+      <button class="play-btn" onclick="dsGoToSection('snake-sec', '🐍 Yılan Oyunu')">▶ Oyna</button>
+    </div>
+
+    <!-- 2. MEMORY -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🃏</span><div><h3>Hafıza Kartları</h3><p>Çiftleri Eşleştir</p></div><span class="game-badge">Hafıza</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Kartları tek tek çevir, aklında tut ve eşlerini bularak panoyu en az hamleyle temizle!</p>
+      <button class="play-btn" onclick="dsGoToSection('memory-sec', '🃏 Hafıza Kartları')">▶ Oyna</button>
+    </div>
+
+    <!-- 3. BUBBLE POP -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🫧</span><div><h3>Bubble Pop</h3><p>Balon Patlatma</p></div><span class="game-badge">Rahatlatıcı</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Baloncukları patlatarak stresini at, çıtır çıtır patlama efektleriyle zihnini tamamen rahatlat!</p>
+      <button class="play-btn" onclick="dsGoToSection('bubble-sec', '🫧 Bubble Pop')">▶ Oyna</button>
+    </div>
+
+    <!-- 4. REACTION -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">⚡</span><div><h3>Refleks Testi</h3><p>Yeşile Dönünce Tıkla!</p></div><span class="game-badge">Hızlı</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Daire yeşile döndüğü anda olabildiğince hızlı tıklayarak refleks süreni milisaniye bazında ölç!</p>
+      <button class="play-btn" onclick="dsGoToSection('reaction-sec', '⚡ Refleks Testi')">▶ Oyna</button>
+    </div>
+
+    <!-- 5. COLOR MATCH -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎨</span><div><h3>Renk Yarışı</h3><p>Rengi Doğru Adlandır</p></div><span class="game-badge">Görsel</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Kelimenin rengiyle yazılışı eşleşiyor mu? Hızlıca karar ver, beyninin odaklanma hızını test et!</p>
+      <button class="play-btn" onclick="dsGoToSection('color-sec', '🎨 Renk Yarışı')">▶ Oyna</button>
+    </div>
+
+    <!-- 6. 15 PUZZLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧩</span><div><h3>15 Puzzle</h3><p>Sayıları Sıraya Diz</p></div><span class="game-badge">Zeka</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Sayı karelerini boşluktan yararlanarak kaydır ve en kısa sürede 1'den 15'e doğru sırala!</p>
+      <button class="play-btn" onclick="dsGoToSection('puzzle-sec', '🧩 15 Puzzle')">▶ Oyna</button>
+    </div>
+
+    <!-- 7. WHACK A MOLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🐹</span><div><h3>Köstebek Vur!</h3><p>Hızlı Refleks Testi</p></div><span class="game-badge new-badge">Aksiyon</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Topraktan aniden fırlayan köstebeklere vurarak reflekslerini konuştur, süre bitmeden en yüksek puanı al!</p>
+      <button class="play-btn" onclick="dsGoToSection('mole-sec', '🐹 Köstebek Vur!')">▶ Oyna</button>
+    </div>
+
+    <!-- 8. TIC TAC TOE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">❌</span><div><h3>XOX — AI</h3><p>Yapay Zekaya Karşı Oyna</p></div><span class="game-badge">Strateji</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Klasik üç taş oyununda yapay zekaya meydan oku. Doğru stratejiyle rakibini köşeye sıkıştır!</p>
+      <button class="play-btn" onclick="dsGoToSection('ttt-sec', '❌ XOX — AI')">▶ Oyna</button>
+    </div>
+
+    <!-- 9. WORD SCRAMBLE -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">📝</span><div><h3>Kelime Bulmaca</h3><p>Karışık Harfleri Düzenle</p></div><span class="game-badge">Kelime</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Karışık harflerle verilen kelimeyi ve ipucunu gör, doğru tahminle gizli kelimeyi ortaya çıkar!</p>
+      <button class="play-btn" onclick="dsGoToSection('word-sec', '📝 Kelime Bulmaca')">▶ Oyna</button>
+    </div>
+
+    <!-- 10. SIMON SAYS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧠</span><div><h3>Simon Says</h3><p>Renk Dizisini Ezberle</p></div><span class="game-badge new-badge">Hafıza</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Simon'ın yanıp sönen renk dizilerini sırasıyla ezberle ve tekrar et, hafızanın sınırlarını zorla!</p>
+      <button class="play-btn" onclick="dsGoToSection('simon-sec', '🧠 Simon Says')">▶ Oyna</button>
+    </div>
+
+    <!-- 11. MATH SPRINT -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🔢</span><div><h3>Matematik Sprint</h3><p>Zamana Karşı İşlemler</p></div><span class="game-badge">Zeka</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">60 saniyelik süre sınırında karşına çıkan matematik işlemlerini zihinden hızlıca çöz!</p>
+      <button class="play-btn" onclick="dsGoToSection('math-sec', '🔢 Matematik Sprint')">▶ Oyna</button>
+    </div>
+
+    <!-- 12. ROCK PAPER SCISSORS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">✊</span><div><h3>Taş-Kağıt-Makas</h3><p>AI'ya Karşı Oyna</p></div><span class="game-badge">Şans</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Yapay zekaya karşı taş, kağıt veya makas seçerek şansını ve tahmin gücünü test et!</p>
+      <button class="play-btn" onclick="dsGoToSection('rps-sec', '✊ Taş-Kağıt-Makas')">▶ Oyna</button>
+    </div>
+
+    <!-- 13. NUMBER GUESS -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🎯</span><div><h3>Sayı Tahmin</h3><p>Gizli Sayıyı Bul</p></div><span class="game-badge">Mantık</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Aklımda tuttuğum 1 ile 100 arasındaki gizli sayıyı daha büyük/daha küçük ipuçlarıyla tahmin et!</p>
+      <button class="play-btn" onclick="dsGoToSection('guess-sec', '🎯 Sayı Tahmin')">▶ Oyna</button>
+    </div>
+
+    <!-- 14. MINESWEEPER -->
+    <div class="game-card wide">
+      <div class="game-card-header"><span class="game-icon">💣</span><div><h3>Mayın Tarlası</h3><p>Klasik Mayın Temizleme</p></div><span class="game-badge new-badge">Strateji</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Mayınlara basmadan tüm güvenli alanları aç ve mayınlı bölgeleri bayraklarla işaretle!</p>
+      <button class="play-btn" onclick="dsGoToSection('mine-sec', '💣 Mayın Tarlası')">▶ Oyna</button>
+    </div>
+
+    <!-- 15. TYPING SPEED -->
+    <div class="game-card wide">
+      <div class="game-card-header"><span class="game-icon">⌨️</span><div><h3>Yazma Hızı Testi</h3><p>Hız & Doğruluk Ölçümü</p></div><span class="game-badge new-badge">WPM</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Süre bitmeden ekrandaki kelimeleri hatasız yazarak dakikadaki kelime yazma hızını (WPM) ölç!</p>
+      <button class="play-btn" onclick="dsGoToSection('typing-sec', '⌨️ Yazma Hızı Testi')">▶ Oyna</button>
+    </div>
+
+    <!-- 16. PIKSEL FIZIK -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧪</span><div><h3>Piksel Fizik</h3><p>Zen Kum Havuzu</p></div><span class="game-badge">Fizik</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Kum, su, barut, ateş ve asit taneciklerini dök, fiziksel yerçekimi ve zincirleme patlamaları dene!</p>
+      <button class="play-btn" onclick="dsGoToSection('sand-sec', '🧪 Piksel Fizik Simülatörü')">▶ Oyna</button>
+    </div>
+
+    <!-- 17. KOZMIK FLAPPY -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🛸</span><div><h3>Kozmik Flappy</h3><p>Uçan Daire Kaçış</p></div><span class="game-badge new-badge">Arcade</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Yerçekimine karşı koyarak parlayan uçan daireyi engellerin arasından geçir ve en yüksek skora ulaş!</p>
+      <button class="play-btn" onclick="dsGoToSection('flappy-sec', '🛸 Kozmik Flappy')">▶ Oyna</button>
+    </div>
+
+    <!-- 18. KOZMIK SAVUNUCU -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">☄️</span><div><h3>Kozmik Savunucu</h3><p>Galaksi Savaşı</p></div><span class="game-badge new-badge">Aksiyon</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Sonsuz uzayda savaş geminle lazerler ateşle, üstümüze gelen tehlikeli göktaşlarını yok et!</p>
+      <button class="play-btn" onclick="dsGoToSection('shooter-sec', '☄️ Kozmik Savunucu')">▶ Oyna</button>
+    </div>
+
+    <!-- 19. NEON 2048 -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🧩</span><div><h3>Neon 2048</h3><p>Sayı Birleştirme</p></div><span class="game-badge">Zeka</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Karoları kaydır, aynı sayıları birleştirerek neon ışıklı kozmik 2048 karosuna ulaşmaya çalış!</p>
+      <button class="play-btn" onclick="dsGoToSection('m2048-sec', '🧩 Neon 2048')">▶ Oyna</button>
+    </div>
+
+    <!-- 20. KOZMIK LABIRENT -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">🌀</span><div><h3>Kozmik Labirent</h3><p>Sonsuz Koridorlar</p></div><span class="game-badge">Keşif</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Procedural (prosedürel) olarak üretilen gizemli labirentte yolunu bul ve çıkış kapısına ulaş!</p>
+      <button class="play-btn" onclick="dsGoToSection('maze-sec', '🌀 Kozmik Labirent')">▶ Oyna</button>
+    </div>
+
+    <!-- 21. KOZMIK ORBIT -->
+    <div class="game-card wide">
+      <div class="game-card-header"><span class="game-icon">🚀</span><div><h3>Kozmik Orbit</h3><p>Zen Yerçekimi Sapanı</p></div><span class="game-badge new-badge">Fizik</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Gezegenleri sapanla fırlatarak merkez güneşin çekim gücüne kapılışlarını izle, spiral yörüngeler çiz!</p>
+      <button class="play-btn" onclick="dsGoToSection('orbit-sec', '🚀 Kozmik Orbit')">▶ Oyna</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- 1. DEDICATED SNAKE GAME SECTION -->
+<section class="section ds-section" id="snake-sec">
+  <div class="section-header">
+    <div class="section-badge">🐍 Klasik</div>
+    <h2 class="section-title">Yılan Oyunu (Snake)</h2>
+    <p class="section-sub">Kendini yemeden uzayabildiğin kadar uza!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="game-card">
       <div class="game-area" id="snakeArea">
         <canvas id="snakeCanvas"></canvas>
         <div class="game-overlay" id="snakeOverlay">
@@ -1007,10 +1234,18 @@
         <span class="hint">← ↑ → ↓</span>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 2. MEMORY -->
+<!-- 2. DEDICATED HAFIZA KARTLARI SECTION -->
+<section class="section ds-section" id="memory-sec">
+  <div class="section-header">
+    <div class="section-badge">🃏 Hafıza</div>
+    <h2 class="section-title">Hafıza Kartları</h2>
+    <p class="section-sub">Kartları çevir ve aynı olanları eşleştir!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🃏</span><div><h3>Hafıza Kartları</h3><p>Çiftleri eşleştir</p></div><span class="game-badge">Hafıza</span></div>
       <div class="memory-grid" id="memoryGrid"></div>
       <div class="stats-row">
         <span>Hamle: <strong id="memoryMoves">0</strong></span>
@@ -1018,10 +1253,18 @@
         <button class="mini-btn" id="resetMemory">🔄 Yeni</button>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 3. BUBBLE POP -->
+<!-- 3. DEDICATED BUBBLE POP SECTION -->
+<section class="section ds-section" id="bubble-sec">
+  <div class="section-header">
+    <div class="section-badge">🫧 Rahatlatıcı</div>
+    <h2 class="section-title">Bubble Pop</h2>
+    <p class="section-sub">Baloncukları patlatıp stres at!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🫧</span><div><h3>Bubble Pop</h3><p>Baloncuk patlat</p></div><span class="game-badge">Rahatlatıcı</span></div>
       <div class="bubble-arena" id="bubbleArena"></div>
       <div class="stats-row">
         <span>Patlanan: <strong id="bubbleCount">0</strong></span>
@@ -1029,10 +1272,18 @@
         <button class="mini-btn" id="addBubbles">+ Balon Ekle</button>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 4. REACTION -->
+<!-- 4. DEDICATED REFLEKS TESTI SECTION -->
+<section class="section ds-section" id="reaction-sec">
+  <div class="section-header">
+    <div class="section-badge">⚡ Hızlı</div>
+    <h2 class="section-title">Refleks Testi</h2>
+    <p class="section-sub">Yeşile dönünce tıkla!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">⚡</span><div><h3>Refleks Testi</h3><p>Yeşile dönünce tıkla!</p></div><span class="game-badge">Hızlı</span></div>
       <div class="reaction-area">
         <button class="reaction-circle" id="reactionCircle">Tıkla!</button>
         <div class="rt-results">
@@ -1042,27 +1293,51 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 5. COLOR MATCH -->
+<!-- 5. DEDICATED RENK YARISI SECTION -->
+<section class="section ds-section" id="color-sec">
+  <div class="section-header">
+    <div class="section-badge">🎨 Görsel</div>
+    <h2 class="section-title">Renk Yarışı</h2>
+    <p class="section-sub">Rengi doğru adlandır!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🎨</span><div><h3>Renk Yarışı</h3><p>Rengi doğru adlandır</p></div><span class="game-badge">Görsel</span></div>
       <div class="color-area">
         <div class="color-question"><div class="color-target" id="colorTarget"></div><p id="colorQuestion">Bu rengin adı hangisi?</p></div>
         <div class="color-options" id="colorOptions"></div>
         <div class="color-stat-row"><span>Skor: <strong id="colorScore">0</strong></span><span>Can: <strong id="colorLives">❤️❤️❤️</strong></span></div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 6. 15 PUZZLE -->
+<!-- 6. DEDICATED 15 PUZZLE SECTION -->
+<section class="section ds-section" id="puzzle-sec">
+  <div class="section-header">
+    <div class="section-badge">🧩 Zeka</div>
+    <h2 class="section-title">15 Puzzle</h2>
+    <p class="section-sub">Sayıları sıraya diz!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🧩</span><div><h3>15 Puzzle</h3><p>Sayıları sıraya diz</p></div><span class="game-badge">Zeka</span></div>
       <div class="puzzle-grid" id="puzzleGrid"></div>
       <div class="stats-row"><span>Hamle: <strong id="puzzleMoves">0</strong></span><button class="mini-btn" id="resetPuzzle">🔀 Yeni Oyun</button></div>
     </div>
+  </div>
+</section>
 
-    <!-- 7. WHACK A MOLE -->
+<!-- 7. DEDICATED MOLE SECTION -->
+<section class="section ds-section" id="mole-sec">
+  <div class="section-header">
+    <div class="section-badge">🐹 Aksiyon</div>
+    <h2 class="section-title">Köstebek Vur!</h2>
+    <p class="section-sub">Çıkan köstebeklere vur!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🐹</span><div><h3>Köstebek Vur!</h3><p>Çıkan köstebeklere vur</p></div><span class="game-badge new-badge">Aksiyon</span></div>
       <div class="mole-info"><span>Süre: <strong id="moleTime">30</strong>s</span><span>Skor: <strong id="moleScore">0</strong></span></div>
       <div class="mole-grid" id="moleGrid">
         <div class="mole-hole" data-hole="0"><div class="mole-inner" id="mole0"></div></div>
@@ -1075,12 +1350,20 @@
         <div class="mole-hole" data-hole="7"><div class="mole-inner" id="mole7"></div></div>
         <div class="mole-hole" data-hole="8"><div class="mole-inner" id="mole8"></div></div>
       </div>
-      <button class="play-btn" id="moleStartBtn">▶ Başlat</button>
+      <button class="play-btn" id="moleStartBtn" style="margin-top:1rem; width:100%">▶ Başlat</button>
     </div>
+  </div>
+</section>
 
-    <!-- 8. TIC TAC TOE -->
+<!-- 8. DEDICATED TTT SECTION -->
+<section class="section ds-section" id="ttt-sec">
+  <div class="section-header">
+    <div class="section-badge">❌ Strateji</div>
+    <h2 class="section-title">XOX — Yapay Zeka</h2>
+    <p class="section-sub">Yapay zekaya karşı oyna!</p>
+  </div>
+  <div style="max-width: 450px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">❌</span><div><h3>XOX — AI</h3><p>Yapay zekaya karşı oyna</p></div><span class="game-badge">Strateji</span></div>
       <div class="ttt-status" id="tttStatus">Sen ⭕ — AI ❌ — Sıra sende!</div>
       <div class="ttt-grid" id="tttGrid">
         <button class="ttt-cell" data-i="0"></button><button class="ttt-cell" data-i="1"></button><button class="ttt-cell" data-i="2"></button>
@@ -1094,10 +1377,18 @@
         <button class="mini-btn" id="tttReset" style="margin-left:auto">🔄 Yeni</button>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 9. WORD SCRAMBLE -->
+<!-- 9. DEDICATED WORD SCRAMBLE SECTION -->
+<section class="section ds-section" id="word-sec">
+  <div class="section-header">
+    <div class="section-badge">📝 Kelime</div>
+    <h2 class="section-title">Kelime Bulmaca</h2>
+    <p class="section-sub">Karışık harfleri düzenle!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">📝</span><div><h3>Kelime Bulmaca</h3><p>Karışık harfleri düzenle</p></div><span class="game-badge">Kelime</span></div>
       <div class="word-game">
         <div class="word-meta"><span class="word-cat" id="wordCategory">Yükleniyor</span><span class="word-hint-text" id="wordHint"></span></div>
         <div class="scrambled-word" id="scrambledWord"></div>
@@ -1114,10 +1405,18 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 10. SIMON SAYS -->
+<!-- 10. DEDICATED SIMON SAYS SECTION -->
+<section class="section ds-section" id="simon-sec">
+  <div class="section-header">
+    <div class="section-badge">🧠 Hafıza</div>
+    <h2 class="section-title">Simon Says</h2>
+    <p class="section-sub">Renk dizisini ezberle!</p>
+  </div>
+  <div style="max-width: 450px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🧠</span><div><h3>Simon Says</h3><p>Renk dizisini ezberle</p></div><span class="game-badge new-badge">Hafıza</span></div>
       <div class="simon-board" id="simonBoard">
         <button class="simon-btn simon-red" id="simonRed"></button>
         <button class="simon-btn simon-blue" id="simonBlue"></button>
@@ -1128,12 +1427,20 @@
         <span>Seviye: <strong id="simonLevel">0</strong></span>
         <span>En İyi: <strong id="simonBest">0</strong></span>
       </div>
-      <button class="play-btn" id="simonStart">▶ Başlat</button>
+      <button class="play-btn" id="simonStart" style="width:100%; margin-top:0.5rem">▶ Başlat</button>
     </div>
+  </div>
+</section>
 
-    <!-- 11. MATH SPRINT -->
+<!-- 11. DEDICATED MATH SPRINT SECTION -->
+<section class="section ds-section" id="math-sec">
+  <div class="section-header">
+    <div class="section-badge">🔢 Zeka</div>
+    <h2 class="section-title">Matematik Sprint</h2>
+    <p class="section-sub">60 saniyede hızlı hesapla!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🔢</span><div><h3>Matematik Sprint</h3><p>60 saniyede hızlı hesapla!</p></div><span class="game-badge">Zeka</span></div>
       <div class="math-timer-bar"><div class="math-timer-fill" id="mathTimerFill"></div></div>
       <div class="math-problem" id="mathProblem">Başlatmak için butona bas</div>
       <input type="number" class="math-input" id="mathInput" placeholder="Cevabı gir ve Enter'a bas" disabled autocomplete="off" />
@@ -1142,12 +1449,20 @@
         <span>❌ <strong id="mathWrong">0</strong></span>
         <span>Puan: <strong id="mathScore">0</strong></span>
       </div>
-      <button class="play-btn" id="mathStart">▶ Başlat</button>
+      <button class="play-btn" id="mathStart" style="width:100%; margin-top:0.5rem">▶ Başlat</button>
     </div>
+  </div>
+</section>
 
-    <!-- 12. ROCK PAPER SCISSORS -->
+<!-- 12. DEDICATED RPS SECTION -->
+<section class="section ds-section" id="rps-sec">
+  <div class="section-header">
+    <div class="section-badge">✊ Şans</div>
+    <h2 class="section-title">Taş-Kağıt-Makas</h2>
+    <p class="section-sub">AI'ya karşı oyna!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">✊</span><div><h3>Taş-Kağıt-Makas</h3><p>AI'ya karşı oyna</p></div><span class="game-badge">Şans</span></div>
       <div class="rps-arena">
         <div class="rps-side"><div class="rps-emoji" id="rpsPlayer">❓</div><small>Sen</small></div>
         <div class="rps-vs">VS</div>
@@ -1165,10 +1480,18 @@
         <span>AI: <strong id="rpsLose">0</strong></span>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 13. NUMBER GUESS -->
+<!-- 13. DEDICATED NUMBER GUESS SECTION -->
+<section class="section ds-section" id="guess-sec">
+  <div class="section-header">
+    <div class="section-badge">🎯 Mantık</div>
+    <h2 class="section-title">Sayı Tahmin</h2>
+    <p class="section-sub">1-100 arasını bul!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
     <div class="game-card">
-      <div class="game-card-header"><span class="game-icon">🎯</span><div><h3>Sayı Tahmin</h3><p>1-100 arasını bul</p></div><span class="game-badge">Mantık</span></div>
       <div class="guess-number" id="guessDisplay">?</div>
       <div class="guess-hint" id="guessHint">1 ile 100 arasında bir sayı düşündüm...</div>
       <div class="guess-range" id="guessRange">📍 Aralık: 1 — 100</div>
@@ -1182,10 +1505,18 @@
         <button class="mini-btn" id="guessReset">🔄 Yeni</button>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 14. MINESWEEPER -->
-    <div class="game-card wide">
-      <div class="game-card-header"><span class="game-icon">💣</span><div><h3>Mayın Tarlası</h3><p>Sol tık: Aç &nbsp;|&nbsp; Sağ tık: 🚩 Bayrak</p></div><span class="game-badge new-badge">Strateji</span></div>
+<!-- 14. DEDICATED MINESWEEPER SECTION -->
+<section class="section ds-section" id="mine-sec">
+  <div class="section-header">
+    <div class="section-badge">💣 Strateji</div>
+    <h2 class="section-title">Mayın Tarlası</h2>
+    <p class="section-sub">Sol tık: Aç | Sağ tık: 🚩 Bayrak</p>
+  </div>
+  <div style="max-width: 580px; margin: 0 auto;">
+    <div class="game-card">
       <div class="mine-header">
         <span>💣 Kalan: <strong id="mineCount">10</strong></span>
         <span id="mineStatus" style="font-size:1.2rem;cursor:pointer" title="Yeni oyun">🙂</span>
@@ -1194,10 +1525,18 @@
       </div>
       <div class="mine-grid" id="mineGrid"></div>
     </div>
+  </div>
+</section>
 
-    <!-- 15. TYPING SPEED -->
-    <div class="game-card wide">
-      <div class="game-card-header"><span class="game-icon">⌨️</span><div><h3>Yazma Hızı Testi</h3><p>WPM (Kelime/Dakika) ölçümü</p></div><span class="game-badge new-badge">WPM</span></div>
+<!-- 15. DEDICATED TYPING SECTION -->
+<section class="section ds-section" id="typing-sec">
+  <div class="section-header">
+    <div class="section-badge">⌨️ WPM</div>
+    <h2 class="section-title">Yazma Hızı Testi</h2>
+    <p class="section-sub">Klavyedeki hız ve doğruluk oranını ölç!</p>
+  </div>
+  <div style="max-width: 700px; margin: 0 auto;">
+    <div class="game-card">
       <div class="typing-stats">
         <div class="typing-stat"><strong id="typingWPM">0</strong><span>WPM</span></div>
         <div class="typing-stat"><strong id="typingAcc">100</strong><span>% Doğruluk</span></div>
@@ -1206,9 +1545,8 @@
       </div>
       <div class="typing-text" id="typingText">Teste başlamak için aşağıdaki butona bas...</div>
       <textarea class="typing-textarea" id="typingInput" placeholder="Buraya yaz..." disabled rows="2"></textarea>
-      <button class="play-btn" id="typingStart">▶ Testi Başlat</button>
+      <button class="play-btn" id="typingStart" style="width:100%; margin-top:0.8rem">▶ Testi Başlat</button>
     </div>
-
   </div>
 </section>
 
@@ -1244,7 +1582,7 @@
 </section>
 
 <!-- DRAWING -->
-<section class="section canvas-section" id="canvas-sec">
+<section class="section ds-section canvas-section" id="canvas-sec">
   <div class="section-header"><div class="section-badge">🎨 Çizim</div><h2 class="section-title">Doodle Alanı</h2><p class="section-sub">Aklına ne gelirse çiz</p></div>
   <div class="canvas-toolbar">
     <div class="tool-group"><label class="tool-lbl">Renk</label>
@@ -1791,6 +2129,486 @@
   </div>
 </section>
 
+<!-- COSMIC NEBULA SIMULATOR -->
+<section class="section ds-section" id="nebula-sec">
+  <div class="section-header">
+    <div class="section-badge">🌌 İnteraktif</div>
+    <h2 class="section-title">Kozmik Nebula Simülatörü</h2>
+    <p class="section-sub">Tıklayarak karadelikler oluştur, kozmik tozların dansını izle!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Parçacık Sayısı: <span id="nebulaCountDisplay">1500</span></label>
+        <input type="range" id="nebulaCount" min="200" max="3000" value="1500" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Çekim Gücü</label>
+        <input type="range" id="nebulaGravity" min="1" max="10" value="5" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Renk Teması</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="nebulaThemeCosmic">🌌 Kozmik</button>
+          <button class="tool-btn" id="nebulaThemeSupernova">💥 Süpernova</button>
+          <button class="tool-btn" id="nebulaThemeAurora">💚 Aurora</button>
+        </div>
+      </div>
+      <button class="clear-btn" id="clearNebula">🗑️ Temizle</button>
+      <button class="save-btn" id="resetNebula">🔄 Yeniden Başlat</button>
+    </div>
+    <div class="drawing-canvas-wrapper">
+      <canvas id="nebulaCanvas" style="display:block; width:100%; height:450px; background:#04050d;"></canvas>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Tıklayarak çekim merkezleri yerleştirebilirsin. Yerleştirdiğin merkezler parçacıkları yörüngesine çeker!</p>
+  </div>
+</section>
+
+<!-- ZEN AMBIENT PAD -->
+<section class="section ds-section" id="dreampad-sec">
+  <div class="section-header">
+    <div class="section-badge">🎹 Ambiyans</div>
+    <h2 class="section-title">Zen Melodi Havuzu</h2>
+    <p class="section-sub">Parmağını veya fareyi karelerin üzerinde gezdir, büyüleyici tınılar üret!</p>
+  </div>
+  <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+    <div class="pomo-modes">
+      <button class="pomo-mode-btn active" id="dreampadSoundWarm">🎯 Ilık Dalga</button>
+      <button class="pomo-mode-btn" id="dreampadSoundEcho">🚀 Uzay Eko</button>
+      <button class="pomo-mode-btn" id="dreampadSoundDeep">🌿 Derin Zen</button>
+    </div>
+    
+    <!-- 6x6 Pad Grid -->
+    <div class="dreampad-grid" id="dreampadGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; width: 100%; max-width: 450px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: var(--r3); border: 1px solid var(--gb);">
+      <!-- Generated dynamically in JS -->
+    </div>
+
+    <div style="display: flex; gap: 2rem; align-items: center; width: 100%; justify-content: center; flex-wrap: wrap;">
+      <div class="vol-control">
+        <span>🔉</span>
+        <input type="range" id="dreampadVolume" min="0" max="100" value="50" class="vol-slider" />
+        <span>🔊</span>
+      </div>
+      <button class="play-stop-btn" id="dreampadAutoPlay" style="box-shadow: 0 8px 30px rgba(0,229,255,0.25); background: linear-gradient(135deg, var(--a3), var(--a1));">✨ Auto-Dream (Otomatik)</button>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Fareyle kareler üzerinde gezinirken veya tıklarken pentatonik notalar çalar. Auto-Dream ile arka planda kendi kendine akan sakinleştirici ezgiler oluşturabilirsin.</p>
+  </div>
+</section>
+
+<!-- ZEN BONSAI GARDEN -->
+<section class="section ds-section" id="bonsai-sec">
+  <div class="section-header">
+    <div class="section-badge">🌸 Doğa</div>
+    <h2 class="section-title">Zen Bonsai Bahçesi</h2>
+    <p class="section-sub">Fraktal matematik ile kendi dijital ağacını büyüt ve kumları tırmıkla!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Ağaç Tipi</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="bonsaiTypeSakura">🌸 Sakura</button>
+          <button class="tool-btn" id="bonsaiTypeOak">🌳 Neon Meşe</button>
+          <button class="tool-btn" id="bonsaiTypeFern">🌿 Siber Eğrelti</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Ağaç Boyutu: <span id="bonsaiDepthDisplay">7</span> Seviye</label>
+        <input type="range" id="bonsaiDepth" min="4" max="9" value="7" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Rüzgar Esintisi</label>
+        <input type="range" id="bonsaiWind" min="0" max="10" value="2" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Mod</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="bonsaiToolPlant">🌱 Ağaç Büyüt</button>
+          <button class="tool-btn" id="bonsaiToolRake">🧹 Kum Tırmıkla</button>
+        </div>
+      </div>
+      <button class="clear-btn" id="clearBonsai">🗑️ Temizle</button>
+      <button class="save-btn" id="saveBonsai">💾 Kaydet</button>
+    </div>
+    <div class="drawing-canvas-wrapper" style="position: relative;">
+      <canvas id="bonsaiCanvas" style="display:block; width:100%; height:450px; background:#0b0c16;"></canvas>
+      <div id="bonsaiWaterGlow" style="position: absolute; bottom: 10px; right: 15px; font-size: .78rem; color: var(--a4); text-shadow: 0 0 8px var(--a4);">☯ Zen Bahçesi Sakinliği</div>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Tıklayarak yeni ağaçlar dikebilirsin. 'Kum Tırmıkla' moduna geçerek zemin üzerinde pürüzsüz huzur dalgaları çizebilirsin.</p>
+  </div>
+</section>
+
+<!-- VECTOR FLOW FIELD PAINT -->
+<section class="section ds-section" id="flowfield-sec">
+  <div class="section-header">
+    <div class="section-badge">💨 Akışkan</div>
+    <h2 class="section-title">Rüzgar Akışı Tuvali</h2>
+    <p class="section-sub">Renklerin akışına yön ver, rüzgar esintili eşsiz soyut tablolar çiz!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Akış Hızı</label>
+        <input type="range" id="flowSpeed" min="1" max="10" value="4" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Parçacık Ömrü</label>
+        <input type="range" id="flowLife" min="20" max="200" value="80" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Renk Paleti</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="flowPalRainbow">🌈 Spektrum</button>
+          <button class="tool-btn" id="flowPalOcean">💙 Okyanus</button>
+          <button class="tool-btn" id="flowPalFire">🔥 Lav</button>
+        </div>
+      </div>
+      <button class="clear-btn" id="clearFlow">🗑️ Temizle</button>
+      <button class="save-btn" id="saveFlow">💾 Resmi Kaydet</button>
+    </div>
+    <div class="drawing-canvas-wrapper">
+      <canvas id="flowfieldCanvas" style="display:block; width:100%; height:450px; background:#030308; cursor:crosshair;"></canvas>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Farenizi sürükleyerek görünmez rüzgarlar oluşturun. Binlerce parlayan parçacık oluşturduğunuz hava akımlarına kapılıp akıcı izler bırakacaktır.</p>
+</section>
+
+<!-- PIXEL SAND PHYSICS SIMULATOR -->
+<section class="section ds-section" id="sand-sec">
+  <div class="section-header">
+    <div class="section-badge">🧪 Kum Havuzu</div>
+    <h2 class="section-title">Piksel Fizik Simülatörü</h2>
+    <p class="section-sub">Farklı elementleri sprey et, fiziksel ve kimyasal reaksiyonları gözlemle!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Element Seçimi</label>
+        <div class="tool-btns" style="flex-wrap: wrap;">
+          <button class="tool-btn active" id="sandElSand">🟡 Kum</button>
+          <button class="tool-btn" id="sandElWater">🔵 Su</button>
+          <button class="tool-btn" id="sandElGunpowder">🟣 Barut</button>
+          <button class="tool-btn" id="sandElFire">🔴 Ateş</button>
+          <button class="tool-btn" id="sandElAcid">🟢 Asit</button>
+          <button class="tool-btn" id="sandElWall">🔲 Duvar</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Sprey Boyutu: <span id="sandBrushDisplay">4</span>px</label>
+        <input type="range" id="sandBrushSize" min="1" max="10" value="4" class="brush-slider" />
+      </div>
+      <button class="clear-btn" id="clearSand">🗑️ Temizle</button>
+      <button class="save-btn" id="presetSand">💥 Barut Fıçısı Patlat!</button>
+    </div>
+    <div class="drawing-canvas-wrapper">
+      <canvas id="sandCanvas" style="display:block; width:100%; height:430px; background:#07070c; cursor:crosshair;"></canvas>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Elementleri tuvale püskürtmek için farenizi basılı tutup sürükleyin. Ateşle barutu patlatabilir, asitle duvarları eritebilirsiniz!</p>
+  </div>
+</section>
+
+<!-- COSMIC FLAPPY ARCADE -->
+<section class="section ds-section" id="flappy-sec">
+  <div class="section-header">
+    <div class="section-badge">🛸 Arcade</div>
+    <h2 class="section-title">Kozmik Flappy</h2>
+    <p class="section-sub">Boşluk tuşuna veya ekrana basarak UFO'yu uçur, engelleri aş!</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="game-card" style="padding: 1rem;">
+      <div class="target-stat-bar" style="margin-bottom: 0.8rem;">
+        <span>Skor: <strong id="flappyScore">0</strong></span>
+        <span>En İyi: <strong id="flappyBest">0</strong></span>
+      </div>
+      <div class="game-area" style="aspect-ratio: 4/3; height: 320px; width: 100%;">
+        <canvas id="flappyCanvas" style="display:block; width:100%; height:100%; background:#060814;"></canvas>
+        <div class="game-overlay" id="flappyOverlay">
+          <div class="overlay-icon">🛸</div>
+          <p>Kozmik Flappy</p>
+          <button class="play-btn" id="flappyStartBtn">▶ Başlat</button>
+          <p style="font-size: 0.72rem; color: var(--tx3); margin-top: 5px;">[Boşluk] / Tıkla</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALAXY SHOOTER ARCADE -->
+<section class="section ds-section" id="shooter-sec">
+  <div class="section-header">
+    <div class="section-badge">☄️ Savaş</div>
+    <h2 class="section-title">Kozmik Savunucu</h2>
+    <p class="section-sub">Göktaşlarını vurarak gezegeni koru! Yön Tuşları veya Fare ile hareket et.</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="game-card" style="padding: 1rem;">
+      <div class="target-stat-bar" style="margin-bottom: 0.8rem;">
+        <span>Skor: <strong id="shooterScore">0</strong></span>
+        <span>En İyi: <strong id="shooterBest">0</strong></span>
+      </div>
+      <div class="game-area" style="aspect-ratio: 4/3; height: 320px; width: 100%;">
+        <canvas id="shooterCanvas" style="display:block; width:100%; height:100%; background:#04040a;"></canvas>
+        <div class="game-overlay" id="shooterOverlay">
+          <div class="overlay-icon">☄️</div>
+          <p>Kozmik Savunucu</p>
+          <button class="play-btn" id="shooterStartBtn">▶ Başlat</button>
+          <p style="font-size: 0.72rem; color: var(--tx3); margin-top: 5px;">[←][→] Git / [Boşluk] Ateş</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEON 2048 PUZZLE -->
+<section class="section ds-section" id="m2048-sec">
+  <div class="section-header">
+    <div class="section-badge">🧩 Zeka</div>
+    <h2 class="section-title">Neon 2048</h2>
+    <p class="section-sub">Kareleri kaydır, aynı sayıları birleştir ve 2048'e ulaş!</p>
+  </div>
+  <div style="max-width: 450px; margin: 0 auto;">
+    <div class="game-card" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 0.5rem;">
+          <div class="typing-stat-box" style="padding: 6px 12px; min-width: 60px;">
+            <strong id="m2048Score" style="font-size: 1.2rem;">0</strong>
+            <span style="font-size: 0.6rem;">Skor</span>
+          </div>
+          <div class="typing-stat-box" style="padding: 6px 12px; min-width: 60px;">
+            <strong id="m2048Best" style="font-size: 1.2rem;">0</strong>
+            <span style="font-size: 0.6rem;">En İyi</span>
+          </div>
+        </div>
+        <button class="mini-btn" id="resetM2048">🔄 Yenile</button>
+      </div>
+      
+      <!-- 2048 Grid Container -->
+      <div id="m2048GridContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(0,0,0,0.35); padding: 12px; border-radius: var(--r2); aspect-ratio: 1; border: 1px solid var(--gb);">
+        <!-- Generated dynamically in JS -->
+      </div>
+      <p style="font-size: 0.72rem; color: var(--tx3); text-align: center;">Klavye yön tuşlarını [←][↑][→][↓] veya fare sürüklemesini kullanarak karoları hareket ettirebilirsiniz.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEON MAZE SOLVER -->
+<section class="section ds-section" id="maze-sec">
+  <div class="section-header">
+    <div class="section-badge">🗺️ Keşif</div>
+    <h2 class="section-title">Kozmik Labirent</h2>
+    <p class="section-sub">Çıkış kapısına ulaşarak kozmik enerjiyi serbest bırak!</p>
+  </div>
+  <div style="max-width: 500px; margin: 0 auto;">
+    <div class="game-card" style="display: flex; flex-direction: column; gap: 1rem; padding: 1.2rem;">
+      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div class="pomo-modes" style="margin: 0;">
+          <button class="pomo-mode-btn active" id="mazeDiffEasy">🌱 Kolay</button>
+          <button class="pomo-mode-btn" id="mazeDiffMedium">🌳 Orta</button>
+          <button class="pomo-mode-btn" id="mazeDiffHard">🔥 Zor</button>
+        </div>
+        <button class="mini-btn" id="resetMazeBtn">🔄 Yeni Harita</button>
+      </div>
+      <div class="game-area" style="aspect-ratio: 1; width: 100%; height: auto;">
+        <canvas id="mazeCanvas" style="display:block; width:100%; height:100%; background:#07080f;"></canvas>
+        <div class="game-overlay" id="mazeOverlay">
+          <div class="overlay-icon">🌀</div>
+          <p>Labirent Hazırlanıyor</p>
+          <button class="play-btn" id="mazeStartBtn">▶ Oyunu Başlat</button>
+          <p style="font-size: 0.72rem; color: var(--tx3); margin-top: 5px;">[←][↑][→][↓] tuşlarıyla hareket et</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KOZMİK TELESKOP -->
+<section class="section ds-section" id="telescope-sec">
+  <div class="section-header">
+    <div class="section-badge">🗺️ Keşif & Bilgi</div>
+    <h2 class="section-title">Kozmik Teleskop</h2>
+    <p class="section-sub">Gökyüzü koordinatlarını kaydırarak derin uzay nebularını ve astronomi olaylarını keşfet!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Koordinat Seçenekleri</label>
+        <div class="tool-btns" style="flex-wrap: wrap;">
+          <button class="tool-btn active" id="telPreset1">🌌 Orion Nebulası</button>
+          <button class="tool-btn" id="telPreset2">🌀 Andromeda Galaksisi</button>
+          <button class="tool-btn" id="telPreset3">🪐 Satürn Halkaları</button>
+          <button class="tool-btn" id="telPreset4">🕳️ Sagittarius A* (Kara Delik)</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Yakınlaştırma (Zoom): <span id="telZoomDisplay">1.0</span>x</label>
+        <input type="range" id="telZoomSlider" min="1.0" max="5.0" step="0.1" value="1.0" class="brush-slider" />
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; flex-wrap: wrap;">
+      <div class="drawing-canvas-wrapper" style="position: relative;">
+        <canvas id="telescopeCanvas" style="display:block; width:100%; height:420px; background:#020208; cursor:crosshair;"></canvas>
+        <div id="telescopeCoords" style="position: absolute; bottom: 15px; left: 15px; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; border: 1px solid var(--gb); color: #00e5ff;">RA: 05h 35m / DEC: -05° 23'</div>
+      </div>
+      <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; gap: 0.8rem; justify-content: flex-start; height: 100%;">
+        <div class="game-card-header"><span class="game-icon" id="telInfoIcon">🌌</span><div><h3 id="telInfoTitle">Orion Nebulası</h3><p>Koordinat Kilitlendi</p></div></div>
+        <p id="telInfoDesc" style="font-size: .8rem; color: var(--tx2); line-height: 1.6; margin: 0;">Avcı Takımyıldızı kuşağının hemen güneyinde yer alan devasa bir yıldız oluşum bölgesidir. Dünyaya yaklaşık 1344 ışık yılı uzaklıktadır ve çıplak gözle dahi hafif bir pus şeklinde görülebilir.</p>
+        <div style="margin-top: auto; border-top: 1px solid var(--gb); padding-top: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.72rem; color: var(--tx3);">
+          <div>✨ Kategori: Yıldız Oluşum Bulutsusu</div>
+          <div>📏 Çap: Yaklaşık 24 Işık Yılı</div>
+          <div>🔬 Gözlem Oranı: %100 Kararlı</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RUH HALİ ÇEMBERİ -->
+<section class="section ds-section" id="aura-sec">
+  <div class="section-header">
+    <div class="section-badge">🌿 Araçlar & Kişisel</div>
+    <h2 class="section-title">Ruh Hali Çemberi</h2>
+    <p class="section-sub">Mevcut ruh halini seç, matematiksel harmoniyle dans eden aura mandalanı ve zihinsel sakinleşme önerilerini keşfet!</p>
+  </div>
+  <div style="max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <button class="play-btn active" id="moodCalm" style="background: linear-gradient(135deg, #00c853, #00b894); color: #fff; border: none; padding: 10px 20px; font-weight: 700;">🟢 Sakin & Huzurlu</button>
+      <button class="play-btn" id="moodFocus" style="background: rgba(0,229,255,0.15); border: 1px solid #00e5ff; color: #fff; padding: 10px 20px;">🔵 Odaklanmış</button>
+      <button class="play-btn" id="moodCreative" style="background: rgba(124,77,255,0.15); border: 1px solid #7c4dff; color: #fff; padding: 10px 20px;">🟣 Yaratıcı</button>
+      <button class="play-btn" id="moodEnergetic" style="background: rgba(255,234,0,0.15); border: 1px solid #ffea00; color: #fff; padding: 10px 20px;">🟡 Enerjik & Canlı</button>
+      <button class="play-btn" id="moodTired" style="background: rgba(255,112,67,0.15); border: 1px solid #ff7043; color: #fff; padding: 10px 20px;">🟠 Yorgun & Gergin</button>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+      <div class="drawing-canvas-wrapper" style="aspect-ratio: 1; max-width: 400px; margin: 0 auto; width: 100%;">
+        <canvas id="auraCanvas" style="display:block; width:100%; height:100%; background:#030309; border-radius: 50%; border: 1px solid var(--gb);"></canvas>
+      </div>
+      <div class="game-card" style="padding: 1.5rem; min-height: 280px; display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
+        <div style="font-size: 0.72rem; color: #00c853; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;" id="auraStatusBadge">Aura Durumu: Sakin & Huzurlu</div>
+        <h3 id="auraTipTitle" style="font-size: 1.3rem; margin: 0;">Zihniniz Bir Liman</h3>
+        <p id="auraTipDesc" style="font-size: 0.85rem; color: var(--tx2); line-height: 1.6; margin: 0;">Harika bir dengedesiniz. Bu anı taçlandırmak için burnunuzdan 4 saniye nefes alın, 4 saniye tutun ve 4 saniyede yavaşça verin. Doğanın yeşil frekansları auranızı korumaya devam ediyor.</p>
+        <div style="font-size: 0.75rem; color: var(--tx3); border-top: 1px solid var(--gb); padding-top: 0.8rem; display: flex; gap: 1rem;">
+          <span>🧘 Frekans: <strong>528 Hz</strong></span>
+          <span>🌀 Çakra: <strong>Kalp (Anahata)</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN KALEİDOSKOP -->
+<section class="section ds-section" id="kaleido-sec">
+  <div class="section-header">
+    <div class="section-badge">🎨 Yaratıcılık & Huzur</div>
+    <h2 class="section-title">Zen Kaleidoskop</h2>
+    <p class="section-sub">Tuval üzerinde sürükleyerek çizim yapın. Çizgileriniz 8 simetrik eksende çoğaltılarak büyüleyici mandalalar oluşturacaktır.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.2rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Renk Modu</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="kalColNeon">🌈 Neon Spektrum</button>
+          <button class="tool-btn" id="kalColGold">✨ Altın Işıltı</button>
+          <button class="tool-btn" id="kalColOcean">🌊 Okyanus Esintisi</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Fırça Kalınlığı: <span id="kalBrushDisplay">3</span>px</label>
+        <input type="range" id="kalBrushSize" min="1" max="10" value="3" class="brush-slider" />
+      </div>
+      <div class="tool-group">
+        <label class="tool-lbl">Sönme Hızı (Decay)</label>
+        <input type="range" id="kalDecay" min="0" max="100" value="15" class="brush-slider" />
+      </div>
+      <button class="clear-btn" id="clearKal">🗑️ Temizle</button>
+    </div>
+    <div class="drawing-canvas-wrapper">
+      <canvas id="kaleidoCanvas" style="display:block; width:100%; height:450px; background:#010105; cursor:crosshair;"></canvas>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Farenizi veya parmağınızı tuval üzerinde gezdirerek göz alıcı, simetrik geometrik desenler üretin. Çizimler sönme hızına göre yavaşça silinerek akıcı bir deneyim sunar.</p>
+  </div>
+</section>
+
+<!-- KOZMİK ORBİT -->
+<section class="section ds-section" id="orbit-sec">
+  <div class="section-header">
+    <div class="section-badge">🚀 Eğlenceli & Fizik</div>
+    <h2 class="section-title">Kozmik Orbit</h2>
+    <p class="section-sub">Yerçekimi merkezli uzay tuvalinde basılı tutup gererek gezegenleri fırlat ve kozmik yörüngeler tasarla!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.2rem;">
+    <div class="canvas-toolbar">
+      <div class="tool-group">
+        <label class="tool-lbl">Gezegen Tipi</label>
+        <div class="tool-btns">
+          <button class="tool-btn active" id="orbTypeNormal">🪐 Normal Gezegen</button>
+          <button class="tool-btn" id="orbTypeMassive">☄️ Ağır Göktaşı</button>
+          <button class="tool-btn" id="orbTypeLight">✨ Mini Uydu</button>
+        </div>
+      </div>
+      <button class="clear-btn" id="clearOrbit">🗑️ Evreni Temizle</button>
+      <button class="save-btn" id="resetOrbitSun">☀️ Çekim Gücü Ekle</button>
+    </div>
+    <div class="drawing-canvas-wrapper" style="position: relative;">
+      <canvas id="orbitCanvas" style="display:block; width:100%; height:460px; background:#020207; cursor:crosshair;"></canvas>
+      <div style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.65); padding: 5px 12px; border-radius: var(--r1); font-size: 0.75rem; border: 1px solid var(--gb); color: var(--tx2);">
+        Sistemdeki Gökcisimleri: <strong id="orbitCount" style="color: #ffea00;">1</strong>
+      </div>
+    </div>
+    <p style="font-size: .78rem; color: var(--tx3); text-align: center;">Farenizle tuvalde basılı tutup sürükleyerek yön ve hız vektörünü ayarlayın, ardından bırakarak yeni bir gezegen fırlatın. Merkezdeki parlayan güneşin kütleçekim kuvvetine kapılan gezegenlerin spiral dansını izleyin.</p>
+  </div>
+</section>
+
+<!-- ZEN ODAKLANMA SAATİ -->
+<section class="section ds-section" id="zenclock-sec">
+  <div class="section-header">
+    <div class="section-badge">⏱️ Araçlar & Kişisel</div>
+    <h2 class="section-title">Zen Odaklanma Saati</h2>
+    <p class="section-sub">Cam analog saat tasarımıyla zamanı takip et, arka plan doğa sesleriyle zihnini dinlendir!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+      <div class="drawing-canvas-wrapper" style="aspect-ratio: 1; border-radius: 50%; max-width: 320px; width: 100%;">
+        <canvas id="zenClockCanvas" style="display:block; width:100%; height:100%; background:radial-gradient(circle, #090a16, #020207); border-radius: 50%; border: 1px solid var(--gb);"></canvas>
+      </div>
+      <div style="font-size: 1.8rem; font-family: monospace; font-weight: 700; color: #fff; letter-spacing: 2px;" id="zenClockDigital">00:00:00</div>
+    </div>
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; justify-content: flex-start;">
+      <h3 style="margin: 0; font-size: 1.2rem;">Kozmik Ses Mikseri</h3>
+      <p style="font-size: 0.78rem; color: var(--tx2); line-height: 1.5; margin: 0;">Odaklanırken veya dinlenirken arka planda çalacak doğal ortam seslerini karıştırın:</p>
+      
+      <!-- Sound Controls -->
+      <div style="display: flex; flex-direction: column; gap: 0.8rem; border-top: 1px solid var(--gb); padding-top: 1rem; border-bottom: 1px solid var(--gb); padding-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">🌧️ Ilık Yağmur</span>
+          <button class="mini-btn" id="btnSoundRain" style="padding: 4px 10px; font-size: 0.7rem;">▶ Çal</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">💨 Kozmik Rüzgar</span>
+          <button class="mini-btn" id="btnSoundWind" style="padding: 4px 10px; font-size: 0.7rem;">▶ Çal</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">🔥 Çıtırdayan Ateş</span>
+          <button class="mini-btn" id="btnSoundFire" style="padding: 4px 10px; font-size: 0.7rem;">▶ Çal</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">🌊 Derin Sualtı</span>
+          <button class="mini-btn" id="btnSoundWater" style="padding: 4px 10px; font-size: 0.7rem;">▶ Çal</button>
+        </div>
+      </div>
+      
+      <!-- Focus Timer -->
+      <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; font-weight: 700;">⏱️ Odaklanma Sayacı (Pomodoro)</span>
+          <span style="font-size: 0.85rem; font-family: monospace; font-weight: 700; color: #ffea00;" id="zenTimerDisplay">25:00</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="play-btn" id="zenTimerStartBtn" style="flex: 1; padding: 8px 12px; font-size: 0.8rem;">▶ Başlat</button>
+          <button class="mini-btn" id="zenTimerResetBtn" style="padding: 8px 12px; font-size: 0.8rem;">🔄 Sıfırla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <footer class="footer">
   <div class="footer-inner">
