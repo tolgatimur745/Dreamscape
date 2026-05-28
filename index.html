@@ -3725,6 +3725,368 @@
   </div>
 </section>
 
+<!-- ZEN RENK SELİ (COLOR FLOOD MINI GAME) -->
+<section class="section ds-section" id="color-flood-sec">
+  <div class="section-header">
+    <div class="section-badge">🎮 Renk Bulmacası</div>
+    <h2 class="section-title">Zen Renk Seli</h2>
+    <p class="section-sub">Sol üstten başlayarak tüm paneli tek bir renge boyayın. Hamle sayınız kısıtlı, sakinleşin ve planlayın.</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; background: radial-gradient(circle at top right, rgba(0,229,255,0.02), rgba(0,0,0,0));">
+      <canvas id="floodCanvas" width="380" height="380" style="background: #040508; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></canvas>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Oyun Tablosu & Kontroller</h3>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; text-align: center;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Kalan Hamle</span>
+          <strong style="font-size: 1.4rem; color: #ffea00;" id="lblFloodMoves">25</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Boya Yüzdesi</span>
+          <strong style="font-size: 1.4rem; color: #69f0ae;" id="lblFloodPercent">0%</strong>
+        </div>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700;">Boya Rengi Seçin:</span>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;" id="floodColors">
+          <button class="mini-btn" id="btnFloodCyan" style="padding: 10px; border-color: rgba(0,229,255,0.2); color: #00e5ff; font-weight: 700;">Cyan</button>
+          <button class="mini-btn" id="btnFloodMagenta" style="padding: 10px; border-color: rgba(255,107,157,0.2); color: #ff6b9d; font-weight: 700;">Pink</button>
+          <button class="mini-btn" id="btnFloodYellow" style="padding: 10px; border-color: rgba(255,234,0,0.2); color: #ffea00; font-weight: 700;">Yellow</button>
+          <button class="mini-btn" id="btnFloodGreen" style="padding: 10px; border-color: rgba(105,240,174,0.2); color: #69f0ae; font-weight: 700;">Green</button>
+          <button class="mini-btn" id="btnFloodPurple" style="padding: 10px; border-color: rgba(124,77,255,0.2); color: #a29bfe; font-weight: 700;">Purple</button>
+          <button class="mini-btn" id="btnFloodRed" style="padding: 10px; border-color: rgba(255,23,71,0.2); color: #ff1744; font-weight: 700;">Red</button>
+        </div>
+      </div>
+      
+      <button class="play-btn" id="btnFloodRestart" style="margin: 0; width: 100%; padding: 10px; font-size: 0.85rem;">🔄 Tahtayı Yenile</button>
+    </div>
+  </div>
+</section>
+
+<!-- HAFIZA YÖRÜNGESİ (PATTERN MEMORY GRID) -->
+<section class="section ds-section" id="memory-orbit-sec">
+  <div class="section-header">
+    <div class="section-badge">🎮 Zihin Jimnastiği</div>
+    <h2 class="section-title">Hafıza Yörüngesi</h2>
+    <p class="section-sub">Sırayla parlayan kozmik karoları ezberleyin ve deseni tekrarlayın. Seviye atladıkça kozmos hızlanacak!</p>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; background: radial-gradient(circle at top right, rgba(124,77,255,0.02), rgba(0,0,0,0));">
+      <canvas id="memoryCanvas" width="380" height="380" style="background: #030408; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r2); display: block; width: 100%; aspect-ratio: 1; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer;"></canvas>
+    </div>
+    
+    <div class="game-card" style="padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Hafıza Konsolu</h3>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; text-align: center;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">Aktif Seviye</span>
+          <strong style="font-size: 1.4rem; color: #00e5ff;" id="lblMemoryLevel">Seviye 1</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase;">En Yüksek Skor</span>
+          <strong style="font-size: 1.4rem; color: #69f0ae;" id="lblMemoryHighScore">0</strong>
+        </div>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb); margin: 0.2rem 0;"></div>
+      
+      <div id="memoryStatus" style="font-size: 0.85rem; color: var(--tx2); text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 0.5rem;">
+        Başlamak için "Oyunu Başlat" butonuna tıklayın.
+      </div>
+      
+      <button class="play-btn" id="btnMemoryStart" style="margin: 0; width: 100%; padding: 12px; font-size: 0.9rem; background: linear-gradient(135deg, #7c4dff, #00e5ff);">▶ Oyunu Başlat</button>
+    </div>
+  </div>
+</section>
+
+<!-- RÜYA YORUMLAYICI (DREAM WEAVER AI) -->
+<section class="section ds-section" id="dream-weaver-sec">
+  <div class="section-header">
+    <div class="section-badge">🔮 Bilinçaltı Analizcisi</div>
+    <h2 class="section-title">Kozmik Rüya Yorumlayıcı</h2>
+    <p class="section-sub">Gördüğünüz rüyayı kelimelere dökün. Yapay zeka sembollerinizi ayıklayıp bilinçaltınızın derinliklerini çizsin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Bilinçaltı Günlüğü</h3>
+      
+      <textarea id="dreamInput" placeholder="Rüyanızda neler gördünüz? (Uçuyordum, karanlık bir ormandaydım, devasa bir dalga vardı, saatler geri akıyordu vb. detaylıca yazın...)" style="width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; padding: 12px; color: #fff; font-size: 0.85rem; line-height: 1.5; resize: none;"></textarea>
+      
+      <button class="play-btn" id="btnAnalyzeDream" style="margin: 0; padding: 11px 20px; font-size: 0.88rem; background: linear-gradient(135deg, #7c4dff, #ff6b9d);">🔮 Rüyayı Dokut & Analiz Et</button>
+      
+      <div id="dreamInterpretationPanel" class="hidden" style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 1rem; border-radius: 12px; font-size: 0.8rem; line-height: 1.6; color: var(--tx2); max-height: 200px; overflow-y: auto;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+    
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; align-items: center;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff; width: 100%; text-align: left;">Rüya Görseli & Enerji Dağılımı</h3>
+      
+      <!-- Dream nebula visualizer canvas -->
+      <canvas id="dreamCanvas" width="380" height="200" style="background: #030306; border: 1px solid rgba(255,255,255,0.06); border-radius: var(--r2); display: block; width: 100%; height: auto; aspect-ratio: 1.9; box-shadow: inset 0 0 25px rgba(0,0,0,0.9);"></canvas>
+      
+      <!-- Subconscious analytics progress bars -->
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 0.6rem;">
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--tx2); margin-bottom: 2px;">
+            <span>Yaratıcılık</span>
+            <span id="lblDreamStat1">15%</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 5px; border-radius: 3px; overflow: hidden;">
+            <div id="barDreamStat1" style="width: 15%; height: 100%; background: #00e5ff; transition: width 1s;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--tx2); margin-bottom: 2px;">
+            <span>Kaygı Derecesi</span>
+            <span id="lblDreamStat2">10%</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 5px; border-radius: 3px; overflow: hidden;">
+            <div id="barDreamStat2" style="width: 10%; height: 100%; background: #ff6b9d; transition: width 1s;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--tx2); margin-bottom: 2px;">
+            <span>Mantıksal Tutarlılık</span>
+            <span id="lblDreamStat3">30%</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 5px; border-radius: 3px; overflow: hidden;">
+            <div id="barDreamStat3" style="width: 30%; height: 100%; background: #ffea00; transition: width 1s;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--tx2); margin-bottom: 2px;">
+            <span>Spiritualite</span>
+            <span id="lblDreamStat4">20%</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); height: 5px; border-radius: 3px; overflow: hidden;">
+            <div id="barDreamStat4" style="width: 20%; height: 100%; background: #69f0ae; transition: width 1s;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN AI MENTOR & DUYGU KÜRESİ (ZEN MENTOR) -->
+<section class="section ds-section" id="zen-mentor-sec">
+  <div class="section-header">
+    <div class="section-badge">🧘 Zihinsel Felsefe</div>
+    <h2 class="section-title">Zen AI Mentor & Canlı Duygu Küresi</h2>
+    <p class="section-sub">Bilgelerle konuşup dertleşin. Türbülanslı düşüncelerinizi sakinleştirmek için duygusal durumunuza özel nefes küresini izleyin.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <!-- Left panel: chat dialogue console -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 480px;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Felsefi Mentor Seçimi</h3>
+      
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem;">
+        <button class="mini-btn active" id="btnMentorSeneca" style="font-size: 0.72rem; padding: 6px 4px;">Seneca (Stoacı)</button>
+        <button class="mini-btn" id="btnMentorRyokan" style="font-size: 0.72rem; padding: 6px 4px;">Ryokan (Zen)</button>
+        <button class="mini-btn" id="btnMentorSophia" style="font-size: 0.72rem; padding: 6px 4px;">Sophia (Psikolog)</button>
+        <button class="mini-btn" id="btnMentorCosmos" style="font-size: 0.72rem; padding: 6px 4px;">Rehber (Cosmic)</button>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb);"></div>
+      
+      <!-- Dialogue feeds -->
+      <div id="mentorChatHistory" style="flex: 1; min-height: 200px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.3rem;">
+        <div style="display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--tx2); background: rgba(255,255,255,0.01); border: 1px solid var(--gb); padding: 8px 12px; border-radius: 4px 12px 12px 12px;">
+          <strong style="color: #ffea00; min-width: 60px;">Seneca:</strong> Selam genç zihin. Bugün hayatın kısalığı veya seni sarsan hangi dış olay üzerine felsefe yapmak istersin?
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <input type="text" id="mentorUserInput" placeholder="Zihnini kurcalayan derdini bilgeye dök..." style="flex: 1; padding: 10px 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; color: #fff; font-size: 0.88rem;" />
+        <button class="play-btn" id="btnMentorSend" style="padding: 10px 20px; font-size: 0.88rem; margin: 0; background: linear-gradient(135deg, #7c4dff, #ffea00); color: #000; font-weight: 700;">Akıl Danış</button>
+      </div>
+    </div>
+    
+    <!-- Right panel: Orb wave visualizer & breathing instructions -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; align-items: center; min-height: 480px; justify-content: space-between;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff; width: 100%;">Duygu Küresi & Nefes Sweeper</h3>
+      
+      <!-- Soul wave canvas -->
+      <div style="position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
+        <canvas id="mentorCanvas" width="220" height="220" style="border-radius: 50%; display: block; background: transparent; cursor: pointer;"></canvas>
+        <div id="lblBreathingText" style="position: absolute; font-size: 0.88rem; font-weight: 700; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.9); pointer-events: none;">NEFES AL</div>
+      </div>
+      
+      <div id="lblSentimentDetected" style="font-size: 0.72rem; color: var(--tx3); text-transform: uppercase; border: 1px solid var(--gb); padding: 4px 12px; border-radius: 20px;">
+        Algılanan Aura: <strong style="color:#69f0ae;" id="lblSentimentVal">Dingin (Calm)</strong>
+      </div>
+      
+      <div style="background: rgba(105,240,174,0.02); border: 1px solid rgba(105,240,174,0.08); border-radius: 12px; padding: 0.8rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5; text-align: center; width: 100%;">
+        * Duygu küresi, yazdığınız kelimelerin stres, üzüntü veya bilgelik tonunu tarayarak dinamik olarak şekil ve renk değiştirir. Kürenin büyüme/küçülme yörüngesine uyum sağlayarak derin nefes egzersizi yapın.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ŞÜPHELİ DEDEKTİF (TURING SUSPECT GAME) -->
+<section class="section ds-section" id="turing-detective-sec">
+  <div class="section-header">
+    <div class="section-badge">🕵️ Turing Testi</div>
+    <h2 class="section-title">Yapay Zeka Dedektifi: Robot Kim?</h2>
+    <p class="section-sub">Karşınızda duran üç şüpheliyi sorgulayın. Biyometrik nabız ölçümleriyle robot şüphe değerlerini analiz ederek hangisinin AI olduğunu bulun.</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <!-- Left panel: suspect list & question selection -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 520px; justify-content: space-between;">
+      <div>
+        <h3 style="margin: 0 0 0.8rem 0; font-size: 1.1rem; color: #fff;">Sorgu Listesi</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+          <button class="mini-btn active" id="btnSuspect1" style="font-size: 0.72rem; padding: 10px 4px; display: flex; flex-direction: column; gap: 4px; align-items: center;">
+            <span style="font-size: 1.2rem;">🤖</span>
+            <strong>Şüpheli A (TR-800)</strong>
+          </button>
+          <button class="mini-btn" id="btnSuspect2" style="font-size: 0.72rem; padding: 10px 4px; display: flex; flex-direction: column; gap: 4px; align-items: center;">
+            <span style="font-size: 1.2rem;">🌀</span>
+            <strong>Şüpheli B (Yolcu)</strong>
+          </button>
+          <button class="mini-btn" id="btnSuspect3" style="font-size: 0.72rem; padding: 10px 4px; display: flex; flex-direction: column; gap: 4px; align-items: center;">
+            <span style="font-size: 1.2rem;">👤</span>
+            <strong>Şüpheli C (İnsan)</strong>
+          </button>
+        </div>
+        
+        <div style="height: 1px; background: var(--gb); margin-bottom: 1rem;"></div>
+        
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: var(--tx2);">Hazır Sorgu Soruları:</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+          <button class="mini-btn" id="btnSuspectQ1" style="font-size: 0.72rem; text-align: left; padding: 8px;">❤️ Aşk senin için ne ifade ediyor?</button>
+          <button class="mini-btn" id="btnSuspectQ2" style="font-size: 0.72rem; text-align: left; padding: 8px;">🔢 Bana pi sayısının ilk 15 basamağını söyler misin?</button>
+          <button class="mini-btn" id="btnSuspectQ3" style="font-size: 0.72rem; text-align: left; padding: 8px;">🍕 Dün akşam yemekte ne yedin?</button>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="text" id="suspectCustomInput" placeholder="Kendi dedektiflik sorunu yaz..." style="flex: 1; padding: 10px 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; color: #fff; font-size: 0.88rem;" />
+          <button class="play-btn" id="btnSuspectInquire" style="padding: 10px 20px; font-size: 0.88rem; margin: 0; background: linear-gradient(135deg, #00e5ff, #7c4dff);">Sorgula</button>
+        </div>
+      </div>
+      
+      <!-- Voting panel -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); border-radius: 12px; padding: 0.8rem;">
+        <span style="display: block; font-size: 0.75rem; color: var(--tx3); text-align: center; margin-bottom: 0.4rem; text-transform: uppercase;">Karar Zamanı: Robot Hangisi?</span>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem;">
+          <button class="mini-btn" id="btnVoteS1" style="font-size: 0.75rem; border-color: rgba(255,23,71,0.2); color: #ff1744; font-weight: 700;">A ROBOTTUR</button>
+          <button class="mini-btn" id="btnVoteS2" style="font-size: 0.75rem; border-color: rgba(255,23,71,0.2); color: #ff1744; font-weight: 700;">B ROBOTTUR</button>
+          <button class="mini-btn" id="btnVoteS3" style="font-size: 0.75rem; border-color: rgba(255,23,71,0.2); color: #ff1744; font-weight: 700;">C ROBOTTUR</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right panel: query outputs & biometrics -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 520px; justify-content: space-between;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Sorgu Odası Ses Kaydı</h3>
+      
+      <div id="suspectSpeechBubble" style="background: rgba(0, 229, 255, 0.02); border: 1px solid rgba(0, 229, 255, 0.15); padding: 1.2rem; border-radius: 15px; font-size: 0.85rem; line-height: 1.6; color: #fff; min-height: 120px; display: flex; align-items: center; justify-content: center; text-align: center;">
+        "Sorgu başlatılmaya hazır. Bir şüpheli seçin ve ona bir soru yönelterek biyometrik nabzını ölçün."
+      </div>
+      
+      <div style="height: 1px; background: var(--gb);"></div>
+      
+      <!-- Pulse visualizer canvas -->
+      <div>
+        <span style="display: block; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 1px;">Canlı Biyometrik Nabız Grafiği (Biometrics)</span>
+        <canvas id="suspectCanvas" width="380" height="90" style="background: #020204; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; display: block; width: 100%; height: auto; aspect-ratio: 4.2;"></canvas>
+      </div>
+      
+      <!-- Biometric log cards -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px; text-align: center;">
+          <span style="display: block; font-size: 0.65rem; color: var(--tx3); text-transform: uppercase;">Stress Seviyesi</span>
+          <strong style="font-size: 1.1rem; color: #ff6b9d;" id="lblSuspectStress">NORMAL</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.6rem; border-radius: 12px; text-align: center;">
+          <span style="display: block; font-size: 0.65rem; color: var(--tx3); text-transform: uppercase;">AI Şüphe İndeksi</span>
+          <strong style="font-size: 1.1rem; color: #ffea00;" id="lblSuspectAIScore">0%</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI PITCH / NEGOTIATOR (AI CHARISMA SIMULATOR) -->
+<section class="section ds-section" id="pitch-negotiator-sec">
+  <div class="section-header">
+    <div class="section-badge">🚀 Pazarlık Arenası</div>
+    <h2 class="section-title">AI Karizma & İkna Simülatörü</h2>
+    <p class="section-sub">Karşınızdaki çetin patronlara startup fikrinizi sunun, zam isteyin veya uzay ittifakı kurun. Kelimelerinizi seçin ve sıcaklığı yükseltin!</p>
+  </div>
+  <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; align-items: start; flex-wrap: wrap;">
+    <!-- Left panel: character selection & scenario -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 480px; justify-content: space-between;">
+      <div>
+        <h3 style="margin: 0 0 0.8rem 0; font-size: 1.1rem; color: #fff;">Müzakere Karakterleri</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 1rem;">
+          <button class="mini-btn active" id="btnBossElon" style="font-size: 0.72rem; padding: 8px 4px;">🚀 Elon (Milyarder)</button>
+          <button class="mini-btn" id="btnBossBoard" style="font-size: 0.72rem; padding: 8px 4px;">💼 Yönetim Kurulu</button>
+          <button class="mini-btn" id="btnBossAlien" style="font-size: 0.72rem; padding: 8px 4px;">👾 Galaktik Delege</button>
+        </div>
+        
+        <div style="height: 1px; background: var(--gb); margin-bottom: 1rem;"></div>
+        
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: var(--tx2);">Aktif Görev Senaryosu:</h4>
+        <div id="lblBossScenario" style="font-size: 0.78rem; line-height: 1.55; color: var(--tx2); background: rgba(255,255,255,0.01); border: 1px solid var(--gb); padding: 0.8rem; border-radius: 12px; min-height: 80px;">
+          <strong>🚀 Fikir Sunumu:</strong> Elon, Mars kolonizasyonu için yeni roket kalkanı fikrini dinleyecek. Ona inovasyondan, kâr oranından ve veri odaklı vizyonundan bahset!
+        </div>
+      </div>
+      
+      <!-- Pitch input field -->
+      <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+        <span style="font-size: 0.78rem; color: var(--tx2); font-weight: 700;">İkna Konuşmanızı Yazın:</span>
+        <textarea id="pitchInput" placeholder="Teklifinizi buraya girin (Örn: Efendim, yeni roket kalkanı tasarımımız %40 kâr marjıyla inovatif bir vizyon sunuyor. Test verilerimiz başarıyı kesinlikle garanti ediyor...)" style="width: 100%; height: 110px; background: rgba(0,0,0,0.3); border: 1px solid var(--gb); border-radius: 12px; padding: 12px; color: #fff; font-size: 0.82rem; line-height: 1.5; resize: none;"></textarea>
+        <button class="play-btn" id="btnSubmitPitch" style="margin: 0; padding: 11px 20px; font-size: 0.88rem; background: linear-gradient(135deg, #ff6b9d, #ffea00); color: #000; font-weight: 700;">🗣️ Teklifi Sun</button>
+      </div>
+    </div>
+    
+    <!-- Right panel: feedback metrics & thermometer -->
+    <div class="game-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 480px; justify-content: space-between;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">AI Değerlendirme Analizi</h3>
+      
+      <div id="bossReactionBubble" style="background: rgba(255, 234, 0, 0.02); border: 1px solid rgba(255, 234, 0, 0.15); padding: 1.2rem; border-radius: 15px; font-size: 0.85rem; line-height: 1.6; color: #fff; min-height: 110px; display: flex; align-items: center; justify-content: center; text-align: center;">
+        "Teklifinizi sunarak yatırımcının kararını ölçün. Kelimelerinizi akıllıca seçerek ikna gücünüzü gösterin."
+      </div>
+      
+      <!-- Thermometer Deal temperature bar -->
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--tx3); text-transform: uppercase; margin-bottom: 0.4rem; font-weight: 700; letter-spacing: 1px;">
+          <span>Anlaşma Sıcaklığı (Deal Temperature)</span>
+          <span style="color:#ffea00;" id="lblDealTemp">0°C</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); padding: 2px;">
+          <div id="barDealTemp" style="width: 0%; height: 100%; background: linear-gradient(90deg, #7c4dff, #ff6b9d, #ffea00); border-radius: 6px; transition: width 1.2s cubic-bezier(0.1, 0.8, 0.25, 1);"></div>
+        </div>
+      </div>
+      
+      <div style="height: 1px; background: var(--gb);"></div>
+      
+      <!-- Detailed score reports -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; text-align: center;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.5rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.65rem; color: var(--tx3); text-transform: uppercase;">İkna Anahtarları</span>
+          <strong style="font-size: 1rem; color: #00e5ff;" id="lblPersuasionKeys">Bulunamadı</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--gb); padding: 0.5rem; border-radius: 12px;">
+          <span style="display: block; font-size: 0.65rem; color: var(--tx3); text-transform: uppercase;">Özgüven Çarpanı</span>
+          <strong style="font-size: 1rem; color: #69f0ae;" id="lblConfidenceMult">x0.0</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="footer">
 
   <div class="footer-inner">

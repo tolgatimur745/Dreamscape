@@ -3381,7 +3381,9 @@ try {
       {em:'☄️', ttl:'Kozmik Savunucu', dsc:'Retro galaksi savaşı',    id:'shooter-sec'},
       {em:'🧩', ttl:'Neon 2048',      dsc:'Sayı birleştirme bulmacası',id:'m2048-sec'},
       {em:'🌀', ttl:'Kozmik Labirent', dsc:'Sonsuz labirent çözücü',   id:'maze-sec'},
-      {em:'🚀', ttl:'Kozmik Orbit',   dsc:'Zen yerçekimi sapanı oyunu',id:'orbit-sec'}
+      {em:'🚀', ttl:'Kozmik Orbit',   dsc:'Zen yerçekimi sapanı oyunu',id:'orbit-sec'},
+      {em:'🌊', ttl:'Zen Renk Seli',   dsc:'Renk yayılım bulmacası oyunu',id:'color-flood-sec'},
+      {em:'🌀', ttl:'Hafıza Yörüngesi', dsc:'Desen ezberleme hafıza testi',id:'memory-orbit-sec'}
     ]},
     { label: '🎨 Yaratıcılık & Huzur', items: [
       {em:'🌌', ttl:'Kozmik Nebula',  dsc:'Karadelik & parçacık simülatörü',id:'nebula-sec'},
@@ -3397,6 +3399,12 @@ try {
       {em:'📖', ttl:'Emoji Hikaye',   dsc:'Emojilerle hikaye yaz',   id:'emojistory'},
       {em:'🌌', ttl:'Yerçekimi Sandboxı', dsc:'Gezegen yörüngeleri ve kozmik kütleçekim sandboxı',id:'gravity-sec'},
       {em:'🎛️', ttl:'Zen Yapay Yaşam', dsc:'Lenia hücresel otomat ve kozmik organizma sandboxı',id:'lenia-sec'}
+    ]},
+    { label: '🤖 Yapay Zeka & Zihin', items: [
+      {em:'🔮', ttl:'Rüya Yorumlayıcı',  dsc:'Yapay zeka ile bilinçaltı rüya analizi',id:'dream-weaver-sec'},
+      {em:'🧘', ttl:'Zen AI Mentor',     dsc:'Bilge mentorlar & canlı duygu küresi', id:'zen-mentor-sec'},
+      {em:'🕵️', ttl:'AI Şüpheli Dedektif',dsc:'Robot dedektiflik Turing testi oyunu',id:'turing-detective-sec'},
+      {em:'🚀', ttl:'Karizma Simülatörü', dsc:'AI pazarlık & ikna kabiliyeti testi', id:'pitch-negotiator-sec'}
     ]},
     { label: '🌍 Keşif & Bilgi', items: [
       {em:'🗺️', ttl:'Dünya Kaşifi',   dsc:"Dünyanın güzel yerleri",  id:'world'},
@@ -10270,6 +10278,1232 @@ try {
     debateUserInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') sendUserArg(); });
   }
 } catch(e) { console.error('Debate error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   65. ZEN RENK SELİ MINI GAME (COLOR FLOOD LOGIC)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var floodCanvas = document.getElementById('floodCanvas');
+  if (floodCanvas) {
+    var flCtx = floodCanvas.getContext('2d');
+    var lblFloodMoves = document.getElementById('lblFloodMoves');
+    var lblFloodPercent = document.getElementById('lblFloodPercent');
+    var btnFloodRestart = document.getElementById('btnFloodRestart');
+
+    var flW = floodCanvas.width;
+    var flH = floodCanvas.height;
+
+    // Game configurations
+    var gridSize = 14;
+    var cellSize = flW / gridSize;
+    var maxMoves = 25;
+    var movesLeft = maxMoves;
+    var floodGrid = [];
+    var gameWon = false;
+
+    // 6 glowing neon colors
+    var FLOOD_COLORS = {
+      cyan: '#00e5ff',
+      pink: '#ff6b9d',
+      yellow: '#ffea00',
+      green: '#69f0ae',
+      purple: '#a29bfe',
+      red: '#ff1744'
+    };
+
+    var colorKeys = Object.keys(FLOOD_COLORS);
+
+    function initFloodGame() {
+      movesLeft = maxMoves;
+      gameWon = false;
+      if (lblFloodMoves) lblFloodMoves.textContent = movesLeft;
+      if (lblFloodPercent) lblFloodPercent.textContent = '0%';
+      
+      // Randomly populate grid
+      floodGrid = [];
+      for (var r = 0; r < gridSize; r++) {
+        var row = [];
+        for (var c = 0; c < gridSize; c++) {
+          var randCol = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+          row.push(randCol);
+        }
+        floodGrid.push(row);
+      }
+
+      renderFloodCanvas();
+      calculateFloodScore();
+    }
+
+    function renderFloodCanvas() {
+      flCtx.fillStyle = '#040508';
+      flCtx.fillRect(0, 0, flW, flH);
+
+      // Draw grid squares with subtle gaps
+      for (var r = 0; r < gridSize; r++) {
+        for (var c = 0; c < gridSize; c++) {
+          var colKey = floodGrid[r][c];
+          flCtx.fillStyle = FLOOD_COLORS[colKey];
+          
+          // Outer neon glow styling
+          flCtx.save();
+          flCtx.shadowBlur = 4;
+          flCtx.shadowColor = FLOOD_COLORS[colKey];
+          
+          flCtx.fillRect(c * cellSize + 1, r * cellSize + 1, cellSize - 2, cellSize - 2);
+          flCtx.restore();
+        }
+      }
+    }
+
+    // Flood fill algorithm
+    function floodFill(oldColor, newColor) {
+      if (oldColor === newColor) return;
+      
+      var visited = Array(gridSize).fill(null).map(function() { return Array(gridSize).fill(false); });
+      var queue = [{ r: 0, c: 0 }];
+      visited[0][0] = true;
+
+      while (queue.length > 0) {
+        var curr = queue.shift();
+        floodGrid[curr.r][curr.c] = newColor;
+
+        // Check 4 directions
+        var dirs = [{ r: -1, c: 0 }, { r: 1, c: 0 }, { r: 0, c: -1 }, { r: 0, c: 1 }];
+        for (var i = 0; i < dirs.length; i++) {
+          var nr = curr.r + dirs[i].r;
+          var nc = curr.c + dirs[i].c;
+
+          if (nr >= 0 && nr < gridSize && nc >= 0 && nc < gridSize) {
+            if (!visited[nr][nc] && floodGrid[nr][nc] === oldColor) {
+              visited[nr][nc] = true;
+              queue.push({ r: nr, c: nc });
+            }
+          }
+        }
+      }
+    }
+
+    function calculateFloodScore() {
+      var targetCol = floodGrid[0][0];
+      var count = 0;
+      for (var r = 0; r < gridSize; r++) {
+        for (var c = 0; c < gridSize; c++) {
+          if (floodGrid[r][c] === targetCol) count++;
+        }
+      }
+
+      var percent = Math.floor((count / (gridSize * gridSize)) * 100);
+      if (lblFloodPercent) lblFloodPercent.textContent = percent + '%';
+
+      if (percent === 100) {
+        gameWon = true;
+        toast('🎉 Muhteşem! Tahtayı başarıyla birleştirdiniz!', '#69f0ae');
+      } else if (movesLeft <= 0 && !gameWon) {
+        toast('❌ Hamleler bitti! Yeniden deneyin.', '#ff1744');
+      }
+    }
+
+    function makeFloodMove(colorKey) {
+      if (movesLeft <= 0 || gameWon) return;
+
+      var oldCol = floodGrid[0][0];
+      if (oldCol === colorKey) return;
+
+      floodFill(oldCol, colorKey);
+      movesLeft--;
+      if (lblFloodMoves) lblFloodMoves.textContent = movesLeft;
+
+      renderFloodCanvas();
+      calculateFloodScore();
+    }
+
+    // Color buttons listeners
+    document.getElementById('btnFloodCyan').addEventListener('click', function() { makeFloodMove('cyan'); });
+    document.getElementById('btnFloodMagenta').addEventListener('click', function() { makeFloodMove('pink'); });
+    document.getElementById('btnFloodYellow').addEventListener('click', function() { makeFloodMove('yellow'); });
+    document.getElementById('btnFloodGreen').addEventListener('click', function() { makeFloodMove('green'); });
+    document.getElementById('btnFloodPurple').addEventListener('click', function() { makeFloodMove('purple'); });
+    document.getElementById('btnFloodRed').addEventListener('click', function() { makeFloodMove('red'); });
+
+    btnFloodRestart.addEventListener('click', initFloodGame);
+
+    initFloodGame();
+    
+    // Viewport-pausing observer hook
+    function floodGameLoop() {
+      if (isCanvasActive('floodCanvas')) {
+        renderFloodCanvas();
+      }
+      // Extremely low tick - static rendering only updates on moves, so 1 frame per second is plenty!
+      setTimeout(function() {
+        requestAnimationFrame(floodGameLoop);
+      }, 1000);
+    }
+    floodGameLoop();
+  }
+} catch(e) { console.error('ColorFlood error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   66. HAFIZA YÖRÜNGESİ MINI GAME (PATTERN MEMORY GRID)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var memoryCanvas = document.getElementById('memoryCanvas');
+  if (memoryCanvas) {
+    var mCtx = memoryCanvas.getContext('2d');
+    var lblMemoryLevel = document.getElementById('lblMemoryLevel');
+    var lblMemoryHighScore = document.getElementById('lblMemoryHighScore');
+    var btnMemoryStart = document.getElementById('btnMemoryStart');
+    var memoryStatus = document.getElementById('memoryStatus');
+
+    var mW = memoryCanvas.width;
+    var mH = memoryCanvas.height;
+
+    // Grid states
+    var memoryGridSize = 4;
+    var memCellSize = mW / memoryGridSize;
+    var sequence = [];
+    var playerSequence = [];
+    var currentLevel = 1;
+    var isShowingSequence = false;
+    var isPlayerTurn = false;
+    var gameStarted = false;
+    
+    // High Score synced persistence
+    var memoryHighScore = parseInt(localStorage.getItem('dream_memory_highscore') || '0', 10);
+    if (lblMemoryHighScore) lblMemoryHighScore.textContent = memoryHighScore;
+
+    function renderMemoryBoard(activeCell) {
+      mCtx.fillStyle = '#030408';
+      mCtx.fillRect(0, 0, mW, mH);
+
+      // Draw 16 tiles
+      for (var r = 0; r < memoryGridSize; r++) {
+        var top = r * memCellSize + 4;
+        for (var c = 0; c < memoryGridSize; c++) {
+          var left = c * memCellSize + 4;
+          var w = memCellSize - 8;
+          
+          var isThisActive = activeCell && (activeCell.r === r && activeCell.c === c);
+
+          mCtx.save();
+          mCtx.shadowBlur = isThisActive ? 25 : 4;
+          mCtx.shadowColor = isThisActive ? '#00e5ff' : 'rgba(255,255,255,0.05)';
+
+          if (isThisActive) {
+            mCtx.fillStyle = 'rgba(0, 229, 255, 0.7)';
+            mCtx.strokeStyle = '#00e5ff';
+          } else {
+            mCtx.fillStyle = 'rgba(255,255,255,0.02)';
+            mCtx.strokeStyle = 'rgba(255,255,255,0.08)';
+          }
+
+          mCtx.lineWidth = 1.5;
+          mCtx.beginPath();
+          mCtx.roundRect(left, top, w, w, 10);
+          mCtx.fill();
+          mCtx.stroke();
+          mCtx.restore();
+
+          // Render internal cell index coordinate
+          mCtx.fillStyle = 'rgba(255,255,255,0.15)';
+          mCtx.font = '700 0.8rem Outfit, system-ui';
+          mCtx.textAlign = 'center';
+          mCtx.fillText((r * 4 + c + 1), left + w/2, top + w/2 + 4);
+        }
+      }
+    }
+
+    function addStepToSequence() {
+      var randR = Math.floor(Math.random() * memoryGridSize);
+      var randC = Math.floor(Math.random() * memoryGridSize);
+      sequence.push({ r: randR, c: randC });
+    }
+
+    function flashSequence() {
+      isShowingSequence = true;
+      isPlayerTurn = false;
+      var i = 0;
+      
+      if (memoryStatus) memoryStatus.textContent = '🌟 Dizilim gösteriliyor, ezberleyin...';
+
+      var interval = setInterval(function() {
+        if (!gameStarted) { clearInterval(interval); return; }
+        
+        var step = sequence[i];
+        renderMemoryBoard(step);
+        
+        // Simple Audio Blip
+        try {
+          var ac = new (window.AudioContext || window.webkitAudioContext)();
+          var osc = ac.createOscillator();
+          var gain = ac.createGain();
+          osc.connect(gain);
+          gain.connect(ac.destination);
+          
+          osc.frequency.setValueAtTime(261.63 * Math.pow(1.06, step.r * 4 + step.c), ac.currentTime); // Dynamic frequency scale
+          gain.gain.setValueAtTime(0.06, ac.currentTime);
+          
+          osc.start();
+          osc.stop(ac.currentTime + 0.15);
+        } catch(e){}
+
+        setTimeout(function() {
+          renderMemoryBoard(null);
+        }, 320);
+
+        i++;
+        if (i >= sequence.length) {
+          clearInterval(interval);
+          isShowingSequence = false;
+          isPlayerTurn = true;
+          playerSequence = [];
+          if (memoryStatus) memoryStatus.textContent = '👇 Sizin sıranız! Ezberlediğiniz sırayla tıklayın.';
+        }
+      }, 550);
+    }
+
+    function handleMemoryCellClick(x, y) {
+      if (!gameStarted || isShowingSequence || !isPlayerTurn) return;
+
+      var c = Math.floor(x / memCellSize);
+      var r = Math.floor(y / memCellSize);
+
+      if (r >= 0 && r < memoryGridSize && c >= 0 && c < memoryGridSize) {
+        var clicked = { r: r, c: c };
+        renderMemoryBoard(clicked);
+        setTimeout(function() { renderMemoryBoard(null); }, 150);
+
+        var matchIndex = playerSequence.length;
+        var expected = sequence[matchIndex];
+
+        if (clicked.r === expected.r && clicked.c === expected.c) {
+          playerSequence.push(clicked);
+          
+          // Audio confirmation
+          try {
+            var ac = new (window.AudioContext || window.webkitAudioContext)();
+            var osc = ac.createOscillator();
+            var gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.frequency.setValueAtTime(440 * Math.pow(1.06, clicked.r * 4 + clicked.c), ac.currentTime);
+            gain.gain.setValueAtTime(0.04, ac.currentTime);
+            osc.start();
+            osc.stop(ac.currentTime + 0.12);
+          } catch(e){}
+
+          if (playerSequence.length === sequence.length) {
+            // Round successfully completed!
+            currentLevel++;
+            if (lblMemoryLevel) lblMemoryLevel.textContent = 'Seviye ' + currentLevel;
+            
+            if (currentLevel - 1 > memoryHighScore) {
+              memoryHighScore = currentLevel - 1;
+              localStorage.setItem('dream_memory_highscore', memoryHighScore);
+              if (lblMemoryHighScore) lblMemoryHighScore.textContent = memoryHighScore;
+            }
+
+            toast('✨ Seviye tamamlandı! Sonraki tura geçiliyor...', '#69f0ae');
+            isPlayerTurn = false;
+            setTimeout(function() {
+              addStepToSequence();
+              flashSequence();
+            }, 1000);
+          }
+        } else {
+          // Game Over
+          gameStarted = false;
+          isPlayerTurn = false;
+          if (memoryStatus) memoryStatus.textContent = '❌ Yanlış karo! ' + (currentLevel - 1) + ' seride elendiniz.';
+          btnMemoryStart.textContent = '▶ Tekrar Dene';
+          toast('Oyun Bitti! Doğru karo değildi.', '#ff1744');
+          sequence = [];
+        }
+      }
+    }
+
+    memoryCanvas.addEventListener('mousedown', function(e) {
+      var rect = memoryCanvas.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (mW / rect.width);
+      var y = (e.clientY - rect.top) * (mH / rect.height);
+      handleMemoryCellClick(x, y);
+    });
+
+    btnMemoryStart.addEventListener('click', function() {
+      gameStarted = true;
+      currentLevel = 1;
+      if (lblMemoryLevel) lblMemoryLevel.textContent = 'Seviye 1';
+      sequence = [];
+      playerSequence = [];
+      btnMemoryStart.textContent = '🔄 Yeniden Başlat';
+      
+      addStepToSequence();
+      flashSequence();
+    });
+
+    renderMemoryBoard(null);
+  }
+} catch(e) { console.error('PatternMemory error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   67. KOZMİK RÜYA DOKUYUCU (AI DREAM WEAVER ENGINE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var dreamCanvas = document.getElementById('dreamCanvas');
+  if (dreamCanvas) {
+    var dCtx = dreamCanvas.getContext('2d');
+    var dreamInput = document.getElementById('dreamInput');
+    var btnAnalyzeDream = document.getElementById('btnAnalyzeDream');
+    var dreamInterpretationPanel = document.getElementById('dreamInterpretationPanel');
+
+    var drW = dreamCanvas.width;
+    var drH = dreamCanvas.height;
+
+    // Generative particles for visualizer
+    var dreamParticles = [];
+    var primaryMood = 'neutral'; // water, fear, flight, logic, forest, cosmic
+
+    function initDreamVisualizer() {
+      dreamParticles = [];
+      for (var i = 0; i < 35; i++) {
+        dreamParticles.push({
+          x: Math.random() * drW,
+          y: Math.random() * drH,
+          r: Math.random() * 2 + 0.5,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          hue: Math.random() * 360,
+          speed: Math.random() * 0.02 + 0.005,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    initDreamVisualizer();
+
+    function drawDreamScape() {
+      if (!isCanvasActive('dreamCanvas')) return;
+
+      dCtx.fillStyle = '#030306';
+      dCtx.fillRect(0, 0, drW, drH);
+
+      // Render custom atmospheric visual patterns based on active mood
+      if (primaryMood === 'water') {
+        // Ocean ripples overlay
+        dCtx.strokeStyle = 'rgba(0, 229, 255, 0.08)';
+        dCtx.lineWidth = 1.5;
+        dCtx.beginPath();
+        for (var y = 20; y < drH; y += 30) {
+          dCtx.moveTo(0, y);
+          for (var x = 0; x <= drW; x += 10) {
+            var wave = Math.sin(x * 0.03 + Date.now()*0.0018 + y) * 12;
+            dCtx.lineTo(x, y + wave);
+          }
+        }
+        dCtx.stroke();
+      } else if (primaryMood === 'fear') {
+        // Deep purple swirling gravities
+        dCtx.strokeStyle = 'rgba(255, 23, 71, 0.05)';
+        dCtx.lineWidth = 1;
+        dCtx.beginPath();
+        var cx = drW/2, cy = drH/2;
+        for (var r = 20; r < 140; r += 15) {
+          dCtx.moveTo(cx + r, cy);
+          for (var angle = 0; angle < Math.PI * 2; angle += 0.15) {
+            var warp = Math.cos(angle * 3 + Date.now()*0.003) * 6;
+            dCtx.lineTo(cx + Math.cos(angle)*(r+warp), cy + Math.sin(angle)*(r+warp));
+          }
+        }
+        dCtx.stroke();
+      } else if (primaryMood === 'flight') {
+        // Fast flying cosmic rays
+        dCtx.strokeStyle = 'rgba(255, 234, 0, 0.06)';
+        dCtx.lineWidth = 1;
+        for (var j = 0; j < 8; j++) {
+          var yPos = (j * 30 + Date.now()*0.08) % drH;
+          dCtx.beginPath();
+          dCtx.moveTo(0, yPos);
+          dCtx.lineTo(drW, yPos - 20);
+          dCtx.stroke();
+        }
+      } else if (primaryMood === 'forest') {
+        // Glowing organic neon shapes
+        dCtx.fillStyle = 'rgba(105, 240, 174, 0.04)';
+        for (var k = 0; k < 4; k++) {
+          var size = 40 + Math.sin(Date.now()*0.001 + k)*15;
+          dCtx.beginPath();
+          dCtx.arc(50 + k*100, drH - 30, size, 0, Math.PI * 2);
+          dCtx.fill();
+        }
+      }
+
+      // Draw floating nebula points
+      dreamParticles.forEach(function(p) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap coordinates
+        if (p.x < 0) p.x = drW;
+        if (p.x > drW) p.x = 0;
+        if (p.y < 0) p.y = drH;
+        if (p.y > drH) p.y = 0;
+
+        // Pulse size
+        var sz = p.r + Math.sin(Date.now()*p.speed + p.phase)*0.8;
+
+        dCtx.save();
+        dCtx.shadowBlur = 8;
+        
+        // Color mapping based on mood
+        if (primaryMood === 'water') {
+          dCtx.fillStyle = 'rgba(0, 229, 255, 0.7)';
+          dCtx.shadowColor = '#00e5ff';
+        } else if (primaryMood === 'fear') {
+          dCtx.fillStyle = 'rgba(255, 107, 157, 0.7)';
+          dCtx.shadowColor = '#ff6b9d';
+        } else if (primaryMood === 'flight') {
+          dCtx.fillStyle = 'rgba(255, 234, 0, 0.7)';
+          dCtx.shadowColor = '#ffea00';
+        } else if (primaryMood === 'forest') {
+          dCtx.fillStyle = 'rgba(105, 240, 174, 0.7)';
+          dCtx.shadowColor = '#69f0ae';
+        } else {
+          dCtx.fillStyle = 'hsla(' + ((p.hue + Date.now()/120)%360) + ', 85%, 65%, 0.6)';
+          dCtx.shadowColor = 'hsl(' + ((p.hue + Date.now()/120)%360) + ', 85%, 65%)';
+        }
+
+        dCtx.beginPath();
+        dCtx.arc(p.x, p.y, sz, 0, Math.PI * 2);
+        dCtx.fill();
+        dCtx.restore();
+      });
+    }
+
+    function runDreamAnalysis() {
+      var text = dreamInput.value.trim();
+      if (!text) {
+        toast('⚠️ Lütfen önce bir rüya detayı girin!', '#ff7043');
+        return;
+      }
+
+      var lower = text.toLowerCase();
+      
+      // Sentiment & Symbol matrices
+      var stats = { creative: 25, anxiety: 15, logic: 20, spiritual: 20 };
+      var extractedSymbols = [];
+      var interpretation = '';
+
+      if (lower.indexOf('uç') !== -1 || lower.indexOf('gök') !== -1 || lower.indexOf('kanat') !== -1) {
+        stats.creative += 35; stats.spiritual += 20; stats.logic -= 5;
+        extractedSymbols.push('🕊️ Uçuş & Özgürlük');
+        primaryMood = 'flight';
+      }
+      if (lower.indexOf('düş') !== -1 || lower.indexOf('kork') !== -1 || lower.indexOf('canavar') !== -1 || lower.indexOf('kaç') !== -1) {
+        stats.anxiety += 45; stats.logic -= 10; stats.creative += 10;
+        extractedSymbols.push('🌪️ Düşüş & Kaygı');
+        primaryMood = 'fear';
+      }
+      if (lower.indexOf('su') !== -1 || lower.indexOf('deniz') !== -1 || lower.indexOf('dalga') !== -1 || lower.indexOf('nehir') !== -1) {
+        stats.spiritual += 40; stats.creative += 15;
+        extractedSymbols.push('🌊 Su & Duygusal Akış');
+        primaryMood = 'water';
+      }
+      if (lower.indexOf('orman') !== -1 || lower.indexOf('ağaç') !== -1 || lower.indexOf('doğa') !== -1 || lower.indexOf('yeşil') !== -1) {
+        stats.creative += 25; stats.spiritual += 15; stats.anxiety -= 10;
+        extractedSymbols.push('🌿 Orman & Büyüme');
+        primaryMood = 'forest';
+      }
+      if (lower.indexOf('saat') !== -1 || lower.indexOf('zaman') !== -1 || lower.indexOf('sayı') !== -1 || lower.indexOf('kod') !== -1) {
+        stats.logic += 45; stats.spiritual -= 10;
+        extractedSymbols.push('⏳ Zaman & Düzen');
+        primaryMood = 'logic';
+      }
+
+      if (extractedSymbols.length === 0) {
+        extractedSymbols.push('✨ Soyut Evren');
+        primaryMood = 'cosmic';
+      }
+
+      // Generate customized psychological analysis text
+      interpretation = '<strong>🧩 Rüya Analiz Raporu:</strong><br/>';
+      interpretation += 'Rüyanızda yer alan <strong>' + extractedSymbols.join(', ') + '</strong> sembolleri bilinçaltınızda derin izler barındırıyor. ';
+      
+      if (primaryMood === 'flight') {
+        interpretation += 'Uçma ve gökyüzü temaları, hayatınızda bir özgürleşme isteğini, mevcut sınırları aşma arzusunu ve yaratıcı vizyonunuzun dorukta olduğunu simgeler. Kendinizi sınırlanmış hissettiğiniz bağlardan kurtuluyorsunuz.';
+      } else if (primaryMood === 'fear') {
+        interpretation += 'Düşüş veya kaçış temaları, kontrol kaybı korkusunu ve uyanık hayatınızda bastırılmış kaygıların varlığını gösterir. Kendinizi zayıf hissettiğiniz konularda kontrolü yeniden ele almanız gerektiğine dair bilinçaltınız sizi uyarıyor.';
+      } else if (primaryMood === 'water') {
+        interpretation += 'Su ve akışkan temalar, duygusal yenilenmeyi ve manevi bir arınma sürecini temsil eder. Bilinçaltınız, birikmiş duygusal yükleri serbest bırakmanızı ve sezgilerinize daha fazla güvenmenizi söylüyor.';
+      } else if (primaryMood === 'forest') {
+        interpretation += 'Orman ve yeşillik, kişisel büyüme, içsel köklenme ve kendinizi bulma yolculuğudur. Karışık düşüncelerden sıyrılıp kendi doğal dengenize ulaşmakta olduğunuzun göstergesidir.';
+      } else if (primaryMood === 'logic') {
+        interpretation += 'Saatler ve sayılar, hayatınızda düzen kurma ihtiyacını, zaman kaygısını veya zihinsel olarak çok yorucu mantıksal döngülerin içinde sıkışmış olabileceğinizi sembolize eder.';
+      } else {
+        interpretation += 'Soyut semboller, zihninizin derinlerindeki yaratıcı enerjilerin aktifleştiğini, kalıpların dışına çıkan bir düşünce yapısına sahip olduğunuzu simgeler.';
+      }
+
+      // Sync and animate bars
+      document.getElementById('lblDreamStat1').textContent = Math.min(100, stats.creative) + '%';
+      document.getElementById('barDreamStat1').style.width = Math.min(100, stats.creative) + '%';
+      
+      document.getElementById('lblDreamStat2').textContent = Math.min(100, stats.anxiety) + '%';
+      document.getElementById('barDreamStat2').style.width = Math.min(100, stats.anxiety) + '%';
+      
+      document.getElementById('lblDreamStat3').textContent = Math.min(100, stats.logic) + '%';
+      document.getElementById('barDreamStat3').style.width = Math.min(100, stats.logic) + '%';
+      
+      document.getElementById('lblDreamStat4').textContent = Math.min(100, stats.spiritual) + '%';
+      document.getElementById('barDreamStat4').style.width = Math.min(100, stats.spiritual) + '%';
+
+      if (dreamInterpretationPanel) {
+        dreamInterpretationPanel.innerHTML = interpretation;
+        dreamInterpretationPanel.classList.remove('hidden');
+      }
+
+      toast('🔮 Bilinçaltı dokusu analiz edildi!', '#7c4dff');
+    }
+
+    btnAnalyzeDream.addEventListener('click', runDreamAnalysis);
+
+    // Animation frames loop
+    function dreamLoop() {
+      drawDreamScape();
+      requestAnimationFrame(dreamLoop);
+    }
+    dreamLoop();
+  }
+} catch(e) { console.error('DreamWeaver error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   68. ZEN AI MENTOR & DUYGU KÜRESİ (ZEN MENTOR ENGINE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var mentorCanvas = document.getElementById('mentorCanvas');
+  if (mentorCanvas) {
+    var mtCtx = mentorCanvas.getContext('2d');
+    var mentorUserInput = document.getElementById('mentorUserInput');
+    var btnMentorSend = document.getElementById('btnMentorSend');
+    var mentorChatHistory = document.getElementById('mentorChatHistory');
+    var lblBreathingText = document.getElementById('lblBreathingText');
+    var lblSentimentVal = document.getElementById('lblSentimentVal');
+
+    var mtW = mentorCanvas.width;
+    var mtH = mentorCanvas.height;
+
+    // Active mentor variables
+    var activeMentor = 'seneca'; // seneca, ryokan, sophia, cosmos
+    var mentorSentiment = 'calm'; // calm, stress, sad, logic
+
+    // Mentor archetypes data
+    var MENTORS = {
+      seneca: {
+        name: 'Seneca',
+        color: '#ffea00',
+        intro: 'Selam genç zihin. Bugün hayatın kısalığı veya seni sarsan hangi dış olay üzerine felsefe yapmak istersin?',
+        responses: {
+          stress: 'Dostum, zihnini sarsan bu kaygılar dış dünyadan değil, senin o olaylara verdiğin kararlardan geliyor. Dışarıdaki rüzgarı engelleyemezsin ama yelkenlerini dinginleştirebilirsin. Sakinleş ve derin bir nefes al.',
+          sad: 'Keder, hayatın kaçınılmaz bir parçasıdır ancak ona esir olmak bizim seçimimizdir. Kaybettiğin zamanı üzülerek geri getiremezsin. Sahip olduğun tek gerçek şey şu anki saniyendir, onu erdemle yaşa.',
+          logic: 'Güzel bir sorgulama. Mantığın olmadığı yerde kontrolü arzular ele geçirir. Her zaman kendine sor: "Bu durum benim kontrolüm altında mı?" Değilse, onu Stoacı tevekkülle kucakla.',
+          calm: 'İçsel dinginlik en yüce erdemdir. Zihnin bu berraklığı koruduğu sürece hiçbir fırtına seni sarsamaz. Bu Stoacı vakarı kaybetme.'
+        }
+      },
+      ryokan: {
+        name: 'Ryokan',
+        color: '#69f0ae',
+        intro: 'Merhaba yolcu. Zihnindeki karmaşık düşünceleri bir kenara bırak, sessizliği ve doğanın sade ritmini dinle.',
+        responses: {
+          stress: 'Su, önüne çıkan engellere öfkelenmez; onların etrafından yumuşakça süzülür. Düşüncelerini serbest bırak, tıpkı gökyüzündeki beyaz bulutlar gibi akıp gitsinler. Nefes al ve doğayı hisset.',
+          sad: 'Güz yaprakları dökülürken ağaçlar yas tutmaz; çünkü baharda yeniden açacaklarını bilirler. Acın da tıpkı bu yapraklar gibi zamanla toprağa karışacak ve yerini huzura bırakacak.',
+          logic: 'Düşünceler zihnin nehrinde yüzen balıklar gibidir. Onları yakalamaya çalışma, sadece nehrin kenarında oturup akışlarını izle. Cevaplar sessizlikte gizlidir.',
+          calm: 'İşte Zen budur. Rüzgardaki bambu gibi esneksin, hiçbir şey seni kıramaz. Şimdi bu derin sessizliğin ve dingin nefesin tadını çıkar.'
+        }
+      },
+      sophia: {
+        name: 'Sophia',
+        color: '#00e5ff',
+        intro: 'Merhaba. Ben Sophia. Kendini rahat hissettiğin bir alandasın. İç dünyanda seni yoran duyguları benimle paylaşabilirsin.',
+        responses: {
+          stress: 'Şu an omuzlarında çok ağır bir yük hissettiğini görebiliyorum. Bazen her şeyi kontrol edememek son derece normaldir. Kendine şefkat göstermeyi unutma, yavaşla ve benimle nefes al.',
+          sad: 'Bu hüznü hissetmeye hakkın var, duygularını bastırmak zorunda değilsin. Ağlamak ruhun yağmurudur. Ben buradayım ve seni yargılamadan dinliyorum. Kendini toparlamak için acele etme.',
+          logic: 'Duygularının ardındaki mantıksal kalıpları anlamaya çalışman çok sağlıklı bir adım. Bu durumun üstesinden gelmek için adım adım bir plan yapabiliriz. Zihnin çok berrak.',
+          calm: 'Kendini dengede ve güvende hissetmene çok sevindim. Bu pozitif enerjiyi ve ruhsal farkındalığı koruman yaşam kaliteni artıracaktır. Çok güzel ilerliyorsun.'
+        }
+      },
+      cosmos: {
+        name: 'Kozmik Rehber',
+        color: '#a29bfe',
+        intro: 'Evrenin tozundan yapılmış varlık. Sonsuz kozmosun içinde bugün zihninde hangi galaksileri keşfedeceğiz?',
+        responses: {
+          stress: 'Küçük gezegeninde yaşadığın bu stres, kozmik ölçekte bir toz tanesi bile değil. Yıldızlar milyarlarca yıl boyunca kaostan doğar. İçindeki bu geçici türbülansı evrenin genişliğine bırak, nefes al.',
+          sad: 'Yıldızlar patlamadan yeni nebulalar oluşamaz. Yaşadığın bu hüzün ve acı, içindeki eski formların yıkılıp yeniden parlamaya hazırlanan yeni bir yıldızın doğum sancısıdır.',
+          logic: 'Kozmos matematiksel ve kusursuz bir geometriyle işler. Sorunun karmaşık görünmesi, henüz büyük resmi göremediğindendir. Perspektifini genişlet ve yasalara güven.',
+          calm: 'Evrenle tam bir uyum içindesin. Atomların kozmik dansı şu an sende en saf halinde titreşiyor. Kozmik enerjinin akışını tüm bedeninde hisset.'
+        }
+      }
+    };
+
+    // Sentiment vocabulary scan
+    function analyzeSentiment(text) {
+      var lower = text.toLowerCase();
+      
+      // Anger & Stress keywords
+      if (lower.indexOf('stres') !== -1 || lower.indexOf('öfke') !== -1 || lower.indexOf('kork') !== -1 || 
+          lower.indexOf('bıktım') !== -1 || lower.indexOf('nefret') !== -1 || lower.indexOf('kaygı') !== -1 || 
+          lower.indexOf('yeter') !== -1 || lower.indexOf('sıkıldım') !== -1) {
+        return 'stress';
+      }
+      
+      // Sadness keywords
+      if (lower.indexOf('üzgün') !== -1 || lower.indexOf('yalnız') !== -1 || lower.indexOf('acı') !== -1 || 
+          lower.indexOf('mutsuz') !== -1 || lower.indexOf('ağla') !== -1 || lower.indexOf('kırık') !== -1 || 
+          lower.indexOf('yoruldum') !== -1) {
+        return 'sad';
+      }
+      
+      // Logic & Analytical keywords
+      if (lower.indexOf('nasıl') !== -1 || lower.indexOf('mantık') !== -1 || lower.indexOf('neden') !== -1 || 
+          lower.indexOf('sorgu') !== -1 || lower.indexOf('karar') !== -1 || lower.indexOf('çözüm') !== -1 || 
+          lower.indexOf('hedef') !== -1) {
+        return 'logic';
+      }
+
+      return 'calm';
+    }
+
+    function appendMentorMessage(senderName, senderCol, text) {
+      var msg = document.createElement('div');
+      msg.style.cssText = 'display:flex; gap:0.5rem; font-size:0.8rem; color:var(--tx2); background:rgba(255,255,255,0.01); border:1px solid var(--gb); padding:8px 12px; border-radius:4px 12px 12px 12px;';
+      msg.innerHTML = '<strong style="color:' + senderCol + ';min-width:60px;">' + senderName + ':</strong> ' + text;
+      
+      mentorChatHistory.appendChild(msg);
+      mentorChatHistory.scrollTop = mentorChatHistory.scrollHeight;
+    }
+
+    function sendMentorDialogue() {
+      var text = mentorUserInput.value.trim();
+      if (!text) {
+        toast('⚠️ Lütfen önce bilgeye sorunuzu yazın!', '#ff7043');
+        return;
+      }
+
+      // Add user message
+      appendMentorMessage('Siz', 'rgba(0, 229, 255, 0.9)', text);
+      mentorUserInput.value = '';
+
+      // Analyze sentiment and update orb states
+      mentorSentiment = analyzeSentiment(text);
+      
+      // Render text val
+      var sentimentTurkish = { calm: 'Dingin', stress: 'Stresli', sad: 'Melankolik', logic: 'Mantıksal' };
+      if (lblSentimentVal) {
+        lblSentimentVal.textContent = sentimentTurkish[mentorSentiment];
+        if (mentorSentiment === 'stress') lblSentimentVal.style.color = '#ff6b9d';
+        else if (mentorSentiment === 'sad') lblSentimentVal.style.color = '#a29bfe';
+        else if (mentorSentiment === 'logic') lblSentimentVal.style.color = '#ffea00';
+        else lblSentimentVal.style.color = '#69f0ae';
+      }
+
+      // Answer delay
+      setTimeout(function() {
+        var mentorData = MENTORS[activeMentor];
+        var responseText = mentorData.responses[mentorSentiment];
+        appendMentorMessage(mentorData.name, mentorData.color, responseText);
+        toast('🧘 Bilge felsefi çıkarımını sundu.', '#69f0ae');
+      }, 1200);
+    }
+
+    btnMentorSend.addEventListener('click', sendMentorDialogue);
+    mentorUserInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') sendMentorDialogue(); });
+
+    // Selector buttons binding
+    function selectMentor(mentorId, btnId) {
+      activeMentor = mentorId;
+      document.querySelectorAll('#zen-mentor-sec .mini-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      document.getElementById(btnId).classList.add('active');
+
+      // Clear chat history and append intro
+      mentorChatHistory.innerHTML = '';
+      var data = MENTORS[mentorId];
+      appendMentorMessage(data.name, data.color, data.intro);
+      toast('Sohbet başlatıldı: ' + data.name, '#00e5ff');
+    }
+
+    document.getElementById('btnMentorSeneca').addEventListener('click', function(){ selectMentor('seneca', 'btnMentorSeneca'); });
+    document.getElementById('btnMentorRyokan').addEventListener('click', function(){ selectMentor('ryokan', 'btnMentorRyokan'); });
+    document.getElementById('btnMentorSophia').addEventListener('click', function(){ selectMentor('sophia', 'btnMentorSophia'); });
+    document.getElementById('btnMentorCosmos').addEventListener('click', function(){ selectMentor('cosmos', 'btnMentorCosmos'); });
+
+    // ── ORB WAVE RENDER ENGINE ───────────────────────────────
+    var breathingPhase = 0;
+
+    function drawMentorOrb() {
+      if (!isCanvasActive('mentorCanvas')) return;
+
+      mtCtx.clearRect(0, 0, mtW, mtH);
+
+      var cx = mtW / 2;
+      var cy = mtH / 2;
+      
+      // Update breathing phases
+      breathingPhase += 0.015;
+      var scaleFactor = 1.0 + Math.sin(breathingPhase) * 0.16; // Expand/contract
+      
+      // Set text synced to breathing cycles
+      var cycle = Math.sin(breathingPhase);
+      if (lblBreathingText) {
+        if (cycle > 0.3) lblBreathingText.textContent = 'NEFES AL';
+        else if (cycle < -0.3) lblBreathingText.textContent = 'NEFES VER';
+        else lblBreathingText.textContent = 'TUT';
+      }
+
+      // Configure orb color schemes depending on sentiment state
+      var baseColor, glowColor, waveCount;
+      if (mentorSentiment === 'stress') {
+        baseColor = 'rgba(255, 23, 71, 0.45)';
+        glowColor = '#ff1744';
+        waveCount = 5;
+        scaleFactor += (Math.random() - 0.5) * 0.08; // High frequency shaking
+      } else if (mentorSentiment === 'sad') {
+        baseColor = 'rgba(162, 155, 254, 0.3)';
+        glowColor = '#a29bfe';
+        waveCount = 2;
+      } else if (mentorSentiment === 'logic') {
+        baseColor = 'rgba(255, 234, 0, 0.4)';
+        glowColor = '#ffea00';
+        waveCount = 4;
+      } else { // calm / healthy green
+        baseColor = 'rgba(105, 240, 174, 0.35)';
+        glowColor = '#69f0ae';
+        waveCount = 3;
+      }
+
+      // Renders overlay sine waves forming a sphere
+      mtCtx.save();
+      mtCtx.shadowBlur = 25;
+      mtCtx.shadowColor = glowColor;
+
+      for (var w = 0; w < waveCount; w++) {
+        mtCtx.fillStyle = baseColor;
+        mtCtx.beginPath();
+        var radius = 65 * scaleFactor + w * 4;
+        
+        // Draw wavy circle
+        var firstX = 0, firstY = 0;
+        for (var angle = 0; angle <= Math.PI * 2 + 0.1; angle += 0.1) {
+          // Math wave frequency turbulence
+          var turbulence = mentorSentiment === 'stress' ? 8 : (mentorSentiment === 'logic' ? 1.5 : 4);
+          var waveVal = Math.sin(angle * 6 + Date.now() * 0.004 + w * 20) * turbulence;
+          
+          var rW = radius + waveVal;
+          var x = cx + Math.cos(angle) * rW;
+          var y = cy + Math.sin(angle) * rW;
+
+          if (angle === 0) {
+            firstX = x; firstY = y;
+            mtCtx.moveTo(x, y);
+          } else {
+            mtCtx.lineTo(x, y);
+          }
+        }
+        mtCtx.lineTo(firstX, firstY);
+        mtCtx.fill();
+      }
+      mtCtx.restore();
+    }
+
+    // Animation Tick
+    function mentorLoop() {
+      drawMentorOrb();
+      requestAnimationFrame(mentorLoop);
+    }
+    mentorLoop();
+  }
+} catch(e) { console.error('ZenMentor error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   69. ŞÜPHELİ DEDEKTİF (TURING TEST SUSPECT GAME ENGINE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var suspectCanvas = document.getElementById('suspectCanvas');
+  if (suspectCanvas) {
+    var spCtx = suspectCanvas.getContext('2d');
+    var btnSuspect1 = document.getElementById('btnSuspect1');
+    var btnSuspect2 = document.getElementById('btnSuspect2');
+    var btnSuspect3 = document.getElementById('btnSuspect3');
+    var btnSuspectQ1 = document.getElementById('btnSuspectQ1');
+    var btnSuspectQ2 = document.getElementById('btnSuspectQ2');
+    var btnSuspectQ3 = document.getElementById('btnSuspectQ3');
+    var btnSuspectInquire = document.getElementById('btnSuspectInquire');
+    var suspectCustomInput = document.getElementById('suspectCustomInput');
+    var suspectSpeechBubble = document.getElementById('suspectSpeechBubble');
+    
+    // Biometric labels
+    var lblSuspectStress = document.getElementById('lblSuspectStress');
+    var lblSuspectAIScore = document.getElementById('lblSuspectAIScore');
+
+    var spW = suspectCanvas.width;
+    var spH = suspectCanvas.height;
+
+    // Active suspects states
+    var activeSuspect = 's1'; // s1 (Android), s2 (Time Traveler), s3 (Human)
+    var heartbeatSpeed = 1.0;
+    var heartbeatTimer = 0;
+
+    // Suspect responses matrices
+    var SUSPECT_RESPONSES = {
+      s1: { // Android
+        name: 'Şüpheli A (TR-800)',
+        q1: 'Aşk, organizmaların biyolojik üremesini sağlamak amacıyla salgıladığı hormonal bir algoritmadır. Dopamin düzeyinin %45 artışı olarak hesaplanabilir. (Bunu söylerken nabız çizgisinde düzleşmeler gözlemleniyor!)',
+        q2: 'Tabii ki dedektif. Pi sayısının ilk 15 basamağı: 3,14159265358979. İşlem saniyede 0.0003 milisaniyede tamamlandı.',
+        q3: 'Dün akşam... (Hafıza taraması yapılıyor...) 340 gram sentetik karbonhidrat ve 200 ml H2O tükettim. Bu besinler enerji hücrelerimi şarj etmek için yeterli.',
+        fallback: 'Girdiğiniz soru semantik çözümleme sistemimde analiz ediliyor... Hata: Bu soruya verilecek organik cevap bulunamadı. Lütfen daha yapısal sorular yöneltin.',
+        stress: 'DÜŞÜK',
+        ai: '92%'
+      },
+      s2: { // Time Traveler
+        name: 'Şüpheli B (Zaman Yolcusu)',
+        q1: 'Aşk mı? 2145 yılında duygularımızı genetik kapsüllerle düzenliyoruz. Ancak tarihten okuduğuma göre, eskiden insanların mantığını tamamen yok eden tatlı bir hastalık gibiymiş.',
+        q2: 'Pi sayısı mı? Orta çağ matematiğiyle pek ilgilenmiyorum dedektif, fakat sanırım 3.14 ile başlayıp sonsuza giden yörünge koordinatlarıydı.',
+        q3: 'Dün akşam sentetik moleküler pizza hapı aldım. Yanında da Mars yapımı sentetik şarap içtim. 21. yüzyıl pizzalarını çok merak ediyorum doğrusu.',
+        fallback: 'Gelecekte bu sorduğunuz kavramın adı çoktan değişti dostum. 2145\'in tarih arşivlerine bakmam lazım.',
+        stress: 'YÜKSEK (Anomali)',
+        ai: '35%'
+      },
+      s3: { // Simple Human
+        name: 'Şüpheli C (İnsan)',
+        q1: 'Aşk mı? Gerçekten sorgu odasında bana bunu mu soruyorsunuz? Aşk, sevdiğin insanı görünce kalbinin deli gibi çarpmasıdır işte. (Nabız grafiği aniden fırlıyor!)',
+        q2: 'Şey... 3,14... gerisini bilmiyorum. İlkokulda görmüştük ama aklımda kalmadı. Kim pi sayısının 15 basamağını ezbere bilir ki?',
+        q3: 'Dün akşam pizza sipariş ettim, yanında kola içtim. Maç izliyordum. Beni neden burada tuttuğunuzu hala anlamış değilim!',
+        fallback: 'Ne demek istiyorsunuz? Normal Türkçe konuşuyorum işte. Beni robot sanmanız inanılmaz derecede saçma ve sinir bozucu!',
+        stress: 'NORMAL',
+        ai: '8%'
+      }
+    };
+
+    function runInquiry(qKey, customText) {
+      var data = SUSPECT_RESPONSES[activeSuspect];
+      var responseText = '';
+
+      if (qKey) {
+        responseText = data[qKey];
+        // Set dynamic heartbeat pulse speed depending on stress level
+        if (qKey === 'q1' && activeSuspect === 's3') {
+          heartbeatSpeed = 3.5; // Heart jumps!
+        } else if (qKey === 'q2' && activeSuspect === 's1') {
+          heartbeatSpeed = 0.5; // Robot stays perfectly cool
+        } else {
+          heartbeatSpeed = activeSuspect === 's2' ? 2.2 : 1.2;
+        }
+      } else if (customText) {
+        // Custom text parsing
+        var lower = customText.toLowerCase();
+        if (lower.indexOf('robot') !== -1 || lower.indexOf('yapay') !== -1 || lower.indexOf('ai') !== -1) {
+          responseText = activeSuspect === 's1' ? 'Yapay zeka iddialarını reddediyorum. Donanımım... pardon, ruhum tamamen organiktir.' : 'Ben robot falan değilim, beni buradan derhal çıkarın!';
+          heartbeatSpeed = 2.8;
+        } else {
+          responseText = data.fallback;
+          heartbeatSpeed = 1.3;
+        }
+      }
+
+      if (suspectSpeechBubble) {
+        suspectSpeechBubble.innerHTML = '<strong style="color:#00e5ff; display:block; margin-bottom:5px;">' + data.name + ':</strong> "' + responseText + '"';
+      }
+
+      // Sync dashboards
+      if (lblSuspectStress) lblSuspectStress.textContent = data.stress;
+      if (lblSuspectAIScore) lblSuspectAIScore.textContent = data.ai;
+
+      // Colorize stress labels
+      if (data.stress === 'YÜKSEK (Anomali)') lblSuspectStress.style.color = '#a29bfe';
+      else if (data.stress === 'DÜŞÜK') lblSuspectStress.style.color = '#69f0ae';
+      else lblSuspectStress.style.color = '#ff6b9d';
+
+      toast('Dedektif sorgusu yapıldı.', '#00e5ff');
+    }
+
+    // Question button listeners
+    btnSuspectQ1.addEventListener('click', function(){ runInquiry('q1'); });
+    btnSuspectQ2.addEventListener('click', function(){ runInquiry('q2'); });
+    btnSuspectQ3.addEventListener('click', function(){ runInquiry('q3'); });
+    
+    btnSuspectInquire.addEventListener('click', function() {
+      var text = suspectCustomInput.value.trim();
+      if (!text) {
+        toast('⚠️ Lütfen önce sorgu odasına bir soru yazın!', '#ff7043');
+        return;
+      }
+      runInquiry(null, text);
+      suspectCustomInput.value = '';
+    });
+
+    suspectCustomInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') {
+      var text = suspectCustomInput.value.trim();
+      if (text) { runInquiry(null, text); suspectCustomInput.value = ''; }
+    }});
+
+    // Suspect selection tabs
+    function selectSuspect(suspectKey, btn) {
+      activeSuspect = suspectKey;
+      document.querySelectorAll('#turing-detective-sec .mini-btn').forEach(function(b) {
+        if (b.id.indexOf('btnSuspect') !== -1) b.classList.remove('active');
+      });
+      btn.classList.add('active');
+
+      var data = SUSPECT_RESPONSES[suspectKey];
+      suspectSpeechBubble.textContent = '"Sorgulanmaya hazırım dedektif. Bana ne sormak istiyorsunuz?"';
+      
+      if (lblSuspectStress) lblSuspectStress.textContent = 'NORMAL';
+      if (lblSuspectAIScore) lblSuspectAIScore.textContent = '0%';
+      lblSuspectStress.style.color = '';
+      heartbeatSpeed = 1.0;
+
+      toast('Şüpheli seçildi: ' + data.name, '#00e5ff');
+    }
+
+    btnSuspect1.addEventListener('click', function(){ selectSuspect('s1', btnSuspect1); });
+    btnSuspect2.addEventListener('click', function(){ selectSuspect('s2', btnSuspect2); });
+    btnSuspect3.addEventListener('click', function(){ selectSuspect('s3', btnSuspect3); });
+
+    // ── VOTING LOGIC ─────────────────────────────────────────
+    function castVote(votedSuspect) {
+      if (votedSuspect === 's1') {
+        toast('🎉 TEBRİKLER! Şüpheli A gerçekten TR-800 kodlu Android çıkmıştır. Turing dedektiflik rozetini hak ettiniz!', '#69f0ae');
+      } else {
+        toast('❌ YANLIŞ TAHMİN! Seçtiğiniz şüpheli bir robota benzese de aslında organik bir bilince sahipti. Dikkatli sorgulayın!', '#ff1744');
+      }
+    }
+
+    document.getElementById('btnVoteS1').addEventListener('click', function(){ castVote('s1'); });
+    document.getElementById('btnVoteS2').addEventListener('click', function(){ castVote('s2'); });
+    document.getElementById('btnVoteS3').addEventListener('click', function(){ castVote('s3'); });
+
+    // ── BIOMETRIC PULSE WAVE RENDER ──────────────────────────
+    function drawHeartbeatPulse() {
+      if (!isCanvasActive('suspectCanvas')) return;
+
+      // Trailing alpha
+      spCtx.fillStyle = 'rgba(2,2,4,0.08)';
+      spCtx.fillRect(0, 0, spW, spH);
+
+      // Render grid lines
+      spCtx.strokeStyle = 'rgba(0, 229, 255, 0.02)';
+      spCtx.lineWidth = 0.5;
+      spCtx.beginPath();
+      for (var x = 0; x < spW; x += 15) {
+        spCtx.moveTo(x, 0); spCtx.lineTo(x, spH);
+      }
+      for (var y = 0; y < spH; y += 15) {
+        spCtx.moveTo(0, y); spCtx.lineTo(spW, y);
+      }
+      spCtx.stroke();
+
+      // Math equation for dynamic ECG pulse line
+      // Heartbeat wave equation containing P-wave, QRS-complex, and T-wave!
+      spCtx.strokeStyle = activeSuspect === 's1' ? '#ff6b9d' : '#69f0ae';
+      spCtx.lineWidth = 1.8;
+      
+      // Shadow glow
+      spCtx.save();
+      spCtx.shadowBlur = 10;
+      spCtx.shadowColor = activeSuspect === 's1' ? '#ff6b9d' : '#69f0ae';
+
+      spCtx.beginPath();
+      
+      heartbeatTimer += 0.08 * heartbeatSpeed;
+      
+      for (var px = 0; px < spW; px++) {
+        var phase = (px - heartbeatTimer * 15) * 0.035;
+        var yVal = spH / 2;
+
+        // Form periodic ECG blips
+        var cyclePhase = phase % (Math.PI * 2);
+        if (cyclePhase < 0) cyclePhase += Math.PI * 2;
+
+        // QRS complex logic
+        if (cyclePhase > 1.2 && cyclePhase < 1.4) {
+          yVal -= (cyclePhase - 1.2) * 200; // Q-wave
+        } else if (cyclePhase >= 1.4 && cyclePhase < 1.6) {
+          yVal += (cyclePhase - 1.4) * 350 - 40; // R-wave peak
+        } else if (cyclePhase >= 1.6 && cyclePhase < 1.8) {
+          yVal -= (cyclePhase - 1.6) * 150 + 30; // S-wave
+        } else if (cyclePhase >= 2.4 && cyclePhase < 2.8) {
+          yVal -= Math.sin((cyclePhase - 2.4) * Math.PI) * 12; // T-wave
+        }
+
+        // Glitch android heartbeat signals (micro-cuts)
+        if (activeSuspect === 's1' && Math.random() < 0.015 && isCanvasActive('suspectCanvas')) {
+          yVal += (Math.random() - 0.5) * 18;
+        }
+
+        if (px === 0) {
+          spCtx.moveTo(px, yVal);
+        } else {
+          spCtx.lineTo(px, yVal);
+        }
+      }
+      spCtx.stroke();
+      spCtx.restore();
+
+      // Slowly damp heartbeat speeds back to normal resting rate
+      if (heartbeatSpeed > 1.0) {
+        heartbeatSpeed -= 0.015;
+      }
+    }
+
+    // Animation Tick
+    function suspectLoop() {
+      drawHeartbeatPulse();
+      requestAnimationFrame(suspectLoop);
+    }
+    suspectLoop();
+  }
+} catch(e) { console.error('TuringDetective error', e); }
+
+/* ══════════════════════════════════════════════════════════
+   70. AI KARİZMA & İKNA SİMÜLATÖRÜ (NEGOTIATOR ENGINE)
+   ══════════════════════════════════════════════════════════ */
+try {
+  var btnBossElon = document.getElementById('btnBossElon');
+  var btnBossBoard = document.getElementById('btnBossBoard');
+  var btnBossAlien = document.getElementById('btnBossAlien');
+  var lblBossScenario = document.getElementById('lblBossScenario');
+  var pitchInput = document.getElementById('pitchInput');
+  var btnSubmitPitch = document.getElementById('btnSubmitPitch');
+  var bossReactionBubble = document.getElementById('bossReactionBubble');
+  
+  // Scoring labels
+  var lblDealTemp = document.getElementById('lblDealTemp');
+  var barDealTemp = document.getElementById('barDealTemp');
+  var lblPersuasionKeys = document.getElementById('lblPersuasionKeys');
+  var lblConfidenceMult = document.getElementById('lblConfidenceMult');
+
+  if (btnSubmitPitch) {
+    var activeBoss = 'elon'; // elon, board, alien
+
+    // Boss profiles data
+    var BOSS_PROFILES = {
+      elon: {
+        name: 'Elon (Milyarder)',
+        scenario: '<strong>🚀 Fikir Sunumu:</strong> Elon, Mars kolonizasyonu için yeni roket kalkanı fikrini dinleyecek. Ona inovasyondan, kâr oranından ve veri odaklı vizyonundan bahset! (Anahtar kelimeler: Mars, roket, vizyon, inovasyon)',
+        reactionGood: '"İnanılmaz dostum! Bu kalkan tasarımı tam aradığım şey. İnovatif vizyonunu çok beğendim. Mars projesine dahil oldun! Deal! 🚀"',
+        reactionBad: '"Bak, bu anlattıkların çok sıkıcı ve sıradan. Bana heyecan verici, Mars ölçeğinde bir vizyon sunman lazım. Teklifini reddediyorum."'
+      },
+      board: {
+        name: 'Yönetim Kurulu',
+        scenario: '<strong>💼 Zam Talebi Müzakeresi:</strong> Katı şirket yönetim kurulunu, bu yılki kâr artışına yaptığınız katkılar ve verimlilik artışı verilerinizle ikna edin. (Anahtar kelimeler: kâr, büyüme, veri, verimlilik)',
+        reactionGood: '"Sunduğunuz büyüme ve kâr artışı verileri son derece ikna edici. Şirket hedeflerimize katkınız yadsınamaz. Talep ettiğiniz zam onaylanmıştır. Tebrikler! 💼"',
+        reactionBad: '"Zam yapmak için elimizde yeterli büyüme verisi bulunmuyor. Şirkete nasıl doğrudan kâr sağladığınızı ispatlayamadınız. Talebiniz reddedilmiştir."'
+      },
+      alien: {
+        name: 'Galaktik Delege Zorak',
+        scenario: '<strong>👾 Uzay İttifakı Masası:</strong> Dünya dışı galaktik delegeyi, Samanyolu barış anlaşması için ikna edin. Kozmik denge, sevgi ve sevgi yasasını anlatın! (Anahtar kelimeler: kozmik, barış, denge, sevgi)',
+        reactionGood: '"İnsan evladı, kozmik dengenin ve sevginin dilini konuşabiliyorsun. Bu evrensel barış anlaşmasını gezegeniniz adına imzalıyorum! 👾"',
+        reactionBad: '"Gezegeninizin bencil arzuları galaktik dengeye uymuyor. Kozmik barış felsefesinden çok uzaksınız. İttifak talebiniz geri çevrilmiştir."'
+      }
+    };
+
+    function runPitchAnalysis() {
+      var pitchText = pitchInput.value.trim();
+      if (!pitchText) {
+        toast('⚠️ Lütfen önce ikna konuşmanızı yazın!', '#ff7043');
+        return;
+      }
+
+      var lower = pitchText.toLowerCase();
+
+      // Local analyzer criteria
+      var keyMatches = 0;
+      var confidenceMatches = 0;
+      var activeScenKeys = [];
+
+      // Character-specific key terms
+      if (activeBoss === 'elon') {
+        activeScenKeys = ['mars', 'roket', 'vizyon', 'inovasyon', 'kalkan', 'hız'];
+      } else if (activeBoss === 'board') {
+        activeScenKeys = ['kâr', 'büyüme', 'veri', 'verimlilik', 'hedef', 'katkı'];
+      } else { // alien
+        activeScenKeys = ['kozmik', 'barış', 'denge', 'sevgi', 'evren', 'bütünlük'];
+      }
+
+      // 1. Check Scenario Keywords
+      var matchedKeywords = [];
+      activeScenKeys.forEach(function(key) {
+        if (lower.indexOf(key) !== -1) {
+          keyMatches++;
+          matchedKeywords.push(key);
+        }
+      });
+
+      // 2. Check General Persuasion terms
+      var generalKeys = ['kesinlikle', 'başaracağız', 'lider', 'hazırız', 'kanıt', 'net', 'büyük', 'yatırım'];
+      generalKeys.forEach(function(gk) {
+        if (lower.indexOf(gk) !== -1) {
+          confidenceMatches++;
+        }
+      });
+
+      // Calculate confidence multiplier
+      var confidenceMult = 1.0 + confidenceMatches * 0.2;
+      
+      // Calculate Deal temperature
+      var temperature = Math.min(100, Math.floor((keyMatches * 15 + confidenceMatches * 8 + pitchText.length * 0.08) * 1.1));
+
+      // Sync labels
+      if (lblDealTemp) lblDealTemp.textContent = temperature + '°C';
+      if (barDealTemp) barDealTemp.style.width = temperature + '%';
+      if (lblPersuasionKeys) lblPersuasionKeys.textContent = matchedKeywords.length > 0 ? matchedKeywords.join(', ') : 'Bulunamadı';
+      if (lblConfidenceMult) lblConfidenceMult.textContent = 'x' + confidenceMult.toFixed(1);
+
+      // Boss reactions text
+      var data = BOSS_PROFILES[activeBoss];
+      var resultText = '';
+
+      if (temperature >= 70) {
+        resultText = data.reactionGood;
+        toast('🎉 Harika! Müzakereyi kazandınız ve anlaşmayı kaptınız!', '#69f0ae');
+      } else {
+        resultText = data.reactionBad;
+        toast('❌ Müzakere başarısız. Daha fazla anahtar kelime ve özgüven ekleyin!', '#ff1744');
+      }
+
+      if (bossReactionBubble) {
+        bossReactionBubble.innerHTML = '<strong style="color:#ffea00; display:block; margin-bottom:5px;">' + data.name + ' Reaksiyonu:</strong> ' + resultText;
+      }
+    }
+
+    btnSubmitPitch.addEventListener('click', runPitchAnalysis);
+
+    // Selector buttons binding
+    function selectBoss(bossId, btn) {
+      activeBoss = bossId;
+      document.querySelectorAll('#pitch-negotiator-sec .mini-btn').forEach(function(b) {
+        if (b.id.indexOf('btnBoss') !== -1) b.classList.remove('active');
+      });
+      btn.classList.add('active');
+
+      var data = BOSS_PROFILES[bossId];
+      if (lblBossScenario) lblBossScenario.innerHTML = data.scenario;
+      
+      // Reset scores
+      if (lblDealTemp) lblDealTemp.textContent = '0°C';
+      if (barDealTemp) barDealTemp.style.width = '0%';
+      if (lblPersuasionKeys) lblPersuasionKeys.textContent = 'Bulunamadı';
+      if (lblConfidenceMult) lblConfidenceMult.textContent = 'x0.0';
+      pitchInput.value = '';
+      
+      bossReactionBubble.textContent = '"Teklifinizi sunarak yatırımcının kararını ölçün. Kelimelerinizi akıllıca seçerek ikna gücünüzü gösterin."';
+
+      toast('Müzakereci seçildi: ' + data.name, '#00e5ff');
+    }
+
+    btnBossElon.addEventListener('click', function(){ selectBoss('elon', btnBossElon); });
+    btnBossBoard.addEventListener('click', function(){ selectBoss('board', btnBossBoard); });
+    btnBossAlien.addEventListener('click', function(){ selectBoss('alien', btnBossAlien); });
+  }
+} catch(e) { console.error('PitchNegotiator error', e); }
 
 
 

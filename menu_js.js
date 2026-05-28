@@ -16,7 +16,9 @@ try {
       {em:'🎲',ttl:'Zar Toplayıcı',dsc:'D4\'ten D100\'e',id:'dice'},
       {em:'🃏',ttl:'Hafıza Kartları',dsc:'Eşleştirme oyunu',id:'memory-sec'},
       {em:'🫧',ttl:'Bubble Pop',dsc:'Balon patlatma',id:'bubble-sec'},
-      {em:'🌍',ttl:'Coğrafya Quiz',dsc:'Başkent bil',id:'geography'}
+      {em:'🌍',ttl:'Coğrafya Quiz',dsc:'Başkent bil',id:'geography'},
+      {em:'🌊',ttl:'Zen Renk Seli',dsc:'Renk yayılım bulmacası',id:'color-flood-sec'},
+      {em:'🌀',ttl:'Hafıza Yörüngesi',dsc:'Desen ezberleme testi',id:'memory-orbit-sec'}
     ]},
     { label: '🎨 Yaratıcılık', items: [
       {em:'🎨',ttl:'Pixel Art',dsc:'Dijital sanat',id:'pixelart'},
@@ -27,6 +29,12 @@ try {
       {em:'📖',ttl:'Emoji Hikaye',dsc:'Emoji ile yaz',id:'emojistory'},
       {em:'🌌',ttl:'Yerçekimi Sandboxı',dsc:'Kozmik kütleçekim simülatörü',id:'gravity-sec'},
       {em:'🎛️',ttl:'Yapay Yaşam',dsc:'Lenia otomatı',id:'lenia-sec'}
+    ]},
+    { label: '🤖 Yapay Zeka & Zihin', items: [
+      {em:'🔮',ttl:'Rüya Yorumlayıcı',dsc:'Yapay zeka ile bilinçaltı analizi',id:'dream-weaver-sec'},
+      {em:'🧘',ttl:'Zen AI Mentor',dsc:'Bilge mentorlar & duygu küresi',id:'zen-mentor-sec'},
+      {em:'🕵️',ttl:'AI Şüpheli Dedektif',dsc:'Turing testi sorgulama oyunu',id:'turing-detective-sec'},
+      {em:'🚀',ttl:'Karizma Simülatörü',dsc:'Yapay zeka pazarlık & ikna testi',id:'pitch-negotiator-sec'}
     ]},
     { label: '🌍 Keşif & Bilgi', items: [
       {em:'🗺️',ttl:'Dünya Kaşifi',dsc:'23 güzel yer',id:'world'},
