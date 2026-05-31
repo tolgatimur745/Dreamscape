@@ -3008,6 +3008,7 @@ try {
   var MENU_CATS = [
     { label: '🎮 Oyunlar', items: [
       {em:'🎮',ttl:'Oyun Portalı',dsc:'Tüm mini oyunlar lobisi',id:'games'},
+      {em:'🎲',ttl:'Şans Limanı',dsc:'Simülasyon Merkezi',id:'chance-hub'},
       {em:'🐍',ttl:'Snake (Yılan)',dsc:'Klasik yılan oyunu',id:'snake-sec'},
       {em:'🏓',ttl:'Pong',dsc:'AI rakibine karşı',id:'pong'},
       {em:'🃏',ttl:'Blackjack',dsc:'21\'i geç',id:'blackjack'},
@@ -3020,6 +3021,7 @@ try {
       {em:'🫧',ttl:'Bubble Pop',dsc:'Balon patlatma',id:'bubble-sec'},
       {em:'⚡',ttl:'Refleks Testi',dsc:'Yeşile dönünce tıkla',id:'reaction-sec'},
       {em:'🎨',ttl:'Renk Yarışı',dsc:'Rengi doğru adlandır',id:'color-sec'},
+      {em:'💡',ttl:'Işıkları Kapat',dsc:'Zeka oyunu',id:'lightsout-sec'},
       {em:'🧩',ttl:'15 Puzzle',dsc:'Sayıları sıraya diz',id:'puzzle-sec'},
       {em:'🐹',ttl:'Köstebek Vur',dsc:'Köstebekleri yakala',id:'mole-sec'},
       {em:'❌',ttl:'XOX — AI',dsc:'AI\'a karşı XOX oyna',id:'ttt-sec'},
@@ -3353,6 +3355,7 @@ try {
   var HUB_CATS = [
     { label: '🎮 Oyunlar', items: [
       {em:'🎮', ttl:'Oyun Portalı',   dsc:'Tüm mini oyunlar lobisi', id:'games'},
+      {em:'🎲', ttl:'Şans Limanı',    dsc:'Simülasyon Merkezi',      id:'chance-hub'},
       {em:'🐍', ttl:'Snake (Yılan)',   dsc:'Klasik yılan oyunu',      id:'snake-sec'},
       {em:'🏓', ttl:'Pong',           dsc:'AI rakibine karşı',       id:'pong'},
       {em:'🃏', ttl:'Blackjack',      dsc:"21'i geç",               id:'blackjack'},
@@ -3365,6 +3368,7 @@ try {
       {em:'🫧', ttl:'Bubble Pop',     dsc:'Balon patlatma',          id:'bubble-sec'},
       {em:'⚡', ttl:'Refleks Testi',   dsc:'Yeşile dönünce tıkla',    id:'reaction-sec'},
       {em:'🎨', ttl:'Renk Yarışı',     dsc:'Rengi doğru adlandır',    id:'color-sec'},
+      {em:'💡', ttl:'Işıkları Kapat',  dsc:'Zeka oyunu',              id:'lightsout-sec'},
       {em:'🧩', ttl:'15 Puzzle',       dsc:'Sayıları sıraya diz',     id:'puzzle-sec'},
       {em:'🐹', ttl:'Köstebek Vur',    dsc:'Köstebekleri yakala',     id:'mole-sec'},
       {em:'❌', ttl:'XOX — AI',        dsc:'AI\'a karşı XOX oyna',    id:'ttt-sec'},
@@ -3447,13 +3451,83 @@ try {
       {em:'🎧', ttl:'İkili İşitsel Ritim',dsc:'Meditation & uyku ritimleri sentezleyici',id:'binaural-sec'},
       {em:'💧', ttl:'Zen Su Takipçisi',  dsc:'Günlük su hedefini eğlenceli dalgalarla izle',id:'water-sec'},
       {em:'✔️', ttl:'Zen Yapılacaklar',  dsc:'Motivasyonel yapılacak işler kontrol listesi',id:'todo-sec'}
+    ]},
+    { label: '🎮 Ek Oyunlar (Chill)', items: [
+      {em:'🔢', ttl:'2048', dsc:'Efsanevi Bulmaca', id:'game-2048'},
+      {em:'⏳', ttl:'Kum Havuzu', dsc:'Fizik Simülasyonu', id:'game-sand'},
+      {em:'🔴', ttl:'İşe Yaramaz Buton', dsc:'Sakın Tıklama', id:'game-useless'}
+    ]},
+    { label: '🎵 Müzik & Ritim', items: [
+      {em:'🥁', ttl:'Beat Makinesi', dsc:'8 kanallı web audio davul',id:'beatmaker-sec'},
+      {em:'🎶', ttl:'Neon Ritim', dsc:'Tuşlara basarak ritmi yakala',id:'neonrhythm-sec'}
     ]}
   ];
 
   // ── Build hub cards ──────────────────────────────────────
+  function toggleFavorite(id, e) {
+    if(e) e.stopPropagation();
+    var favs = JSON.parse(localStorage.getItem('ds_favorites') || '[]');
+    if(favs.includes(id)) {
+      favs = favs.filter(function(f) { return f !== id; });
+    } else {
+      favs.push(id);
+    }
+    localStorage.setItem('ds_favorites', JSON.stringify(favs));
+    buildHub();
+  }
+
+  function createHubCard(item, isFav) {
+    var card = document.createElement('div');
+    card.className = 'hub-card';
+    card.dataset.search = (item.ttl + ' ' + item.dsc + ' ' + item.em).toLowerCase();
+    
+    var favBtnHtml = '<div class="fav-btn" style="position:absolute; top:10px; right:10px; font-size:1.2rem; cursor:pointer; z-index:10; transition:0.2s;" title="Favorilere Ekle/Çıkar">' + (isFav ? '❤️' : '🤍') + '</div>';
+    
+    card.innerHTML =
+      favBtnHtml +
+      '<div class="hc-em">' + item.em + '</div>' +
+      '<div class="hc-ttl">' + item.ttl + '</div>' +
+      '<div class="hc-dsc">' + item.dsc + '</div>';
+      
+    var favBtn = card.querySelector('.fav-btn');
+    favBtn.addEventListener('click', function(e) {
+      toggleFavorite(item.id, e);
+    });
+      
+    card.addEventListener('click', function(e) {
+      if(e.target === favBtn) return;
+      if(typeof dsGoToSection === 'function') dsGoToSection(item.id, item.em + ' ' + item.ttl);
+      else window.dsGoToSection(item.id, item.em + ' ' + item.ttl);
+    });
+    return card;
+  }
+
   function buildHub() {
     var hubMain = document.getElementById('hubMain');
     if (!hubMain) return;
+    hubMain.innerHTML = '';
+    
+    var allItems = {};
+    HUB_CATS.forEach(function(cat) {
+      cat.items.forEach(function(item) { allItems[item.id] = item; });
+    });
+    
+    var favs = JSON.parse(localStorage.getItem('ds_favorites') || '[]');
+    var validFavs = favs.map(function(id) { return allItems[id]; }).filter(Boolean);
+    
+    if (validFavs.length > 0) {
+      var favLbl = document.createElement('div');
+      favLbl.className = 'hub-cat';
+      favLbl.innerHTML = '❤️ Favoriler';
+      hubMain.appendChild(favLbl);
+      var favGrid = document.createElement('div');
+      favGrid.className = 'hub-grid';
+      validFavs.forEach(function(item) {
+        favGrid.appendChild(createHubCard(item, true));
+      });
+      hubMain.appendChild(favGrid);
+    }
+
     HUB_CATS.forEach(function(cat) {
       var lbl = document.createElement('div');
       lbl.className = 'hub-cat';
@@ -3464,15 +3538,7 @@ try {
       grid.className = 'hub-grid';
 
       cat.items.forEach(function(item) {
-        var card = document.createElement('div');
-        card.className = 'hub-card';
-        card.dataset.search = (item.ttl + ' ' + item.dsc + ' ' + item.em).toLowerCase();
-        card.innerHTML =
-          '<div class="hc-em">' + item.em + '</div>' +
-          '<div class="hc-ttl">' + item.ttl + '</div>' +
-          '<div class="hc-dsc">' + item.dsc + '</div>';
-        card.addEventListener('click', function() { dsGoToSection(item.id, item.em + ' ' + item.ttl); });
-        grid.appendChild(card);
+        grid.appendChild(createHubCard(item, favs.includes(item.id)));
       });
 
       hubMain.appendChild(grid);
@@ -11507,3 +11573,921 @@ try {
 
 
 
+
+/* ══════════════════════════════════════════════════════════
+   LIGHTS OUT PUZZLE
+   ══════════════════════════════════════════════════════════ */
+try {
+  var LOUT = { grid: document.getElementById('lightsOutGrid'), movesEl: document.getElementById('lightsOutMoves'), resetBtn: document.getElementById('lightsOutReset'), size: 5, state: [], moves: 0 };
+  
+  function lo_init() {
+    if(!LOUT.grid) return;
+    LOUT.moves = 0;
+    if(LOUT.movesEl) LOUT.movesEl.textContent = 0;
+    LOUT.state = [];
+    for(var i=0; i<LOUT.size * LOUT.size; i++) {
+      LOUT.state.push(Math.random() > 0.5); // Randomly true (on) or false (off)
+    }
+    lo_render();
+  }
+  
+  function lo_render() {
+    LOUT.grid.innerHTML = '';
+    for(var i=0; i<LOUT.size * LOUT.size; i++) {
+      var cell = document.createElement('div');
+      cell.style.cssText = 'width: 100%; height: 100%; border-radius: 8px; cursor: pointer; transition: 0.2s;';
+      if(LOUT.state[i]) {
+        cell.style.background = 'var(--a3)';
+        cell.style.boxShadow = '0 0 10px var(--a3)';
+      } else {
+        cell.style.background = 'rgba(255,255,255,0.05)';
+        cell.style.boxShadow = 'none';
+      }
+      
+      (function(index) {
+        cell.addEventListener('click', function() {
+          lo_toggle(index);
+          LOUT.moves++;
+          if(LOUT.movesEl) LOUT.movesEl.textContent = LOUT.moves;
+          lo_render();
+          lo_checkWin();
+        });
+      })(i);
+      LOUT.grid.appendChild(cell);
+    }
+  }
+  
+  function lo_toggle(i) {
+    var r = Math.floor(i / LOUT.size);
+    var c = i % LOUT.size;
+    var toggle = function(r2, c2) {
+      if(r2 >= 0 && r2 < LOUT.size && c2 >= 0 && c2 < LOUT.size) {
+        var idx = r2 * LOUT.size + c2;
+        LOUT.state[idx] = !LOUT.state[idx];
+      }
+    };
+    toggle(r, c);       // center
+    toggle(r-1, c);     // top
+    toggle(r+1, c);     // bottom
+    toggle(r, c-1);     // left
+    toggle(r, c+1);     // right
+  }
+  
+  function lo_checkWin() {
+    var isWin = LOUT.state.every(function(val) { return val === false; });
+    if(isWin) {
+      toast('Tebrikler! ' + LOUT.moves + ' hamlede bitirdiniz!', '#69f0ae');
+      setTimeout(lo_init, 2000);
+    }
+  }
+  
+  if(LOUT.resetBtn) {
+    LOUT.resetBtn.addEventListener('click', lo_init);
+  }
+  
+  lo_init();
+} catch(e) { console.error('LightsOut error', e); }
+
+/* =========================================================
+   CHILL GAMES EXPANSION (2048, Sand, Useless Button)
+========================================================= */
+try {
+  // 1. Inject Hub Cards to the Ana Sayfa (hubMain)
+  const firstGrid = document.querySelector('#hubMain .hub-grid');
+  if (firstGrid) {
+    const newItems = [
+      {em:'🔢', ttl:'2048', dsc:'Efsanevi Bulmaca', id:'game-2048'},
+      {em:'⏳', ttl:'Kum Havuzu', dsc:'Fizik Simülasyonu', id:'game-sand'},
+      {em:'🔴', ttl:'İşe Yaramaz Buton', dsc:'Sakın Tıklama', id:'game-useless'}
+    ];
+
+    newItems.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'hub-card';
+      card.dataset.search = (item.ttl + ' ' + item.dsc + ' ' + item.em).toLowerCase();
+      card.innerHTML =
+        '<div class="hc-em">' + item.em + '</div>' +
+        '<div class="hc-ttl">' + item.ttl + '</div>' +
+        '<div class="hc-dsc">' + item.dsc + '</div>';
+      card.addEventListener('click', function() { 
+        if(typeof window.dsGoToSection === 'function') {
+          window.dsGoToSection(item.id, item.em + ' ' + item.ttl); 
+        }
+      });
+      firstGrid.appendChild(card);
+    });
+  }
+
+  // 2. Inject Sections to body
+  const newSectionsHtml = `
+    <!-- 2048 SECTION -->
+    <section class="section ds-section" id="game-2048">
+      <div class="section-header">
+        <button class="chance-back-btn" style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" onclick="if(typeof dsGoToSection === 'function') dsGoToSection('hubPage', '')">◀ Ana Sayfa</button>
+        <div class="section-badge">🔢 Zeka</div>
+        <h2 class="section-title">2048</h2>
+        <p class="section-sub">Aynı sayıları birleştir ve 2048'e ulaş!</p>
+      </div>
+      <div style="max-width: 400px; margin: 0 auto; text-align:center;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
+          <div style="background:var(--bg3); padding:10px 20px; border-radius:10px; font-size:1.5rem; font-weight:bold;">Skor: <span id="score2048" style="color:var(--a3);">0</span></div>
+          <button class="chance-action-btn" id="reset2048" style="margin:0; width:auto; padding:0 20px;">Baştan Başla</button>
+        </div>
+        <div id="grid2048" style="background:var(--bg2); padding:10px; border-radius:10px; display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; aspect-ratio:1;">
+        </div>
+        <p style="color:var(--tx3); margin-top:1.5rem; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">Oynamak için bilgisayarda Yön tuşlarını (W,A,S,D veya Ok Tuşları) kullan.</p>
+      </div>
+    </section>
+
+    <!-- FALLING SAND SECTION -->
+    <section class="section ds-section" id="game-sand">
+      <div class="section-header">
+        <button class="chance-back-btn" style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" onclick="if(typeof dsGoToSection === 'function') dsGoToSection('hubPage', '')">◀ Ana Sayfa</button>
+        <div class="section-badge">⏳ Chill</div>
+        <h2 class="section-title">Kum Havuzu (SandPhysics)</h2>
+        <p class="section-sub">Bir şeyler çiz ve piksellerin etkileşimini izle.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
+        <div id="sandTools" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <button class="chance-choice-btn selected" data-mat="1" style="color:#e6c280; border-color:#e6c280;">Kum</button>
+          <button class="chance-choice-btn" data-mat="2" style="color:#4db8ff; border-color:#4db8ff;">Su</button>
+          <button class="chance-choice-btn" data-mat="3" style="color:#808080; border-color:#808080;">Duvar</button>
+          <button class="chance-choice-btn" data-mat="0" style="color:#fff;">Silgi</button>
+          <button class="chance-action-btn" id="sandClear" style="width:auto; padding:0 20px; background:var(--danger);">Temizle</button>
+        </div>
+        <canvas id="sandCanvas" width="100" height="100" style="background:#111; border:2px solid var(--gb); border-radius:10px; cursor:crosshair; width:100%; max-width:400px; aspect-ratio:1; image-rendering:pixelated;"></canvas>
+      </div>
+    </section>
+
+    <!-- USELESS BUTTON SECTION -->
+    <section class="section ds-section" id="game-useless">
+      <div class="section-header">
+        <button class="chance-back-btn" style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" onclick="if(typeof dsGoToSection === 'function') dsGoToSection('hubPage', '')">◀ Ana Sayfa</button>
+        <div class="section-badge" style="background:var(--danger)">🔴 Troll</div>
+        <h2 class="section-title">İşe Yaramaz Buton</h2>
+        <p class="section-sub">Sadece merak uyandırmak için yapıldı.</p>
+      </div>
+      <div style="height: 50vh; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; border-radius:10px; background:rgba(0,0,0,0.2);" id="uselessContainer">
+        <p id="uselessText" style="font-size:1.5rem; margin-bottom:2rem; color:var(--tx2); text-align:center;">Burada görecek bir şey yok. Lütfen geri dön.</p>
+        <button id="theUselessBtn" style="background:var(--danger); width:150px; height:150px; border-radius:50%; border:10px solid #a00; font-size:1.8rem; font-weight:bold; color:white; cursor:pointer; box-shadow:0 15px #700, 0 20px 20px rgba(0,0,0,0.5); transition: 0.1s; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); outline:none;">TIKLAMA</button>
+      </div>
+    </section>
+  `;
+  document.body.insertAdjacentHTML('beforeend', newSectionsHtml);
+
+  // --- 2048 LOGIC ---
+  const grid2048 = document.getElementById('grid2048');
+  let board2048 = Array(16).fill(0);
+  let score2048 = 0;
+
+  function render2048() {
+    if(!grid2048) return;
+    grid2048.innerHTML = '';
+    const colors = {
+      0: '#222', 2: '#eee4da', 4: '#ede0c8', 8: '#f2b179', 16: '#f59563', 32: '#f67c5f', 
+      64: '#f65e3b', 128: '#edcf72', 256: '#edcc61', 512: '#edc850', 1024: '#edc53f', 2048: '#edc22e'
+    };
+    for(let i=0; i<16; i++) {
+      const v = board2048[i];
+      const cell = document.createElement('div');
+      cell.style.cssText = `background:${colors[v] || '#ff2020'}; color:${v > 4 ? '#fff' : '#444'}; font-size:2rem; font-weight:900; display:flex; align-items:center; justify-content:center; border-radius:5px; transition:0.1s;`;
+      if(v===0) cell.style.color = 'transparent';
+      cell.textContent = v > 0 ? v : '';
+      grid2048.appendChild(cell);
+    }
+    document.getElementById('score2048').textContent = score2048;
+  }
+
+  function addRandom2048() {
+    const empty = [];
+    for(let i=0; i<16; i++) if(board2048[i] === 0) empty.push(i);
+    if(empty.length === 0) return;
+    board2048[empty[Math.floor(Math.random() * empty.length)]] = Math.random() > 0.9 ? 4 : 2;
+  }
+
+  function move2048(dir) {
+    let moved = false;
+    const moveArray = (arr) => {
+      let nonZero = arr.filter(v => v !== 0);
+      for(let i=0; i<nonZero.length-1; i++) {
+        if(nonZero[i] === nonZero[i+1]) {
+          nonZero[i] *= 2; score2048 += nonZero[i]; nonZero.splice(i+1, 1);
+        }
+      }
+      while(nonZero.length < 4) nonZero.push(0);
+      return nonZero;
+    };
+    
+    for(let i=0; i<4; i++) {
+      let row = [], indices = [];
+      if(dir === 'left') indices = [i*4, i*4+1, i*4+2, i*4+3];
+      if(dir === 'right') indices = [i*4+3, i*4+2, i*4+1, i*4];
+      if(dir === 'up') indices = [i, i+4, i+8, i+12];
+      if(dir === 'down') indices = [i+12, i+8, i+4, i];
+      
+      indices.forEach(idx => row.push(board2048[idx]));
+      const newRow = moveArray(row);
+      indices.forEach((idx, k) => {
+        if(board2048[idx] !== newRow[k]) { board2048[idx] = newRow[k]; moved = true; }
+      });
+    }
+    
+    if(moved) { addRandom2048(); render2048(); }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if(document.getElementById('game-2048') && document.getElementById('game-2048').classList.contains('ds-active')) {
+      if(['ArrowUp','w','W'].includes(e.key)) { move2048('up'); e.preventDefault(); }
+      if(['ArrowDown','s','S'].includes(e.key)) { move2048('down'); e.preventDefault(); }
+      if(['ArrowLeft','a','A'].includes(e.key)) { move2048('left'); e.preventDefault(); }
+      if(['ArrowRight','d','D'].includes(e.key)) { move2048('right'); e.preventDefault(); }
+    }
+  });
+
+  const btn2048 = document.getElementById('reset2048');
+  if(btn2048) {
+    btn2048.onclick = () => { board2048.fill(0); score2048=0; addRandom2048(); addRandom2048(); render2048(); };
+    btn2048.onclick();
+  }
+
+  // --- FALLING SAND LOGIC ---
+  const canvas = document.getElementById('sandCanvas');
+  if(canvas) {
+    const ctx = canvas.getContext('2d');
+    const w = 100, h = 100; // Resolution
+    let grid = new Array(w * h).fill(0);
+    let mat = 1; // 1=sand, 2=water, 3=wall, 0=empty
+    
+    const colors = {0: '#111111', 1: '#e6c280', 2: '#4db8ff', 3: '#808080'};
+    
+    document.querySelectorAll('#sandTools button').forEach(btn => {
+      if(btn.id === 'sandClear') return;
+      btn.onclick = () => {
+        document.querySelectorAll('#sandTools button').forEach(b => { if(b.id !== 'sandClear') b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        mat = parseInt(btn.dataset.mat);
+      };
+    });
+    
+    document.getElementById('sandClear').onclick = () => grid.fill(0);
+    
+    let isDrawing = false;
+    canvas.onmousedown = () => isDrawing = true;
+    canvas.onmouseup = () => isDrawing = false;
+    canvas.onmouseleave = () => isDrawing = false;
+    canvas.onmousemove = (e) => {
+      if(!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = w / rect.width;
+      const scaleY = h / rect.height;
+      const x = Math.floor((e.clientX - rect.left) * scaleX);
+      const y = Math.floor((e.clientY - rect.top) * scaleY);
+      
+      const brushSize = mat === 3 ? 2 : 3; // Thicker brush
+      for(let dx=-brushSize; dx<=brushSize; dx++) {
+        for(let dy=-brushSize; dy<=brushSize; dy++) {
+          if(x+dx>=0 && x+dx<w && y+dy>=0 && y+dy<h) {
+            if(Math.random() > 0.2 || mat === 3) grid[(y+dy)*w + (x+dx)] = mat;
+          }
+        }
+      }
+    };
+    
+    function updateSand() {
+      let next = [...grid];
+      for(let y = h-2; y >= 0; y--) {
+        for(let x = 0; x < w; x++) {
+          let i = y*w + x;
+          let v = grid[i];
+          if(v === 1) { // Sand
+            let b = (y+1)*w + x;
+            if(grid[b] === 0 || grid[b] === 2) { next[i] = grid[b]; next[b] = 1; }
+            else {
+              let dl = grid[b-1]===0 || grid[b-1]===2;
+              let dr = grid[b+1]===0 || grid[b+1]===2;
+              if(dl && dr) { if(Math.random()>0.5) { next[i]=grid[b-1]; next[b-1]=1; } else { next[i]=grid[b+1]; next[b+1]=1; } }
+              else if(dl) { next[i]=grid[b-1]; next[b-1]=1; }
+              else if(dr) { next[i]=grid[b+1]; next[b+1]=1; }
+            }
+          } else if (v === 2) { // Water
+            let b = (y+1)*w + x;
+            if(grid[b] === 0) { next[i] = 0; next[b] = 2; }
+            else {
+              let dl = grid[i-1]===0; let dr = grid[i+1]===0;
+              if(dl && dr) { if(Math.random()>0.5) { next[i]=0; next[i-1]=2; } else { next[i]=0; next[i+1]=2; } }
+              else if(dl) { next[i]=0; next[i-1]=2; }
+              else if(dr) { next[i]=0; next[i+1]=2; }
+            }
+          }
+        }
+      }
+      grid = next;
+      
+      const img = ctx.createImageData(w, h);
+      for(let i=0; i<grid.length; i++) {
+        let c = colors[grid[i]];
+        let r = parseInt(c.slice(1,3),16);
+        let g = parseInt(c.slice(3,5),16);
+        let b = parseInt(c.slice(5,7),16);
+        img.data[i*4] = r; img.data[i*4+1] = g; img.data[i*4+2] = b; img.data[i*4+3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      setTimeout(() => requestAnimationFrame(updateSand), 20); // Control speed
+    }
+    requestAnimationFrame(updateSand);
+  }
+
+  // --- USELESS BUTTON LOGIC ---
+  const uBtn = document.getElementById('theUselessBtn');
+  const uText = document.getElementById('uselessText');
+  const uCont = document.getElementById('uselessContainer');
+  let clicks = 0;
+  
+  const msgs = [
+    "Hmm?",
+    "Neden bastın ki?",
+    "Lütfen basma.",
+    "Bana tıklamanın sana bir faydası yok.",
+    "Bak ciddi söylüyorum, vakit kaybediyorsun.",
+    "Sıkılmadın mı?",
+    "Peki, madem bu kadar ısrarcısın...",
+    "Kaçıyorum!",
+    "Hala tıklıyor musun?",
+    "Bunu sen istedin.",
+    "Yeter!",
+    "Bırak beni!",
+    "Lütfen Ana Sayfaya dön ve beni yalnız bırak."
+  ];
+
+  if(uBtn) {
+    uBtn.onmousedown = () => { uBtn.style.transform = `translate(-50%, calc(-50% + 5px))`; uBtn.style.boxShadow = `0 10px #700, 0 10px 10px rgba(0,0,0,0.5)`; };
+    uBtn.onmouseup = () => { uBtn.style.transform = `translate(-50%, -50%)`; uBtn.style.boxShadow = `0 15px #700, 0 20px 20px rgba(0,0,0,0.5)`; };
+    
+    uBtn.onclick = () => {
+      clicks++;
+      if(clicks < 7) {
+        uText.textContent = msgs[clicks] || msgs[0];
+      } else {
+        uText.textContent = msgs[Math.min(clicks, msgs.length-1)] || "BOŞA UĞRAŞ!";
+        uBtn.style.transition = '0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+        
+        // Random move logic
+        const cw = uCont.clientWidth;
+        const ch = uCont.clientHeight;
+        const bw = uBtn.clientWidth;
+        const bh = uBtn.clientHeight;
+        
+        const maxX = cw - bw;
+        const maxY = ch - bh;
+        
+        const newX = (Math.random() * maxX) - (cw/2) + (bw/2);
+        const newY = (Math.random() * maxY) - (ch/2) + (bh/2);
+        
+        uBtn.style.transform = `translate(calc(-50% + ${newX}px), calc(-50% + ${newY}px))`;
+      }
+    };
+  }
+
+} catch(e) { console.error('Chill games error', e); }
+
+/* =========================================================
+   MUSIC GAMES EXPANSION (Beat Maker, Neon Rhythm)
+========================================================= */
+try {
+  // 1. Inject Sections to body
+  const musicSectionsHtml = `
+    <!-- BEAT MAKER SECTION -->
+    <section class="section ds-section" id="beatmaker-sec">
+      <div class="section-header">
+        <button class="chance-back-btn" style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" onclick="if(typeof dsGoToSection === 'function') dsGoToSection('hubPage', '')">◀ Ana Sayfa</button>
+        <div class="section-badge">🥁 Müzik</div>
+        <h2 class="section-title">Beat Makinesi</h2>
+        <p class="section-sub">12 Adımlı Web Audio Davul Makinesi</p>
+      </div>
+      <div style="max-width: 800px; margin: 0 auto; background:var(--card); padding:20px; border-radius:15px; border:1px solid var(--gb); overflow-x:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button id="bmPlayBtn" class="chance-action-btn" style="width:auto; padding:10px 30px; font-size:1.2rem; background:var(--a3);">▶ BAŞLAT</button>
+            <button id="bmClearBtn" class="chance-choice-btn" style="color:var(--danger); border-color:var(--danger);">Temizle</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; color:var(--tx2);">
+            <label>BPM: <span id="bmBpmVal" style="color:var(--tx); font-weight:bold;">120</span></label>
+            <input type="range" id="bmBpm" min="60" max="180" value="120" style="width:150px; accent-color:var(--a3);">
+          </div>
+        </div>
+        
+        <div id="bmGrid" style="display:flex; flex-direction:column; gap:8px; min-width:600px;">
+          <!-- Generated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- NEON RHYTHM SECTION -->
+    <section class="section ds-section" id="neonrhythm-sec">
+      <div class="section-header">
+        <button class="chance-back-btn" style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" onclick="if(typeof dsGoToSection === 'function') dsGoToSection('hubPage', '')">◀ Ana Sayfa</button>
+        <div class="section-badge">🎶 Ritim</div>
+        <h2 class="section-title">Neon Ritim</h2>
+        <p class="section-sub">D, F, J, K tuşlarıyla ritme eşlik et</p>
+      </div>
+      <div style="max-width: 600px; margin: 0 auto; display:flex; flex-direction:column; align-items:center; gap:15px;">
+        <div id="nrMenu" style="display:flex; flex-direction:column; gap:15px; align-items:center; background:var(--bg2); padding:30px; border-radius:15px; border:1px solid var(--a1); width:100%;">
+          <h3>Zorluk Seçin</h3>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+            <button class="chance-choice-btn nr-diff" data-speed="3">Kolay</button>
+            <button class="chance-choice-btn nr-diff selected" data-speed="5">Orta</button>
+            <button class="chance-choice-btn nr-diff" data-speed="8">Zor</button>
+          </div>
+          <button id="nrStartBtn" class="chance-action-btn" style="width:100%; margin-top:10px; background:linear-gradient(135deg, var(--a1), var(--a2)); max-width:300px;">🎵 OYNA</button>
+        </div>
+        
+        <div id="nrGameArea" style="display:none; flex-direction:column; align-items:center; width:100%;">
+          <div style="display:flex; justify-content:space-between; width:100%; max-width:400px; margin-bottom:10px; font-weight:bold; font-size:1.2rem;">
+            <div>Skor: <span id="nrScore" style="color:var(--a3);">0</span></div>
+            <div>Combo: <span id="nrCombo" style="color:var(--a2);">0</span>x</div>
+          </div>
+          <canvas id="nrCanvas" width="400" height="500" style="background:#0a0a0a; border:2px solid var(--gb); border-radius:10px; max-width:100%; box-shadow:0 0 20px rgba(124,77,255,0.2);"></canvas>
+          
+          <div style="display:flex; width:100%; max-width:400px; margin-top:10px;">
+             <!-- Touch buttons for mobile -->
+             <button class="nr-touch" data-lane="0" style="flex:1; height:60px; background:rgba(255,0,0,0.2); border:1px solid #f00; color:#fff; font-weight:bold; font-size:1.5rem; cursor:pointer;">D</button>
+             <button class="nr-touch" data-lane="1" style="flex:1; height:60px; background:rgba(0,255,0,0.2); border:1px solid #0f0; color:#fff; font-weight:bold; font-size:1.5rem; cursor:pointer;">F</button>
+             <button class="nr-touch" data-lane="2" style="flex:1; height:60px; background:rgba(0,0,255,0.2); border:1px solid #00f; color:#fff; font-weight:bold; font-size:1.5rem; cursor:pointer;">J</button>
+             <button class="nr-touch" data-lane="3" style="flex:1; height:60px; background:rgba(255,255,0,0.2); border:1px solid #ff0; color:#fff; font-weight:bold; font-size:1.5rem; cursor:pointer;">K</button>
+          </div>
+          <button id="nrStopBtn" class="chance-choice-btn" style="margin-top:15px; color:var(--danger); border-color:var(--danger);">Durdur / Menü</button>
+        </div>
+      </div>
+    </section>
+  `;
+  document.body.insertAdjacentHTML('beforeend', musicSectionsHtml);
+
+  // --- AUDIO CONTEXT SETUP ---
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let actx = null;
+  function initAudio() {
+    if(!actx) actx = new AudioContext();
+    if(actx.state === 'suspended') actx.resume();
+  }
+
+  // --- SYNTH DRUM SOUNDS ---
+  function playKick(time) {
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.frequency.setValueAtTime(150, time);
+    osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+    gain.gain.setValueAtTime(1, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+    osc.start(time); osc.stop(time + 0.5);
+  }
+  function playSnare(time) {
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    const noise = actx.createBufferSource();
+    const noiseBuffer = actx.createBuffer(1, actx.sampleRate * 0.2, actx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < output.length; i++) output[i] = Math.random() * 2 - 1;
+    noise.buffer = noiseBuffer;
+    const noiseGain = actx.createGain();
+    
+    // Snare body
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(250, time);
+    gain.gain.setValueAtTime(1, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+    
+    // Snare noise
+    noiseGain.gain.setValueAtTime(1, time);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+    
+    osc.connect(gain); gain.connect(actx.destination);
+    noise.connect(noiseGain); noiseGain.connect(actx.destination);
+    
+    osc.start(time); osc.stop(time + 0.2);
+    noise.start(time);
+  }
+  function playHihat(time, open=false) {
+    const dur = open ? 0.3 : 0.05;
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    const filter = actx.createBiquadFilter();
+    
+    osc.type = 'square';
+    osc.frequency.value = 400; // rough noise base
+    
+    filter.type = 'highpass';
+    filter.frequency.value = 7000;
+    
+    gain.gain.setValueAtTime(0.5, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + dur);
+    
+    osc.connect(filter); filter.connect(gain); gain.connect(actx.destination);
+    osc.start(time); osc.stop(time + dur);
+  }
+  function playClap(time) {
+    const noise = actx.createBufferSource();
+    const noiseBuffer = actx.createBuffer(1, actx.sampleRate * 0.3, actx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < output.length; i++) output[i] = Math.random() * 2 - 1;
+    noise.buffer = noiseBuffer;
+    
+    const filter = actx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1500;
+    
+    const gain = actx.createGain();
+    gain.gain.setValueAtTime(1, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+    
+    noise.connect(filter); filter.connect(gain); gain.connect(actx.destination);
+    noise.start(time);
+  }
+  function playTom(time) {
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.frequency.setValueAtTime(200, time);
+    osc.frequency.exponentialRampToValueAtTime(50, time + 0.3);
+    gain.gain.setValueAtTime(1, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.3);
+    osc.start(time); osc.stop(time + 0.3);
+  }
+  function playSynth(time) {
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(440, time); // A4
+    gain.gain.setValueAtTime(0.3, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.start(time); osc.stop(time + 0.2);
+  }
+  function playBass(time) {
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, time); // A1
+    gain.gain.setValueAtTime(1, time);
+    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.4);
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.start(time); osc.stop(time + 0.4);
+  }
+
+  const insts = [
+    {name: 'Kick', color: '#ff3366', fn: playKick},
+    {name: 'Snare', color: '#33ccff', fn: playSnare},
+    {name: 'HiHat (C)', color: '#ffff33', fn: (t) => playHihat(t, false)},
+    {name: 'HiHat (O)', color: '#ffcc00', fn: (t) => playHihat(t, true)},
+    {name: 'Clap', color: '#cc33ff', fn: playClap},
+    {name: 'Tom', color: '#ff9933', fn: playTom},
+    {name: 'Synth', color: '#00ffcc', fn: playSynth},
+    {name: 'Bass', color: '#33ff33', fn: playBass}
+  ];
+
+  // --- BEAT MAKER UI & LOGIC ---
+  const bmGrid = document.getElementById('bmGrid');
+  const bmPlayBtn = document.getElementById('bmPlayBtn');
+  const bmClearBtn = document.getElementById('bmClearBtn');
+  const bmBpm = document.getElementById('bmBpm');
+  const bmBpmVal = document.getElementById('bmBpmVal');
+  const STEPS = 12;
+  
+  // Matrix: [row][step] -> boolean
+  let bmPattern = insts.map(() => new Array(STEPS).fill(false));
+  let isBmPlaying = false;
+  let currentStep = 0;
+  let nextNoteTime = 0;
+  let bmTimerID = null;
+
+  if(bmGrid) {
+    // Render Grid
+    bmGrid.innerHTML = '';
+    insts.forEach((inst, r) => {
+      const rowDiv = document.createElement('div');
+      rowDiv.style.display = 'flex';
+      rowDiv.style.gap = '5px';
+      rowDiv.style.alignItems = 'center';
+      
+      const label = document.createElement('div');
+      label.textContent = inst.name;
+      label.style.width = '80px';
+      label.style.color = 'var(--tx2)';
+      label.style.fontSize = '0.85rem';
+      label.style.fontWeight = 'bold';
+      rowDiv.appendChild(label);
+      
+      for(let c=0; c<STEPS; c++) {
+        const btn = document.createElement('button');
+        btn.className = 'bm-step';
+        btn.style.flex = '1';
+        btn.style.height = '40px';
+        btn.style.borderRadius = '5px';
+        btn.style.border = '1px solid #333';
+        btn.style.background = '#1a1a1a';
+        btn.style.cursor = 'pointer';
+        btn.style.transition = '0.1s';
+        
+        // Checkered visual for beats (every 4 steps)
+        if(c % 4 === 0) btn.style.borderLeft = '2px solid #555';
+        
+        btn.onclick = () => {
+          bmPattern[r][c] = !bmPattern[r][c];
+          btn.style.background = bmPattern[r][c] ? inst.color : '#1a1a1a';
+          btn.style.boxShadow = bmPattern[r][c] ? `0 0 10px ${inst.color}` : 'none';
+          if(bmPattern[r][c]) {
+            initAudio();
+            inst.fn(actx.currentTime); // Preview
+          }
+        };
+        rowDiv.appendChild(btn);
+      }
+      bmGrid.appendChild(rowDiv);
+    });
+
+    bmBpm.oninput = (e) => bmBpmVal.textContent = e.target.value;
+    
+    bmClearBtn.onclick = () => {
+      bmPattern = insts.map(() => new Array(STEPS).fill(false));
+      document.querySelectorAll('.bm-step').forEach(btn => {
+        btn.style.background = '#1a1a1a';
+        btn.style.boxShadow = 'none';
+        btn.style.border = '1px solid #333';
+      });
+    };
+
+    function nextNote() {
+      const secondsPerBeat = 60.0 / parseInt(bmBpm.value);
+      // We are treating each step as a 16th note (4 steps per beat)
+      // So seconds per step = secondsPerBeat / 4
+      nextNoteTime += 0.25 * secondsPerBeat;
+      currentStep = (currentStep + 1) % STEPS;
+    }
+
+    function scheduleNote(stepNumber, time) {
+      // Highlight UI
+      requestAnimationFrame(() => {
+        const rows = bmGrid.children;
+        for(let r=0; r<insts.length; r++) {
+          const btns = rows[r].querySelectorAll('.bm-step');
+          for(let c=0; c<STEPS; c++) {
+            if(c === stepNumber) {
+              btns[c].style.border = '2px solid #fff';
+            } else {
+              btns[c].style.border = '1px solid #333';
+              if(c % 4 === 0) btns[c].style.borderLeft = '2px solid #555';
+            }
+          }
+        }
+      });
+      
+      // Play sounds
+      for(let r=0; r<insts.length; r++) {
+        if(bmPattern[r][stepNumber]) {
+          insts[r].fn(time);
+        }
+      }
+    }
+
+    function scheduler() {
+      while (nextNoteTime < actx.currentTime + 0.1) {
+        scheduleNote(currentStep, nextNoteTime);
+        nextNote();
+      }
+      bmTimerID = setTimeout(scheduler, 25.0);
+    }
+
+    bmPlayBtn.onclick = () => {
+      initAudio();
+      if(isBmPlaying) {
+        clearTimeout(bmTimerID);
+        isBmPlaying = false;
+        bmPlayBtn.textContent = '▶ BAŞLAT';
+        bmPlayBtn.style.background = 'var(--a3)';
+      } else {
+        isBmPlaying = true;
+        bmPlayBtn.textContent = '⏸ DURDUR';
+        bmPlayBtn.style.background = 'var(--danger)';
+        nextNoteTime = actx.currentTime + 0.05;
+        currentStep = 0;
+        scheduler();
+      }
+    };
+  }
+
+  // --- NEON RHYTHM LOGIC ---
+  const nrMenu = document.getElementById('nrMenu');
+  const nrGameArea = document.getElementById('nrGameArea');
+  const nrCanvas = document.getElementById('nrCanvas');
+  const nrCtx = nrCanvas ? nrCanvas.getContext('2d') : null;
+  const nrScoreEl = document.getElementById('nrScore');
+  const nrComboEl = document.getElementById('nrCombo');
+  
+  let nrReq = null;
+  let nrPlaying = false;
+  let nrNotes = [];
+  let nrKeys = ['d', 'f', 'j', 'k'];
+  let nrLanes = [0,1,2,3]; // 4 lanes
+  let nrSpeed = 5;
+  let nrScore = 0;
+  let nrCombo = 0;
+  let nrHitEffects = [];
+  let nrBgOsc = null;
+  let nrBgInt = null;
+
+  document.querySelectorAll('.nr-diff').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.nr-diff').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      nrSpeed = parseInt(btn.dataset.speed);
+    };
+  });
+
+  function nrSpawnNote() {
+    if(Math.random() < 0.05 + (nrSpeed*0.01)) { // Spawn rate depends on speed
+      const lane = Math.floor(Math.random()*4);
+      nrNotes.push({ lane, y: -20, hit: false });
+    }
+  }
+  
+  function nrPlayBgMusic() {
+    initAudio();
+    if(nrBgOsc) try { nrBgOsc.stop(); } catch(e){}
+    nrBgOsc = actx.createOscillator();
+    const gain = actx.createGain();
+    nrBgOsc.type = 'sawtooth';
+    nrBgOsc.frequency.value = 110; // low bass
+    gain.gain.value = 0.05;
+    nrBgOsc.connect(gain); gain.connect(actx.destination);
+    nrBgOsc.start();
+    
+    // Pulse volume to beat
+    nrBgInt = setInterval(() => {
+      if(actx.state !== 'running') return;
+      const g = actx.createGain();
+      const o = actx.createOscillator();
+      o.type='square'; o.frequency.value=55;
+      g.gain.setValueAtTime(0.1, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.2);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime+0.2);
+    }, 500 - (nrSpeed*20)); // Faster speed = faster bg pulse
+  }
+
+  function nrStopBgMusic() {
+    if(nrBgOsc) try { nrBgOsc.stop(); } catch(e){}
+    if(nrBgInt) clearInterval(nrBgInt);
+  }
+
+  function nrLoop() {
+    if(!nrPlaying) return;
+    nrCtx.fillStyle = '#0a0a0a';
+    nrCtx.fillRect(0,0,nrCanvas.width, nrCanvas.height);
+    
+    // Draw Lanes & Hitline
+    const laneW = nrCanvas.width / 4;
+    const hitY = nrCanvas.height - 80;
+    
+    nrCtx.strokeStyle = '#333';
+    nrCtx.lineWidth = 1;
+    for(let i=1; i<4; i++) {
+      nrCtx.beginPath(); nrCtx.moveTo(i*laneW, 0); nrCtx.lineTo(i*laneW, nrCanvas.height); nrCtx.stroke();
+    }
+    
+    // Hitline
+    nrCtx.shadowBlur = 10;
+    nrCtx.shadowColor = '#0ff';
+    nrCtx.strokeStyle = '#0ff';
+    nrCtx.lineWidth = 4;
+    nrCtx.beginPath(); nrCtx.moveTo(0, hitY); nrCtx.lineTo(nrCanvas.width, hitY); nrCtx.stroke();
+    nrCtx.shadowBlur = 0;
+    
+    // Labels
+    nrCtx.fillStyle = '#666';
+    nrCtx.font = '20px sans-serif';
+    nrCtx.textAlign = 'center';
+    ['D','F','J','K'].forEach((lbl, i) => {
+      nrCtx.fillText(lbl, i*laneW + laneW/2, hitY + 35);
+    });
+    
+    // Spawn & Move Notes
+    nrSpawnNote();
+    for(let i = nrNotes.length - 1; i >= 0; i--) {
+      const n = nrNotes[i];
+      n.y += nrSpeed;
+      
+      const colors = ['#f00', '#0f0', '#00f', '#ff0'];
+      nrCtx.fillStyle = colors[n.lane];
+      nrCtx.shadowBlur = 15;
+      nrCtx.shadowColor = colors[n.lane];
+      
+      // Note rect
+      nrCtx.fillRect(n.lane*laneW + 10, n.y, laneW - 20, 20);
+      nrCtx.shadowBlur = 0;
+      
+      // Missed
+      if(n.y > nrCanvas.height + 20) {
+        nrCombo = 0;
+        nrHitEffects.push({text:'MISS', c:'#f00', y:hitY-50, x: n.lane*laneW + laneW/2, alpha:1});
+        nrNotes.splice(i, 1);
+        nrComboEl.textContent = nrCombo;
+      }
+    }
+    
+    // Draw Hit Effects
+    for(let i = nrHitEffects.length - 1; i >= 0; i--) {
+      const eff = nrHitEffects[i];
+      nrCtx.fillStyle = `rgba(${eff.c==='#f00'?'255,0,0':eff.c==='#0f0'?'0,255,0':eff.c==='#ff0'?'255,255,0':'0,255,255'}, ${eff.alpha})`;
+      nrCtx.font = 'bold 24px sans-serif';
+      nrCtx.fillText(eff.text, eff.x, eff.y);
+      eff.y -= 1;
+      eff.alpha -= 0.02;
+      if(eff.alpha <= 0) nrHitEffects.splice(i, 1);
+    }
+
+    nrReq = requestAnimationFrame(nrLoop);
+  }
+
+  function nrHit(lane) {
+    if(!nrPlaying) return;
+    initAudio();
+    
+    const hitY = nrCanvas.height - 80;
+    const laneW = nrCanvas.width / 4;
+    
+    // Visual flash for key press
+    nrHitEffects.push({text:'', c:'#fff', y:hitY, x: lane*laneW + laneW/2, alpha:0.5}); // Just a tiny flash
+    
+    // Find lowest note in lane
+    let closest = null;
+    let closestDist = 999;
+    let closestIdx = -1;
+    
+    nrNotes.forEach((n, idx) => {
+      if(n.lane === lane) {
+        const dist = Math.abs(n.y - hitY);
+        if(dist < closestDist) {
+          closestDist = dist;
+          closest = n;
+          closestIdx = idx;
+        }
+      }
+    });
+    
+    if(closest && closestDist < 80) {
+      nrNotes.splice(closestIdx, 1);
+      let pnts = 0;
+      let msg = '';
+      let c = '';
+      if(closestDist < 20) { msg = 'PERFECT'; pnts = 300; c='#0ff'; }
+      else if(closestDist < 50) { msg = 'GOOD'; pnts = 100; c='#0f0'; }
+      else { msg = 'OK'; pnts = 50; c='#ff0'; }
+      
+      nrCombo++;
+      nrScore += pnts * (1 + (nrCombo*0.1));
+      
+      nrScoreEl.textContent = Math.floor(nrScore);
+      nrComboEl.textContent = nrCombo;
+      nrHitEffects.push({text:msg, c:c, y:hitY-30, x: lane*laneW + laneW/2, alpha:1});
+      
+      // Hit sound
+      playHihat(actx.currentTime);
+    } else {
+      // Pressed but nothing there = MISS
+      nrCombo = 0;
+      nrComboEl.textContent = nrCombo;
+      nrHitEffects.push({text:'MISS', c:'#f00', y:hitY-30, x: lane*laneW + laneW/2, alpha:1});
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if(!nrPlaying || document.getElementById('neonrhythm-sec').style.display === 'none') return;
+    const k = e.key.toLowerCase();
+    const idx = nrKeys.indexOf(k);
+    if(idx !== -1) { nrHit(idx); }
+  });
+
+  document.querySelectorAll('.nr-touch').forEach(btn => {
+    btn.ontouchstart = (e) => { e.preventDefault(); nrHit(parseInt(btn.dataset.lane)); };
+    btn.onmousedown = (e) => { e.preventDefault(); nrHit(parseInt(btn.dataset.lane)); };
+  });
+
+  document.getElementById('nrStartBtn').onclick = () => {
+    nrMenu.style.display = 'none';
+    nrGameArea.style.display = 'flex';
+    nrScore = 0; nrCombo = 0; nrNotes = [];
+    nrScoreEl.textContent = 0; nrComboEl.textContent = 0;
+    nrPlaying = true;
+    nrPlayBgMusic();
+    nrLoop();
+  };
+
+  document.getElementById('nrStopBtn').onclick = () => {
+    nrPlaying = false;
+    if(nrReq) cancelAnimationFrame(nrReq);
+    nrStopBgMusic();
+    nrMenu.style.display = 'flex';
+    nrGameArea.style.display = 'none';
+  };
+
+} catch(e) { console.error('Music games error', e); }

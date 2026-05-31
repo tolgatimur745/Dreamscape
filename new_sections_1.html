@@ -1,0 +1,311 @@
+
+<!-- ══════════════════════════════════════════════════════════
+     🌸 MANDALA BOYAMA
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="mandala-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="mandala-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🌸 Yaratıcılık</div>
+    <h2 class="section-title">Mandala Boyama</h2>
+    <p class="section-sub">Simetrik mandala çiz — 4/6/8/12 eksen, neon glow, PNG indir</p>
+  </div>
+  <div class="canvas-section" style="display:flex;flex-direction:column;align-items:center;gap:1rem">
+    <!-- Toolbar -->
+    <div class="mandala-toolbar">
+      <div class="mandala-group">
+        <label>Eksen Sayısı</label>
+        <div class="mandala-axes-wrap">
+          <button class="mandala-axis-btn active" data-axes="4">4</button>
+          <button class="mandala-axis-btn" data-axes="6">6</button>
+          <button class="mandala-axis-btn" data-axes="8">8</button>
+          <button class="mandala-axis-btn" data-axes="12">12</button>
+        </div>
+      </div>
+      <div class="mandala-group">
+        <label>Renk</label>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="mandala-color-swatches">
+            <div class="m-swatch active" style="background:#7c4dff" data-col="#7c4dff"></div>
+            <div class="m-swatch" style="background:#ff6b9d" data-col="#ff6b9d"></div>
+            <div class="m-swatch" style="background:#00e5ff" data-col="#00e5ff"></div>
+            <div class="m-swatch" style="background:#69f0ae" data-col="#69f0ae"></div>
+            <div class="m-swatch" style="background:#ffea00" data-col="#ffea00"></div>
+            <div class="m-swatch" style="background:#ff7043" data-col="#ff7043"></div>
+            <div class="m-swatch" style="background:#fff" data-col="#ffffff"></div>
+          </div>
+          <input type="color" id="mandalaColor" value="#7c4dff" style="width:26px;height:26px;border:none;border-radius:50%;cursor:pointer;padding:0;background:none">
+        </div>
+      </div>
+      <div class="mandala-group">
+        <label>Fırça: <span id="mandalaBrushVal">4px</span></label>
+        <input type="range" id="mandalaBrush" min="1" max="40" value="4" class="brush-slider" style="width:110px">
+      </div>
+      <div class="mandala-group">
+        <label>Neon Glow</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="mandalaGlow" checked style="width:18px;height:18px;accent-color:#7c4dff">
+          <span style="font-size:.8rem;color:var(--tx2)">Aktif</span>
+        </label>
+      </div>
+      <div class="mandala-group">
+        <label>&nbsp;</label>
+        <div style="display:flex;gap:6px">
+          <button class="mini-btn" id="mandalaClear">🗑 Temizle</button>
+          <button class="mini-btn" id="mandalaDownload" style="border-color:var(--a4);color:var(--a4)">⬇ PNG İndir</button>
+        </div>
+      </div>
+    </div>
+    <!-- Canvas -->
+    <div class="mandala-wrap" style="width:100%;max-width:700px">
+      <canvas id="mandalaCanvas" width="700" height="700" style="display:block;width:100%;cursor:crosshair;touch-action:none;background:#07080f"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     🥁 BEAT MAKİNESİ
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="beat-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="beat-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🥁 Müzik</div>
+    <h2 class="section-title">Beat Makinesi</h2>
+    <p class="section-sub">8 kanal • 16 adım • BPM 60–180 • Web Audio API sentezi</p>
+  </div>
+  <div class="beat-container" style="max-width:960px;margin:0 auto">
+    <!-- Controls -->
+    <div class="beat-header-row">
+      <div class="beat-bpm-wrap">
+        <span style="font-size:.75rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px">BPM</span>
+        <span class="beat-bpm-display" id="beatBpm">120</span>
+        <input type="range" id="beatBpmSlider" class="beat-bpm-slider" min="60" max="180" value="120">
+      </div>
+      <button class="play-btn" id="beatPlayBtn" style="width:auto;padding:10px 28px;margin:0">▶ Oynat</button>
+      <button class="mini-btn" id="beatClearBtn">🗑 Temizle</button>
+      <button class="mini-btn" id="beatRandomBtn" style="border-color:var(--a5);color:var(--a5)">🎲 Rastgele</button>
+    </div>
+    <!-- Step grid -->
+    <div id="beatGrid" class="beat-container"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     🔭 FRAKTAL GEZGİNİ
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="fractal-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="fractal-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🔭 Keşif</div>
+    <h2 class="section-title">Fraktal Gezgini</h2>
+    <p class="section-sub">Mandelbrot seti • Scroll zoom & sürükle • 3 renk teması • Rastgele ilginç noktalara uçuş</p>
+  </div>
+  <div style="max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:1rem">
+    <div class="fractal-controls">
+      <button class="fractal-theme-btn active" id="fractalThemeNeon">🌈 Neon</button>
+      <button class="fractal-theme-btn" id="fractalThemeInferno">🔥 Inferno</button>
+      <button class="fractal-theme-btn" id="fractalThemeOcean">🌊 Okyanus</button>
+      <div style="flex:1"></div>
+      <button class="mini-btn" id="fractalRandom" style="border-color:var(--a5);color:var(--a5)">🎲 Rastgele Keşfet</button>
+      <button class="mini-btn" id="fractalReset">↩ Sıfırla</button>
+    </div>
+    <div class="fractal-wrap" style="position:relative">
+      <canvas id="fractalCanvas" width="900" height="500" style="display:block;width:100%;cursor:grab;touch-action:none"></canvas>
+      <div class="fractal-info" id="fractalInfo">Re: -0.5 | Im: 0 | Zoom: 1×</div>
+    </div>
+    <p style="font-size:.75rem;color:var(--tx3);text-align:center">🖱 Scroll: Zoom • Sürükle: Pan • Dokunmatik destekli</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     🔢 NEON SUDOKU
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="sudoku-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="sudoku-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🔢 Zeka</div>
+    <h2 class="section-title">Neon Sudoku</h2>
+    <p class="section-sub">Kolay • Orta • Zor • Backtracking çözücü • Kırmızı flaş hata animasyonu</p>
+  </div>
+  <div class="sudoku-layout">
+    <!-- Board -->
+    <div class="sudoku-board-wrap">
+      <div id="sudokuGrid" class="sudoku-grid"></div>
+      <!-- Numpad -->
+      <div class="sudoku-numpad">
+        <button class="sudoku-num-btn" id="sudokuNum1">1</button>
+        <button class="sudoku-num-btn" id="sudokuNum2">2</button>
+        <button class="sudoku-num-btn" id="sudokuNum3">3</button>
+        <button class="sudoku-num-btn" id="sudokuNum4">4</button>
+        <button class="sudoku-num-btn" id="sudokuNum5">5</button>
+        <button class="sudoku-num-btn" id="sudokuNum6">6</button>
+        <button class="sudoku-num-btn" id="sudokuNum7">7</button>
+        <button class="sudoku-num-btn" id="sudokuNum8">8</button>
+        <button class="sudoku-num-btn" id="sudokuNum9">9</button>
+        <button class="sudoku-num-btn sudoku-erase-btn" id="sudokuErase" style="grid-column:span 1">✕</button>
+      </div>
+    </div>
+    <!-- Side -->
+    <div class="sudoku-side">
+      <div class="sudoku-stats-box">
+        <div class="sudoku-stat"><span>Süre</span><strong id="sudokuTimer">00:00</strong></div>
+        <div class="sudoku-stat"><span>Hata</span><strong id="sudokuMistakes">0</strong></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <p style="font-size:.72rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Zorluk</p>
+        <div class="sudoku-diff-btns">
+          <button class="sudoku-diff-btn active" id="sudokuEasy">😊 Kolay</button>
+          <button class="sudoku-diff-btn" id="sudokuMedium">😤 Orta</button>
+          <button class="sudoku-diff-btn" id="sudokuHard">😈 Zor</button>
+        </div>
+      </div>
+      <button class="play-btn" id="sudokuNewGame" style="margin:0">▶ Yeni Oyun</button>
+      <button class="mini-btn" id="sudokuSolve" style="text-align:center">🤖 Çöz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     ⛓️ KELİME ZİNCİRİ
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="kelimezinciri-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="kelimezinciri-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">⛓️ Kelime</div>
+    <h2 class="section-title">Kelime Zinciri</h2>
+    <p class="section-sub">Türkçe kelime bankası ile AI rakibi • Son harfle zincir • Neon bubble animasyonları</p>
+  </div>
+  <div class="wz-game-layout">
+    <!-- Stats -->
+    <div class="wz-stats-row">
+      <div class="wz-stat-card">
+        <div class="wz-stat-num" id="wzScore">0</div>
+        <div class="wz-stat-lbl">Puan</div>
+      </div>
+      <div class="wz-stat-card">
+        <div class="wz-stat-num" id="wzBest">0</div>
+        <div class="wz-stat-lbl">En İyi</div>
+      </div>
+      <div class="wz-stat-card">
+        <div class="wz-stat-num" id="wzWords">0</div>
+        <div class="wz-stat-lbl">Kelime</div>
+      </div>
+    </div>
+    <!-- Timer -->
+    <div class="wz-timer-wrap">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--tx2)">
+        <span id="wzStatus">🟢 Yeni oyun başlat!</span>
+        <span>⏱ <strong id="wzTimer" style="color:var(--a3)">10</strong>s</span>
+      </div>
+      <div class="wz-timer-bar-bg"><div class="wz-timer-bar" id="wzTimerBar"></div></div>
+    </div>
+    <!-- Chain display -->
+    <div class="wz-chain-wrap" id="wzChain">
+      <span style="color:var(--tx3);font-size:.83rem;align-self:center;margin:auto">Zincir buraya gelecek...</span>
+    </div>
+    <!-- Input -->
+    <div class="wz-input-row">
+      <input type="text" id="wzInput" class="wz-input" placeholder="Kelime gir (Türkçe)..." disabled>
+      <button class="play-btn" id="wzSubmit" style="width:auto;padding:12px 24px;margin:0" disabled>Gönder</button>
+    </div>
+    <button class="play-btn" id="wzNewGame" style="margin:0;background:linear-gradient(135deg,var(--a3),var(--a4));color:#000">▶ Oyunu Başlat</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     💡 IŞIKLARI KAPAT
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="lightsout-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="lightsout-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">💡 Mantık</div>
+    <h2 class="section-title">Işıkları Kapat</h2>
+    <p class="section-sub">5×5 ızgara • Tıkla: hücre + komşuları değiştir • Tüm ışıkları söndür</p>
+  </div>
+  <div class="lo-game">
+    <div class="lo-diff-btns">
+      <button class="lo-diff-btn active" id="loEasy">😊 Kolay (5 adım)</button>
+      <button class="lo-diff-btn" id="loMedium">😤 Orta (10 adım)</button>
+      <button class="lo-diff-btn" id="loHard">😈 Zor (15 adım)</button>
+    </div>
+    <div class="lo-stats-row">
+      <span>Hamle: <strong id="loMoves">0</strong></span>
+      <span>Hedef: <strong id="loTarget">5</strong></span>
+      <span>Süre: <strong id="loTimer">00:00</strong></span>
+    </div>
+    <div class="lo-grid" id="lightsOutGrid"></div>
+    <button class="play-btn" id="loNewGame" style="width:auto;padding:12px 32px">▶ Yeni Oyun</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     🟩 KOZMİK KELIME (WORDLE)
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="wordle-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="wordle-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🟩 Tahmin</div>
+    <h2 class="section-title">Kozmik Kelime</h2>
+    <p class="section-sub">5 harfli Türkçe kelimeyi 6 tahminde bul • 3D flip animasyonu • Seri takibi</p>
+  </div>
+  <div class="wordle-layout">
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center">
+      <div style="text-align:center">
+        <span class="wordle-streak" id="wordleStreak">🔥 Seri: 0</span>
+      </div>
+      <button class="mini-btn" id="wordleNewGame">▶ Yeni Oyun</button>
+    </div>
+    <div class="wordle-status" id="wordleStatus">5 harfli bir Türkçe kelime tahmin et!</div>
+    <!-- Board -->
+    <div class="wordle-board" id="wordleGrid"></div>
+    <!-- Keyboard -->
+    <div class="wordle-keyboard" id="wordleKeyboard"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     🎵 NEON RİTİM
+══════════════════════════════════════════════════════════ -->
+<section class="section ds-section" id="neonritim-sec">
+  <div class="section-header" style="position:relative">
+    <button class="fav-btn" data-id="neonritim-sec" title="Favorilere ekle">🤍</button>
+    <div class="section-badge">🎵 Ritim</div>
+    <h2 class="section-title">Neon Ritim</h2>
+    <p class="section-sub">4 sütun D·F·J·K • PERFECT/GOOD/OK hassasiyet • Combo çarpanı • Müzik ile</p>
+  </div>
+  <div class="ritim-layout">
+    <!-- Header stats -->
+    <div class="ritim-header">
+      <div class="ritim-stat">
+        <span class="ritim-stat-num" id="ritimScore">0</span>
+        <span class="ritim-stat-lbl">Skor</span>
+      </div>
+      <div class="ritim-stat">
+        <span class="ritim-stat-num" id="ritimCombo">0</span>
+        <span class="ritim-stat-lbl">Kombo</span>
+      </div>
+      <div class="ritim-stat">
+        <span class="ritim-stat-num" id="ritimMaxCombo">0</span>
+        <span class="ritim-stat-lbl">Max Kombo</span>
+      </div>
+    </div>
+    <!-- Difficulty -->
+    <div class="ritim-diff-btns">
+      <button class="ritim-diff-btn active" id="ritimEasy">😊 Kolay</button>
+      <button class="ritim-diff-btn" id="ritimMedium">😤 Orta</button>
+      <button class="ritim-diff-btn" id="ritimHard">😈 Zor</button>
+    </div>
+    <!-- Canvas -->
+    <div class="ritim-canvas-wrap" style="width:100%;max-width:480px;position:relative">
+      <canvas id="ritimCanvas" width="480" height="520" style="display:block;width:100%"></canvas>
+      <div class="ritim-judge" id="ritimJudge">PERFECT!</div>
+    </div>
+    <!-- Hit buttons -->
+    <div class="ritim-keys" style="width:100%;max-width:480px">
+      <button class="ritim-key" id="ritimKey0" style="border-color:rgba(124,77,255,.4);color:#c49bff">D</button>
+      <button class="ritim-key" id="ritimKey1" style="border-color:rgba(255,107,157,.4);color:#ffb3ce">F</button>
+      <button class="ritim-key" id="ritimKey2" style="border-color:rgba(0,229,255,.4);color:#00e5ff">J</button>
+      <button class="ritim-key" id="ritimKey3" style="border-color:rgba(105,240,174,.4);color:#69f0ae">K</button>
+    </div>
+    <button class="play-btn" id="ritimPlayBtn" style="width:auto;padding:12px 36px;margin:0">▶ Başlat</button>
+  </div>
+</section>

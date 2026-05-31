@@ -998,20 +998,44 @@
     .brush-slider::-webkit-slider-thumb:hover {
       transform: scale(1.25);
     }
+    /* --- CHANCE GAMES STYLES --- */
+    .chance-game-wrapper { width:100%; display:flex; flex-direction:column; align-items:center; }
+    .chance-game-inner { background: rgba(255,255,255,0.03); border: 1px solid var(--gb); padding: 2rem; border-radius: var(--r3); width: 100%; max-width: 800px; display:flex; flex-direction:column; align-items:center; }
+    .chance-game-title { font-size: 2rem; color: var(--a3); margin-bottom: 0.5rem; }
+    .chance-game-desc { color: var(--tx2); margin-bottom: 2rem; text-align:center; }
+    .chance-bet-controls { display:flex; align-items:center; gap: 10px; margin-bottom: 2rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
+    .chance-bet-btn { background: var(--glass); color: #fff; border: 1px solid var(--glass-border); border-radius: 5px; width: 40px; height: 40px; font-size: 1.5rem; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+    .chance-bet-input { background: transparent; border: none; color: #fff; font-size: 1.5rem; width: 80px; text-align:center; outline:none; }
+    .chance-action-btn { background: var(--a3); color: #111; border: none; padding: 12px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 100px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+    .chance-action-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 15px var(--a3); }
+    .chance-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chance-back-btn { align-self: flex-start; background: transparent; color: var(--tx2); border: 1px solid var(--gb); padding: 8px 16px; border-radius: 20px; cursor: pointer; margin-bottom: 1rem; transition: 0.2s; }
+    .chance-back-btn:hover { background: var(--glass); color: #fff; }
+    .chance-game-message { margin-top: 1.5rem; font-size: 1.2rem; font-weight: bold; min-height: 28px; text-align:center; }
+    .chance-game-message.win { color: var(--success); text-shadow: 0 0 10px var(--success); }
+    .chance-game-message.lose { color: var(--danger); text-shadow: 0 0 10px var(--danger); }
+    .chance-game-message.draw { color: var(--warning); text-shadow: 0 0 10px var(--warning); }
+    .chance-choice-btn { background: var(--glass); color: #fff; border: 2px solid transparent; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
+    .chance-choice-btn.selected { border-color: var(--a3); box-shadow: 0 0 10px var(--a3); background: rgba(0,229,255,0.1); }
+    .cg-playing-card { width: 70px; height: 100px; background: #fff; border-radius: 8px; color: #111; display:flex; align-items:center; justify-content:center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.5); border:1px solid #ccc; }
+    .cg-playing-card.red { color: #e74c3c; }
+    .cg-keno-cell.drawn { animation: pop 0.5s ease; }
+    @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
   </style>
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
 
 <nav class="navbar" id="navbar">
-  <button class="menu-ham" id="menuHamburger" onclick="dsGoToHub()" style="position:relative;z-index:9998;pointer-events:all;cursor:pointer" aria-label="Ana Menu">
+  <button class="menu-ham" id="menuHamburger" onclick="dsGoToHub()" style="position:relative;z-index:9998;pointer-events:all;cursor:pointer" aria-label="Ana Menü">
     <span></span><span></span><span></span>
   </button>
-  <button class="nav-back" id="navBackBtn" onclick="dsGoToHub()">← Ana Menü</button>
+  <button class="nav-back" id="navBackBtn" onclick="dsGoToHub()">⬅ Ana Menü</button>
   <div class="nav-logo" style="cursor:pointer" onclick="dsGoToHub()">
     <span class="logo-icon">✦</span><span class="logo-text">Dreamscape</span>
   </div>
   <span class="nav-section-title" id="navSectionTitle"></span>
+  <div class="nav-balance" id="navBalance" style="color:var(--a4); cursor:pointer; font-weight:800; font-size:1.05rem; padding: 4px 12px; background:rgba(105,240,174,0.1); border:1px solid rgba(105,240,174,0.2); border-radius:100px; margin-right:10px;" title="Bakiyeyi Sıfırla">💰 <span id="navBalanceAmount">5000</span></div>
   <div class="nav-time" id="navTime"></div>
 </nav>
 <!-- ══ HUB PAGE ══ -->
@@ -1062,6 +1086,13 @@
   </div>
   <div class="games-grid">
 
+    <!-- CHANCE HAVEN -->
+    <div class="game-card" style="border-color: var(--a3); box-shadow: 0 0 15px rgba(0,229,255,0.3);">
+      <div class="game-card-header"><span class="game-icon">🎲</span><div><h3>Şans Limanı</h3><p>Simülasyon Merkezi</p></div><span class="game-badge new-badge">12 OYUN</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Rulet, Blackjack, Kazı Kazan, Kasa Açma ve daha fazlası. Tamamen eğlence amaçlı simülasyon!</p>
+      <button class="play-btn" onclick="dsGoToSection('chance-hub', '🎲 Şans Oyunları')">▶ Oyna</button>
+    </div>
+
     <!-- 1. SNAKE -->
     <div class="game-card">
       <div class="game-card-header"><span class="game-icon">🐍</span><div><h3>Snake</h3><p>Klasik Yılan Oyunu</p></div><span class="game-badge">Klasik</span></div>
@@ -1095,6 +1126,13 @@
       <div class="game-card-header"><span class="game-icon">🎨</span><div><h3>Renk Yarışı</h3><p>Rengi Doğru Adlandır</p></div><span class="game-badge">Görsel</span></div>
       <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">Kelimenin rengiyle yazılışı eşleşiyor mu? Hızlıca karar ver, beyninin odaklanma hızını test et!</p>
       <button class="play-btn" onclick="dsGoToSection('color-sec', '🎨 Renk Yarışı')">▶ Oyna</button>
+    </div>
+
+    <!-- LIGHTS OUT -->
+    <div class="game-card">
+      <div class="game-card-header"><span class="game-icon">💡</span><div><h3>Işıkları Kapat</h3><p>Zeka Oyunu</p></div><span class="game-badge new-badge">YENİ</span></div>
+      <p style="font-size: .83rem; color: var(--tx2); margin-bottom: 1.5rem; line-height: 1.6;">5x5 panodaki tüm ışıkları söndür. Birine tıklayınca kendisi ve komşuları değişir!</p>
+      <button class="play-btn" onclick="dsGoToSection('lightsout-sec', '💡 Işıkları Kapat')">▶ Oyna</button>
     </div>
 
     <!-- 6. 15 PUZZLE -->
@@ -1309,6 +1347,24 @@
         <div class="color-question"><div class="color-target" id="colorTarget"></div><p id="colorQuestion">Bu rengin adı hangisi?</p></div>
         <div class="color-options" id="colorOptions"></div>
         <div class="color-stat-row"><span>Skor: <strong id="colorScore">0</strong></span><span>Can: <strong id="colorLives">❤️❤️❤️</strong></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTS OUT SECTION -->
+<section class="section ds-section" id="lightsout-sec">
+  <div class="section-header">
+    <div class="section-badge">💡 Zeka</div>
+    <h2 class="section-title">Işıkları Kapat</h2>
+    <p class="section-sub">Tüm ışıkları söndürmeyi başarabilecek misin?</p>
+  </div>
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="game-card">
+      <div id="lightsOutGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 1rem; width: 100%; aspect-ratio: 1; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid var(--gb);"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1rem;">
+        <span style="font-size: 1.1rem; color: var(--tx);">Hamle: <strong id="lightsOutMoves" style="color:var(--a3);">0</strong></span>
+        <button class="mini-btn" id="lightsOutReset" style="background: linear-gradient(135deg, var(--a1), var(--a2)); color:#fff; border:none; padding:8px 16px; border-radius:100px; cursor:pointer;">🔄 Yeniden Başla</button>
       </div>
     </div>
   </div>
@@ -4087,6 +4143,112 @@
   </div>
 </section>
 
+<!-- CHANCE GAMES HUB -->
+<section class="section ds-section" id="chance-hub">
+  <div class="section-header">
+    <div class="section-badge">🎲 Şans Oyunları</div>
+    <h2 class="section-title">Simülasyon Merkezi</h2>
+    <p class="section-sub">Rulet, Blackjack, Kazı Kazan ve çok daha fazlası. Eğlence amaçlı simülasyonlar!</p>
+  </div>
+  
+  <div class="disclaimer" style="max-width:800px; margin:0 auto 2rem auto; padding:1rem; background:rgba(255,234,0,0.05); border:1px solid rgba(255,234,0,0.2); border-radius:12px; color:var(--tx2); font-size:0.9rem; text-align:center;">
+    <span style="color:var(--warning); font-weight:bold;">⚠ YASAL UYARI:</span> Bu bölüm tamamen eğlence amaçlı bir simülasyondur. Hiçbir oyun gerçek parayla oynanmaz, para kazandırmaz.
+  </div>
+
+  <div class="games-grid" id="chanceGameMenu">
+    <div class="game-card" onclick="openChanceGame('slot')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎰</div>
+      <h3>Slot Makinesi</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('case')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">📦</div>
+      <h3>Kasa Açma</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('scratch')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎟️</div>
+      <h3>Kazı Kazan</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('blackjack')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🃏</div>
+      <h3>Blackjack</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('roulette')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎯</div>
+      <h3>Rulet</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('mines')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">💣</div>
+      <h3>Madenler</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('higherlower')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">⬆⬇</div>
+      <h3>Yüksek / Düşük</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('plinko')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🔴</div>
+      <h3>Plinko</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('wheel')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎡</div>
+      <h3>Çarkıfelek</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('keno')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎱</div>
+      <h3>Tombala (Keno)</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('diceroll')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎲</div>
+      <h3>Zar Atma</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('coinflip')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🪙</div>
+      <h3>Yazı Tura</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('crash')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🚀</div>
+      <h3>Crash</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('tower')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🗼</div>
+      <h3>Kule</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('shell')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎩</div>
+      <h3>Üç Kağıt</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('diceclash')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">⚔️</div>
+      <h3>Zar Düellosu</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('horse')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🐎</div>
+      <h3>At Yarışı</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('videopoker')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🃏</div>
+      <h3>Video Poker</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('baccarat')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">👔</div>
+      <h3>Baccarat</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('sicbo')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">🎲</div>
+      <h3>Sic Bo</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('radar')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">💣</div>
+      <h3>Mayın Radarı</h3>
+    </div>
+    <div class="game-card" onclick="openChanceGame('threecard')" style="cursor:pointer; text-align:center;">
+      <div style="font-size:3rem; margin-bottom:10px;">♠️</div>
+      <h3>Üç Kart Poker</h3>
+    </div>
+  </div>
+
+  <div id="chanceGameContainer" style="display:none; width:100%; flex-direction:column; align-items:center; background:var(--card); border:1px solid var(--gb); border-radius:var(--r3); padding:2rem; min-height:400px; position:relative;"></div>
+</section>
+
 <footer class="footer">
 
   <div class="footer-inner">
@@ -4098,6 +4260,7 @@
 
 <div class="toast" id="toast"></div>
 <script src="app.js"></script>
+<script src="chance_games.js"></script>
 
 
 </div>
