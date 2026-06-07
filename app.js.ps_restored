@@ -3491,18 +3491,13 @@ try {
       {em:'🌍', ttl:'Dünya Saatleri', dsc:'Zaman dilimi çevirici', id:'worldclock-sec'},
       {em:'📏', ttl:'Dönüştürücü', dsc:'Uzunluk, ağırlık, sıcaklık', id:'unit-converter-sec'},
       {em:'🔊', ttl:'Frekans Jeneratörü', dsc:'Saf ses (Tone) üretici', id:'tone-gen-sec'},
-      {em:'👁️', ttl:'Göz Asistanı', dsc:'20-20-20 kuralı hatırlatıcı', id:'eye-rest-sec'},
-      {em:'🗣️', ttl:'Kişisel Seslendirmen', dsc:'Metin ve PDF okuyucu', id:'tts-reader-sec'},
-      {em:'📱', ttl:'İkinci Monitör', dsc:'Canlı ekran yayını', id:'screen-caster-sec'}
+      {em:'👁️', ttl:'Göz Asistanı', dsc:'20-20-20 kuralı hatırlatıcı', id:'eye-rest-sec'}
     ]},
     { label: '🎵 Müzik & Ritim', items: [
       {em:'🥁', ttl:'Beat Makinesi', dsc:'8 kanallı web audio davul', id:'beatmaker-sec'},
       {em:'🥁', ttl:'Beat Makinesi V2', dsc:'16 adım, VU meter, Swing, Preset ritimler', id:'beatmaker-v2-sec'},
       {em:'🎶', ttl:'Neon Ritim', dsc:'Tuşlara basarak ritmi yakala', id:'neonrhythm-sec'},
-      {em:'📻', ttl:'Lo-Fi Odası', dsc:'Zen mikseri', id:'lofi-sec'},
-      {em:'☕', ttl:'Otomatik Lo-Fi Yapıcı', dsc:'Sonsuz chill müzik', id:'lofi-maker-sec'},
-      {em:'🎧', ttl:'3D Ses Testi', dsc:'Uzamsal ses deneyimi', id:'audio-3d-sec'},
-      {em:'🎹', ttl:'Stüdyo Piyanosu', dsc:'Gerçekçi kuyruklu piyano', id:'studio-piano-sec'}
+      {em:'📻', ttl:'Lo-Fi Odası', dsc:'Zen mikseri', id:'lofi-sec'}
     ]},
     { label: '🎨 Yaratıcılık & Görsel', items: [
       {em:'📸', ttl:'Mozaik Efekti', dsc:'Fotoğrafını piksel/üçgen/hex sanat eserine çevir', id:'mosaic-sec'},
@@ -14739,7 +14734,7 @@ try {
    ───────────────────────────────────────────── */
 try {
   document.body.insertAdjacentHTML('beforeend', `
-<section id="pipedream-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
+<section id="pipedream-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
   <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
   <div style="text-align:center;padding-top:10px;">
     <h1 style="color:var(--a1);font-size:2rem;text-shadow:0 0 20px var(--a1);margin-bottom:4px;">🔧 Pipe Dream</h1>
@@ -14946,7 +14941,7 @@ try {
    ───────────────────────────────────────────── */
 try {
   document.body.insertAdjacentHTML('beforeend', `
-<section id="mosaic-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
+<section id="mosaic-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
   <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
   <div style="text-align:center;padding-top:10px;">
     <h1 style="color:var(--a2);font-size:2rem;text-shadow:0 0 20px var(--a2);margin-bottom:4px;">🎨 Mozaik Fotoğraf Efekti</h1>
@@ -15128,7 +15123,7 @@ try {
   const MB_EMOJIS = ['😀','😍','🎉','🌟','💫','🔥','❤️','🌈','🦋','🌸','🍀','🎨','🎵','🎸','🏆','🚀','💎','🌙','⚡','🎭','🦄','🐉','🌺','🍭','🎪','🎠','🌊','🍄','🦊','🎯'];
 
   document.body.insertAdjacentHTML('beforeend', `
-<section id="moodboard-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);position:relative;font-family:'Segoe UI',sans-serif;overflow:hidden;">
+<section id="moodboard-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);position:relative;font-family:'Segoe UI',sans-serif;overflow:hidden;">
   <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:200;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
   <div style="display:flex;height:100vh;">
     <!-- Sidebar -->
@@ -15296,7 +15291,7 @@ try {
    ───────────────────────────────────────────── */
 try {
   document.body.insertAdjacentHTML('beforeend', `
-<section id="evolution-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
+<section id="evolution-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
   <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
   <div style="text-align:center;padding-top:10px;">
     <h1 style="color:#69f0ae;font-size:2rem;text-shadow:0 0 20px #69f0ae;margin-bottom:4px;">🧬 Evrim Yarışı</h1>
@@ -15556,7 +15551,7 @@ try {
    ───────────────────────────────────────────── */
 try {
   document.body.insertAdjacentHTML('beforeend', `
-<section id="firewater-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
+<section id="firewater-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);position:relative;padding:20px;box-sizing:border-box;font-family:'Segoe UI',sans-serif;">
   <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
   <div style="text-align:center;padding-top:10px;">
     <h1 style="background:linear-gradient(90deg,#ff4500,#1e90ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:2rem;margin-bottom:4px;">🔥 Ateş & Su Simülatörü 💧</h1>
@@ -19492,7 +19487,7 @@ try {
 try {
   if (!document.getElementById('nonogram-sec')) {
     const nonogramHtml = `
-    <section id="nonogram-sec" class="section ds-section" style="min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
+    <section id="nonogram-sec" class="section ds-section" style="display:none; min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: var(--card); color: var(--tx); border: 1px solid var(--a1); padding: 8px 16px; border-radius: 8px; box-shadow: 0 0 10px var(--a1);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width: 600px; margin: 0 auto; background: var(--bg2); padding: 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -19622,7 +19617,7 @@ try {
 try {
   if (!document.getElementById('connections-sec')) {
     const connHtml = `
-    <section id="connections-sec" class="section ds-section" style="min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
+    <section id="connections-sec" class="section ds-section" style="display:none; min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: var(--card); color: var(--tx); border: 1px solid var(--a2); padding: 8px 16px; border-radius: 8px; box-shadow: 0 0 10px var(--a2);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width: 600px; margin: 0 auto; background: rgba(20,20,30,0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
@@ -19808,7 +19803,7 @@ try {
 try {
   if (!document.getElementById('wheel-sec')) {
     const wheelHtml = `
-    <section id="wheel-sec" class="section ds-section" style="min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
+    <section id="wheel-sec" class="section ds-section" style="display:none; min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: var(--card); color: var(--tx); border: 1px solid var(--a3); padding: 8px 16px; border-radius: 8px; box-shadow: 0 0 10px var(--a3);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 50px rgba(0,0,0,0.8);">
@@ -19950,7 +19945,7 @@ try {
 try {
   if (!document.getElementById('breathing-sec')) {
     const breathHtml = `
-    <section id="breathing-sec" class="section ds-section" style="min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative; overflow: hidden;">
+    <section id="breathing-sec" class="section ds-section" style="display:none; min-height:100vh; background: var(--bg); color: var(--tx); padding: 60px 20px; font-family: sans-serif; position: relative; overflow: hidden;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: var(--card); color: var(--tx); border: 1px solid var(--a1); padding: 8px 16px; border-radius: 8px; box-shadow: 0 0 10px var(--a1);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; margin-top: 40px;">
@@ -20025,7 +20020,7 @@ try {
 try {
   if (!document.getElementById('plant-sec')) {
     const plantHTML = `
-      <section id="plant-sec" class="section ds-section" style="min-height: 100vh; background: var(--bg); position: relative; font-family: sans-serif; color: var(--tx); overflow: hidden;">
+      <section id="plant-sec" class="section ds-section" style="display:none; min-height: 100vh; background: var(--bg); position: relative; font-family: sans-serif; color: var(--tx); overflow: hidden;">
         <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: var(--bg2); border: 1px solid var(--a1); color: var(--tx); padding: 10px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 0 10px var(--a1); transition: all 0.3s ease;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
         
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px;">
@@ -20167,7 +20162,7 @@ try {
 try {
   if (!document.getElementById('wave-sec')) {
     const waveHTML = `
-      <section id="wave-sec" class="section ds-section" style="min-height: 100vh; background: #000; position: relative; font-family: sans-serif; overflow: hidden;">
+      <section id="wave-sec" class="section ds-section" style="display:none; min-height: 100vh; background: #000; position: relative; font-family: sans-serif; overflow: hidden;">
         <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: rgba(0,0,0,0.5); border: 1px solid var(--a3); color: #fff; padding: 10px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 0 10px var(--a3); backdrop-filter: blur(5px);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
         <div style="position: absolute; top: 20px; width: 100%; text-align: center; pointer-events: none; z-index: 10;">
           <h2 style="color: var(--a3); text-shadow: 0 0 15px var(--a3); margin: 0; font-size: 28px;">Dalga Fiziği</h2>
@@ -20325,7 +20320,7 @@ try {
 try {
   if (!document.getElementById('nn-sec')) {
     const nnHTML = `
-      <section id="nn-sec" class="section ds-section" style="min-height: 100vh; background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%); position: relative; font-family: sans-serif; overflow: hidden; color: #fff;">
+      <section id="nn-sec" class="section ds-section" style="display:none; min-height: 100vh; background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%); position: relative; font-family: sans-serif; overflow: hidden; color: #fff;">
         <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer; background: rgba(255,255,255,0.1); border: 1px solid var(--a2); color: #fff; padding: 10px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 0 10px var(--a2); backdrop-filter: blur(5px);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
         
         <div style="position: absolute; top: 20px; width: 100%; text-align: center; z-index: 10;">
@@ -20554,7 +20549,7 @@ try {
 try {
   if (!document.getElementById('softbox-sec')) {
     const html = `
-    <section id="softbox-sec" class="section ds-section" style="min-height:100vh;background:#fff;position:relative;font-family:'Segoe UI',sans-serif;overflow:hidden;transition:background 0.3s;">
+    <section id="softbox-sec" class="section ds-section" style="display:none;min-height:100vh;background:#fff;position:relative;font-family:'Segoe UI',sans-serif;overflow:hidden;transition:background 0.3s;">
       <div id="softbox-ring" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70vh;height:70vh;border-radius:50%;border:10vh solid #fff;box-shadow:0 0 50px rgba(255,255,255,0.5), inset 0 0 50px rgba(255,255,255,0.5);"></div>
       <div id="softbox-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0);pointer-events:none;"></div>
       
@@ -20643,7 +20638,7 @@ try {
 try {
   if (!document.getElementById('teleprompter-sec')) {
     const html = `
-    <section id="teleprompter-sec" class="section ds-section" style="min-height:100vh;background:#111;position:relative;font-family:sans-serif;color:#fff;overflow:hidden;">
+    <section id="teleprompter-sec" class="section ds-section" style="display:none;min-height:100vh;background:#111;position:relative;font-family:sans-serif;color:#fff;overflow:hidden;">
       <div id="tp-content" style="position:absolute;top:100%;left:10%;width:80%;font-size:60px;font-weight:bold;line-height:1.4;text-align:center;transform:scaleX(1);color:#fff;text-shadow:2px 2px 0 #000;">
         <span style="color:#666;font-size:30px;">[Metin buraya gelecek]</span>
       </div>
@@ -20752,7 +20747,7 @@ try {
 try {
   if (!document.getElementById('pixel-test-sec')) {
     const html = `
-    <section id="pixel-test-sec" class="section ds-section" style="height:100vh;background:#000;position:relative;cursor:pointer;overflow:hidden;user-select:none;" onclick="ptNextColor()">
+    <section id="pixel-test-sec" class="section ds-section" style="display:none;height:100vh;background:#000;position:relative;cursor:pointer;overflow:hidden;user-select:none;" onclick="ptNextColor()">
       <div id="pt-msg" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,0.7);padding:20px;border-radius:10px;text-align:center;pointer-events:none;transition:opacity 0.5s;">
         <h2 style="margin:0 0 10px;">🔍 Ölü Piksel Testi</h2>
         <p style="margin:0;">Rengi değiştirmek için ekrana tıklayın.</p>
@@ -20808,7 +20803,7 @@ try {
 try {
   if (!document.getElementById('screensaver-sec')) {
     const html = `
-    <section id="screensaver-sec" class="section ds-section" style="min-height:100vh;background:#000;position:relative;overflow:hidden;font-family:sans-serif;">
+    <section id="screensaver-sec" class="section ds-section" style="display:none;min-height:100vh;background:#000;position:relative;overflow:hidden;font-family:sans-serif;">
       <button id="ss-back-btn" class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;transition:opacity 0.3s;" onclick="if(typeof dsGoToSection==='function') { ssStop(); if(document.fullscreenElement) document.exitFullscreen(); dsGoToSection('hubPage',''); }">◀ Ana Sayfa</button>
       
       <div id="ss-ui" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:15px;z-index:100;background:rgba(0,0,0,0.5);padding:15px;border-radius:15px;backdrop-filter:blur(5px);transition:opacity 0.5s;">
@@ -20948,7 +20943,7 @@ try {
 try {
   if (!document.getElementById('deskclock-sec')) {
     const html = `
-    <section id="deskclock-sec" class="section ds-section" style="height:100vh;background:#050505;position:relative;overflow:hidden;font-family:'Segoe UI',sans-serif;transition:background 0.5s;">
+    <section id="deskclock-sec" class="section ds-section" style="display:none;height:100vh;background:#050505;position:relative;overflow:hidden;font-family:'Segoe UI',sans-serif;transition:background 0.5s;">
       <div style="display:flex;align-items:center;justify-content:center;height:100%;width:100%;">
         <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;transition:opacity 0.3s;" id="dc-back-btn" onclick="if(typeof dsGoToSection==='function') { if(document.fullscreenElement) document.exitFullscreen(); dsGoToSection('hubPage',''); }">◀ Ana Sayfa</button>
         
@@ -21100,7 +21095,7 @@ try {
 try {
   if (!document.getElementById('scratchpad-sec')) {
     const html = `
-    <section id="scratchpad-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="scratchpad-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid var(--a1);color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px var(--a1);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;">
@@ -21173,7 +21168,7 @@ try {
 try {
   if (!document.getElementById('text-converter-sec')) {
     const html = `
-    <section id="text-converter-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="text-converter-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid var(--a2);color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px var(--a2);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:900px;margin:0 auto;padding:20px;">
@@ -21262,7 +21257,7 @@ try {
 try {
   if (!document.getElementById('budget-tracker-sec')) {
     const html = `
-    <section id="budget-tracker-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="budget-tracker-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #4caf50;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #4caf50;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;">
@@ -21369,7 +21364,7 @@ try {
 try {
   if (!document.getElementById('qrcode-sec')) {
     const html = `
-    <section id="qrcode-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="qrcode-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #fff;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #fff;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:600px;margin:0 auto;padding:20px;text-align:center;">
@@ -21406,7 +21401,7 @@ try {
 try {
   if (!document.getElementById('data-gen-sec')) {
     const html = `
-    <section id="data-gen-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="data-gen-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid var(--a3);color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px var(--a3);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;">
@@ -21483,7 +21478,7 @@ try {
 try {
   if (!document.getElementById('json-formatter-sec')) {
     const html = `
-    <section id="json-formatter-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="json-formatter-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #f39c12;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #f39c12;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:900px;margin:0 auto;padding:20px;">
@@ -21555,7 +21550,7 @@ try {
 try {
   if (!document.getElementById('worldclock-sec')) {
     const html = `
-    <section id="worldclock-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="worldclock-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid var(--a1);color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px var(--a1);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;">
@@ -21624,7 +21619,7 @@ try {
 try {
   if (!document.getElementById('unit-converter-sec')) {
     const html = `
-    <section id="unit-converter-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="unit-converter-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #9b59b6;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #9b59b6;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;">
@@ -21744,7 +21739,7 @@ try {
 try {
   if (!document.getElementById('tone-gen-sec')) {
     const html = `
-    <section id="tone-gen-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="tone-gen-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #00bcd4;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #00bcd4;" onclick="if(typeof dsGoToSection==='function') { tgStop(); dsGoToSection('hubPage',''); }">◀ Ana Sayfa</button>
       
       <div style="max-width:600px;margin:0 auto;padding:20px;text-align:center;">
@@ -21854,7 +21849,7 @@ try {
 try {
   if (!document.getElementById('eye-rest-sec')) {
     const html = `
-    <section id="eye-rest-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="eye-rest-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #4caf50;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #4caf50;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:600px;margin:0 auto;padding:20px;text-align:center;">
@@ -21970,7 +21965,7 @@ const loadPdfLib = () => {
 try {
   if (!document.getElementById('pdf-merger-sec')) {
     const html = `
-    <section id="pdf-merger-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="pdf-merger-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #e74c3c;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #e74c3c;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;">
@@ -22089,7 +22084,7 @@ try {
 try {
   if (!document.getElementById('jpg-to-pdf-sec')) {
     const html = `
-    <section id="jpg-to-pdf-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="jpg-to-pdf-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #3498db;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #3498db;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;">
@@ -22231,7 +22226,7 @@ try {
 try {
   if (!document.getElementById('youtube-downloader-sec')) {
     const html = `
-    <section id="youtube-downloader-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="youtube-downloader-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #ff0000;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #ff0000;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;text-align:center;">
@@ -22282,7 +22277,7 @@ try {
 try {
   if (!document.getElementById('image-converter-sec')) {
     const html = `
-    <section id="image-converter-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="image-converter-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #9c88ff;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #9c88ff;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;">
@@ -22387,7 +22382,7 @@ try {
 try {
   if (!document.getElementById('upscaler-sec')) {
     const html = `
-    <section id="upscaler-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="upscaler-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #f39c12;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #f39c12;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;text-align:center;">
@@ -22507,7 +22502,7 @@ try {
 try {
   if (!document.getElementById('bg-remover-sec')) {
     const html = `
-    <section id="bg-remover-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="bg-remover-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #9b59b6;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #9b59b6;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;text-align:center;">
@@ -22604,7 +22599,7 @@ try {
 try {
   if (!document.getElementById('palette-sec')) {
     const html = `
-    <section id="palette-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="palette-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #1abc9c;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #1abc9c;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;text-align:center;">
@@ -22705,7 +22700,7 @@ try {
 try {
   if (!document.getElementById('audio-trimmer-sec')) {
     const html = `
-    <section id="audio-trimmer-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="audio-trimmer-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #e84393;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #e84393;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;text-align:center;">
@@ -22847,7 +22842,7 @@ try {
 try {
   if (!document.getElementById('exif-eraser-sec')) {
     const html = `
-    <section id="exif-eraser-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="exif-eraser-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #7f8c8d;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #7f8c8d;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:700px;margin:0 auto;padding:20px;text-align:center;">
@@ -22911,7 +22906,7 @@ const loadScript = (url) => {
 try {
   if (!document.getElementById('airdrop-sec')) {
     const html = `
-    <section id="airdrop-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="airdrop-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #3498db;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #3498db;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;text-align:center;">
@@ -23044,7 +23039,7 @@ try {
 try {
   if (!document.getElementById('launchpad-sec')) {
     const html = `
-    <section id="launchpad-sec" class="section ds-section" style="min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
+    <section id="launchpad-sec" class="section ds-section" style="display:none;min-height:100vh;background:var(--bg);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:var(--bg2);border:1px solid #1abc9c;color:var(--tx);padding:10px 15px;border-radius:8px;font-weight:bold;box-shadow:0 0 10px #1abc9c;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div style="max-width:600px;margin:0 auto;padding:20px;text-align:center;">
@@ -23201,7 +23196,7 @@ try {
 try {
   if (!document.getElementById('emulator-sec')) {
     const html = `
-    <section id="emulator-sec" class="section ds-section" style="min-height:100vh;background:#111;color:#fff;font-family:'Courier New',Courier,monospace;padding-top:60px;">
+    <section id="emulator-sec" class="section ds-section" style="display:none;min-height:100vh;background:#111;color:#fff;font-family:'Courier New',Courier,monospace;padding-top:60px;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:#333;border:2px solid #fff;color:#fff;padding:10px 15px;font-weight:bold;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ CIKIS</button>
       
       <div style="max-width:800px;margin:0 auto;padding:20px;text-align:center;">
@@ -23379,7 +23374,7 @@ try {
 try {
   if (!document.getElementById('music-universe-sec')) {
     const html = `
-    <section id="music-universe-sec" class="section ds-section" style="min-height:100vh;background:#000;color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;position:relative;overflow:hidden;">
+    <section id="music-universe-sec" class="section ds-section" style="display:none;min-height:100vh;background:#000;color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;position:relative;overflow:hidden;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid #fff;color:#fff;padding:10px 15px;border-radius:8px;font-weight:bold;backdrop-filter:blur(5px);" onclick="if(typeof dsGoToSection==='function') { document.getElementById('mu-audio').pause(); dsGoToSection('hubPage',''); }">◀ Ana Sayfa</button>
       
       <div id="mu-ui" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;background:rgba(0,0,0,0.6);padding:40px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);">
@@ -23513,7 +23508,7 @@ try {
 try {
   if (!document.getElementById('hologram-sec')) {
     const html = `
-    <section id="hologram-sec" class="section ds-section" style="min-height:100vh;background:radial-gradient(circle, #2c3e50, #000);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;position:relative;overflow:hidden;">
+    <section id="hologram-sec" class="section ds-section" style="display:none;min-height:100vh;background:radial-gradient(circle, #2c3e50, #000);color:var(--tx);font-family:'Segoe UI',sans-serif;padding-top:60px;position:relative;overflow:hidden;">
       <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid #fff;color:#fff;padding:10px 15px;border-radius:8px;font-weight:bold;backdrop-filter:blur(5px);" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
       
       <div id="hg-ui" style="position:absolute;top:20px;right:20px;z-index:10;background:rgba(0,0,0,0.6);padding:20px;border-radius:15px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);text-align:center;">
@@ -23742,9 +23737,7 @@ try {
     </div>
   `;
 
-  document.body.insertAdjacentHTML('beforeend', `<section id="tts-reader-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); max-width:800px; margin:0 auto; padding:40px 20px;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${ttsHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="tts-reader-sec" class="page-sec" style="display:none; max-width:800px; margin:0 auto; padding:40px 20px;">${ttsHtml}</section>`);
 } catch(e) { console.error("TTS Reader Error", e); }
 
 
@@ -23841,9 +23834,7 @@ try {
       </div>
     </div>
   `;
-  document.body.insertAdjacentHTML('beforeend', `<section id="screen-caster-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); max-width:800px; margin:0 auto; padding:40px 20px;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${screenHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="screen-caster-sec" class="page-sec" style="display:none; max-width:800px; margin:0 auto; padding:40px 20px;">${screenHtml}</section>`);
 } catch(e) { console.error("Screen Share Error", e); }
 
 
@@ -23979,9 +23970,7 @@ try {
       </button>
     </div>
   `;
-  document.body.insertAdjacentHTML('beforeend', `<section id="lofi-maker-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); max-width:600px; margin:0 auto; padding:40px 20px;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${lofiHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="lofi-maker-sec" class="page-sec" style="display:none; max-width:600px; margin:0 auto; padding:40px 20px;">${lofiHtml}</section>`);
 } catch(e) { console.error("LoFi Error", e); }
 /* ============================================================
    NEW FEATURES M — Mega Update V3 (Kısım 2)
@@ -24090,9 +24079,7 @@ try {
     </div>
     <style>@keyframes petBounce { 0% {transform:translateY(0);} 100% {transform:translateY(-10px);} }</style>
   `;
-  document.body.insertAdjacentHTML('beforeend', `<section id="tamagotchi-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); padding:40px 20px;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${petHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="tamagotchi-sec" class="page-sec" style="display:none; padding:40px 20px;">${petHtml}</section>`);
   
   // Initialize pet logic shortly after load
   setTimeout(initPet, 1000);
@@ -24185,9 +24172,7 @@ try {
       </button>
     </div>
   `;
-  document.body.insertAdjacentHTML('beforeend', `<section id="audio-3d-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); padding:40px 20px;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${audio3DHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="audio-3d-sec" class="page-sec" style="display:none; padding:40px 20px;">${audio3DHtml}</section>`);
 } catch(e) { console.error("3D Audio Error", e); }
 
 
@@ -24280,7 +24265,5 @@ try {
       </div>
     </div>
   `;
-  document.body.insertAdjacentHTML('beforeend', `<section id="studio-piano-sec" class="section ds-section" style="position:relative; min-height:100vh; background:var(--bg); padding:40px 20px; max-width:800px; margin:0 auto;">
-  <button class="chance-back-btn" style="position:absolute;top:20px;left:20px;z-index:100;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--tx);padding:8px 16px;border-radius:8px;font-size:14px;" onclick="if(typeof dsGoToSection==='function') dsGoToSection('hubPage','')">◀ Ana Sayfa</button>
-${studioPianoHtml}</section>`);
+  document.getElementById('hubMain').insertAdjacentHTML('afterend', `<section id="studio-piano-sec" class="page-sec" style="display:none; padding:40px 20px; max-width:800px; margin:0 auto;">${studioPianoHtml}</section>`);
 } catch(e) { console.error("Studio Piano Error", e); }
